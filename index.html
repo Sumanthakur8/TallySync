@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TallySync by Suman — Bank Statement Converter</title>
+<meta name="description" content="TallySync by Suman — convert bank statement PDFs into CSV, Excel and Tally-ready XML.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root{--ink:#122033;--muted:#607087;--line:#e5ebf2;--bg:#f7f9fc;--card:#fff;--brand:#2357ff;--brand2:#5b7cff;--good:#12966b;--shadow:0 18px 55px rgba(24,44,78,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}a{text-decoration:none;color:inherit}
+.container{width:min(1160px,calc(100% - 40px));margin:auto}.nav{height:76px;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}.navin{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:850;font-size:22px;letter-spacing:-.7px}.logo span{color:var(--brand)}.links{display:flex;gap:28px;align-items:center;color:#4f6075;font-size:14px}.links a:hover{color:var(--brand)}.btn{border:0;border-radius:12px;padding:13px 19px;font-weight:750;cursor:pointer;font-size:14px;transition:.2s}.btn.primary{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 9px 22px rgba(35,87,255,.2)}.btn.primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(35,87,255,.26)}.btn.ghost{background:#eef3ff;color:var(--brand)}.hero{padding:78px 0 55px;background:radial-gradient(circle at 80% 15%,#e9efff 0,transparent 34%),linear-gradient(#fff,#f8faff)}.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:58px;align-items:center}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--brand);font-size:13px;font-weight:800;background:#edf2ff;border:1px solid #dbe4ff;padding:8px 12px;border-radius:999px}.hero h1{font-size:clamp(42px,5.5vw,68px);line-height:1.02;letter-spacing:-3px;margin:18px 0}.hero h1 span{color:var(--brand)}.hero p{font-size:18px;line-height:1.7;color:var(--muted);max-width:600px}.hero-actions{display:flex;gap:12px;margin-top:27px;flex-wrap:wrap}.trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:25px;color:#718096;font-size:13px}.trust b{color:#24344c}.hero-card{background:#fff;border:1px solid #e3e9f2;border-radius:24px;box-shadow:var(--shadow);padding:24px}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.pill{font-size:11px;font-weight:800;padding:7px 10px;border-radius:999px;background:#eafaf4;color:var(--good)}.drop{border:2px dashed #cdd8e8;border-radius:18px;padding:42px 24px;text-align:center;background:#fbfcfe;cursor:pointer;transition:.2s}.drop.drag{border-color:var(--brand);background:#f2f6ff}.upload-icon{width:58px;height:58px;border-radius:17px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:26px;margin:0 auto 14px}.drop h3{margin:0 0 7px;font-size:18px}.drop p{margin:0;color:#77869a;font-size:13px}.file{display:none}.settings{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}.field label{display:block;font-size:12px;font-weight:750;color:#5b6c82;margin-bottom:7px}.select,.input{width:100%;height:44px;border:1px solid #dce4ee;border-radius:10px;background:#fff;padding:0 12px;font:inherit;color:var(--ink);outline:none}.select:focus,.input:focus{border-color:#9bb0ff;box-shadow:0 0 0 3px #edf2ff}.convert{width:100%;margin-top:14px}.progress{margin-top:14px;display:none}.bar{height:7px;border-radius:99px;background:#edf1f6;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#6b86ff);transition:width .25s}.status{font-size:12px;color:#708096;margin-top:8px}.section{padding:82px 0}.section.white{background:#fff}.center{text-align:center}.kicker{color:var(--brand);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.3px}.section h2{font-size:40px;letter-spacing:-1.7px;margin:10px 0 13px}.section .lead{max-width:650px;margin:auto;color:var(--muted);line-height:1.7}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}.step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px}.num{width:38px;height:38px;display:grid;place-items:center;background:#edf2ff;color:var(--brand);border-radius:11px;font-weight:850}.step h3{margin:18px 0 8px}.step p{color:var(--muted);line-height:1.65;font-size:14px}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}.feature{padding:22px;border:1px solid var(--line);border-radius:17px;background:#fff}.feature .ico{font-size:23px}.feature h3{font-size:16px;margin:14px 0 7px}.feature p{font-size:13px;color:var(--muted);line-height:1.6}.banks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}.bank{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:10px;color:#586a80;font-size:13px;font-weight:700}.result{display:none;margin-top:18px;border:1px solid #dce7df;background:#f8fffb;border-radius:16px;padding:17px}.result.show{display:block}.result-top{display:flex;justify-content:space-between;gap:15px;align-items:center}.result strong{font-size:14px}.result small{color:#63758b}.downloads{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.faq{max-width:820px;margin:38px auto 0}.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:17px 19px}.faq summary{cursor:pointer;font-weight:750}.faq p{color:var(--muted);line-height:1.65;font-size:14px;margin:12px 0 0}.footer{background:#111c2b;color:#c6d0de;padding:48px 0 25px}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:35px}.footer h3{color:#fff;margin-top:0}.footer p{font-size:13px;line-height:1.7;color:#96a4b8}.footer a{display:block;font-size:13px;margin:9px 0;color:#b9c5d5}.copyright{border-top:1px solid #263448;margin-top:32px;padding-top:20px;font-size:12px;color:#8090a5}
+.toast{position:fixed;right:20px;bottom:20px;background:#172338;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;z-index:80;font-size:13px}.toast.show{display:block}
+.modal{position:fixed;inset:0;background:rgba(11,22,39,.58);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:70}.modal.show{display:flex}.modal-card{width:min(430px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 24px 80px rgba(15,35,65,.22);padding:24px}.modal-icon{width:46px;height:46px;border-radius:13px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:21px;margin-bottom:14px}.modal-card h3{margin:0;font-size:20px;letter-spacing:-.4px}.modal-card p{margin:8px 0 16px;color:var(--muted);font-size:13px;line-height:1.6}.modal-error{display:none;background:#fff2f2;border:1px solid #ffd6d6;color:#b42318;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:12px}.modal-error.show{display:block}.modal-actions{display:flex;gap:9px;margin-top:12px}.modal-actions .btn{flex:1}.password-wrap{position:relative}.password-wrap .input{padding-right:44px}.password-toggle{position:absolute;right:8px;top:7px;height:30px;width:34px;border:0;background:transparent;color:#68788d;cursor:pointer;border-radius:8px}.password-toggle:hover{background:#f1f4f8}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.features{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.links a:not(.btn){display:none}}
+@media(max-width:900px){.settings{grid-template-columns:1fr 1fr}}@media(max-width:560px){.container{width:min(100% - 24px,1160px)}.nav{height:66px}.hero{padding-top:45px}.hero h1{letter-spacing:-2px}.hero-card{padding:15px}.settings{grid-template-columns:1fr}.features,.footer-grid{grid-template-columns:1fr}.section{padding:62px 0}.section h2{font-size:31px}.hero-actions .btn{width:100%}}
+.preview-input{width:100%;min-width:170px;padding:7px 9px;border:1px solid #d7dfeb;border-radius:8px;font:inherit;font-size:12px;background:#fff}.preview-input:focus{outline:2px solid rgba(47,91,255,.15);border-color:#6b8cff}
+
+.brand-lockup{display:flex;align-items:center;gap:10px}.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 18px rgba(35,87,255,.18)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px;align-items:stretch}.price-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;position:relative}.price-card.featured{border:2px solid var(--brand);box-shadow:0 18px 55px rgba(35,87,255,.12)}.price-badge{position:absolute;right:18px;top:18px;background:#edf2ff;color:var(--brand);font-size:11px;font-weight:850;padding:7px 10px;border-radius:999px}.price-card h3{margin:0 0 9px;font-size:19px}.price{font-size:42px;font-weight:900;letter-spacing:-2px;margin:8px 0}.price small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}.price-card p{color:var(--muted);font-size:13px;line-height:1.6}.price-list{list-style:none;padding:0;margin:20px 0}.price-list li{padding:7px 0;color:#53647a;font-size:13px}.about-grid{display:grid;grid-template-columns:280px 1fr;gap:45px;align-items:center;margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto}.profile-photo{width:230px;height:230px;border-radius:50%;object-fit:cover;object-position:center 28%;border:8px solid #fff;box-shadow:0 18px 45px rgba(25,48,83,.14);margin:auto;display:block}.about-copy h3{font-size:28px;letter-spacing:-.8px;margin:0 0 8px}.about-copy p{color:var(--muted);line-height:1.75;font-size:14px;margin:10px 0}.about-tag{display:inline-flex;background:#edf2ff;color:var(--brand);border:1px solid #dbe4ff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;margin-bottom:13px}
+@media(max-width:760px){.pricing-grid{grid-template-columns:1fr}.about-grid{grid-template-columns:1fr;text-align:center}.profile-photo{width:190px;height:190px}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="container navin">
+  <a class="logo brand-lockup" href="#"><span class="brand-mark">TS</span><span style="color:var(--ink)">Tally<span style="color:var(--brand)">Sync</span> <em style="font-style:normal;font-size:12px;color:#728198;font-weight:750">by Suman</em></span></a>
+  <nav class="links"><a href="#converter">Converter</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Convert Statement</a></nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="container hero-grid">
+  <div>
+    <div class="eyebrow">✦ TallySync by Suman · Built for accounting workflows</div>
+    <h1>Turn bank PDFs into <span>Tally-ready data.</span></h1>
+    <p>Upload a bank-generated PDF statement and convert its transactions into clean CSV, Excel, or Tally XML files — without manual data entry.</p>
+    <div class="hero-actions"><a class="btn primary" href="#converter">Start converting →</a><a class="btn ghost" href="#how">See how it works</a></div>
+    <div class="trust"><span>✓ <b>PDF statements</b></span><span>✓ <b>CSV & Excel</b></span><span>✓ <b>Tally XML</b></span><span>✓ <b>Browser-based</b></span></div>
+  </div>
+  <div id="converter" class="hero-card">
+    <div class="card-head"><div><strong>Bank Statement Converter</strong><div style="font-size:12px;color:#738198;margin-top:4px">Upload a bank-generated PDF</div></div><span class="pill">● Ready</span></div>
+    <div id="drop" class="drop">
+      <div class="upload-icon">↑</div>
+      <h3>Drop your statement here</h3>
+      <p>or click to browse · PDF only</p>
+      <input id="file" class="file" type="file" accept="application/pdf,.pdf">
+    </div>
+    <div class="settings">
+      <div class="field"><label for="bank">Statement Bank</label><select id="bank" class="select"><option>Auto Detect</option><option>HDFC Bank</option><option>State Bank of India</option><option>ICICI Bank</option><option>Axis Bank</option><option>Kotak Mahindra Bank</option><option>Other / Generic</option></select></div>
+      <div class="field"><label for="output">Primary output</label><select id="output" class="select"><option value="all">CSV + Excel + Tally XML</option><option value="csv">CSV</option><option value="xlsx">Excel</option><option value="xml">Tally XML</option></select></div>
+      <div class="field"><label for="bankLedger">Tally Bank Ledger (Record In)</label><input id="bankLedger" class="input" type="text" value="PNB Bank A/c" placeholder="e.g. PNB Bank A/c"><div style="font-size:11px;color:#7b8798;margin-top:5px">Existing Tally bank ledger that receives these transactions.</div></div>
+      <div class="field"><label for="referenceLedger">Reference Ledger</label><input id="referenceLedger" class="input" type="text" value="Suspense" placeholder="e.g. Suspense"><div style="font-size:11px;color:#7b8798;margin-top:5px">Used as the offset ledger for every payment/receipt. A master XML is also generated to create it if missing.</div></div>
+    </div>
+    <button id="convert" class="btn primary convert" disabled>Convert statement</button>
+    <div id="progress" class="progress"><div class="bar"><i id="bar"></i></div><div id="status" class="status">Preparing…</div></div>
+    <div id="result" class="result">
+    <div class="result-top"><div><strong id="resultTitle">Conversion complete</strong><br><small id="resultMeta"></small></div><span class="pill">✓ Done</span></div>
+    <div style="margin:16px 0 8px;font-size:13px;font-weight:750;color:#34445a">Transaction preview — records will be imported into: <span id="previewBankLedger">PNB Bank A/c</span></div>
+    <div style="overflow:auto;border:1px solid #e2e8f0;border-radius:12px">
+      <table id="previewTable" style="width:100%;border-collapse:collapse;min-width:900px;font-size:12px">
+        <thead><tr style="background:#f7f9fc"><th style="padding:9px;text-align:left">Date</th><th style="padding:9px;text-align:left">Description</th><th style="padding:9px;text-align:right">Debit</th><th style="padding:9px;text-align:right">Credit</th><th style="padding:9px;text-align:right">Balance</th></tr></thead>
+        <tbody id="previewBody"></tbody>
+      </table>
+    </div>
+    <div class="downloads" id="downloads"></div>
+  </div>
+  </div>
+</div></section>
+
+<section id="how" class="section white"><div class="container">
+  <div class="center"><div class="kicker">How it works</div><h2>Simple. Fast. Practical.</h2><p class="lead">A focused workflow designed around the job accountants actually need to get done.</p></div>
+  <div class="steps"><div class="step"><div class="num">01</div><h3>Upload statement</h3><p>Choose a bank-generated PDF downloaded from internet banking, your banking app, or email.</p></div><div class="step"><div class="num">02</div><h3>Extract transactions</h3><p>The browser reads the PDF text and detects dates, descriptions, debits, credits and balances.</p></div><div class="step"><div class="num">03</div><h3>Download your file</h3><p>Export a clean CSV, Excel workbook, or Tally-compatible XML for your accounting workflow.</p></div></div>
+</div></section>
+
+<section id="features" class="section"><div class="container">
+  <div class="center"><div class="kicker">Made for the workflow</div><h2>Everything you need. Nothing you don't.</h2><p class="lead">No GST filing, e-commerce dashboards, or unrelated modules — just bank statement conversion.</p></div>
+  <div class="features"><div class="feature"><div class="ico">⚡</div><h3>Fast processing</h3><p>Extract transaction text directly in the browser with a lightweight workflow.</p></div><div class="feature"><div class="ico">▣</div><h3>Multiple exports</h3><p>Generate CSV, Excel and Tally XML from the same extracted transaction set.</p></div><div class="feature"><div class="ico">⌕</div><h3>Bank selection</h3><p>Pick a supported bank or use generic detection when the statement format varies.</p></div><div class="feature"><div class="ico">🔒</div><h3>Privacy first</h3><p>The demo conversion happens locally in your browser; files aren't uploaded by this page.</p></div></div>
+</div></section>
+
+<section class="section white"><div class="container">
+  <div class="center"><div class="kicker">Bank coverage</div><h2>Built for common Indian banks</h2><p class="lead">Use bank-specific parsing when available, or generic extraction for other bank-generated PDFs.</p></div>
+  <div class="banks"><span class="bank">HDFC</span><span class="bank">SBI</span><span class="bank">ICICI</span><span class="bank">Axis</span><span class="bank">Kotak</span><span class="bank">Bank of Baroda</span><span class="bank">IDFC FIRST</span><span class="bank">Yes Bank</span><span class="bank">RBL</span><span class="bank">PNB</span><span class="bank">Canara</span><span class="bank">Union Bank</span><span class="bank">Indian Bank</span><span class="bank">Federal</span><span class="bank">IndusInd</span><span class="bank">Other banks</span></div>
+</div></section>
+
+
+<section id="pricing" class="section white">
+  <div class="container">
+    <div class="center">
+      <div class="kicker">Pricing</div>
+      <h2>Simple pricing. Built for daily use.</h2>
+      <p class="lead">Use TallySync by Suman to convert bank statements and prepare accounting-ready files without repetitive manual entry.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Free Trial</h3>
+        <div class="price">₹0 <small>/ trial</small></div>
+        <p>Try the workflow before subscribing.</p>
+        <ul class="price-list">
+          <li>✓ Bank PDF conversion</li>
+          <li>✓ CSV & Excel export</li>
+          <li>✓ Tally XML workflow</li>
+        </ul>
+        <a class="btn ghost" href="#converter" style="width:100%;text-align:center;display:block">Try the converter</a>
+      </div>
+      <div class="price-card featured">
+        <span class="price-badge">Recommended</span>
+        <h3>TallySync Pro</h3>
+        <div class="price">₹99 <small>/ month</small></div>
+        <p>Affordable access for regular bank-statement work.</p>
+        <ul class="price-list">
+          <li>✓ Bank statement conversion</li>
+          <li>✓ CSV, Excel & Tally XML</li>
+          <li>✓ Payment & Receipt voucher handling</li>
+          <li>✓ Tally bank ledger selection</li>
+          <li>✓ Suspense reference workflow</li>
+        </ul>
+        <a class="btn primary" href="#converter" style="width:100%;text-align:center;display:block">Get started · ₹99/month</a>
+      </div>
+      <div class="price-card">
+        <h3>Business</h3>
+        <div class="price">Custom</div>
+        <p>For teams that need a tailored accounting workflow.</p>
+        <ul class="price-list">
+          <li>✓ Custom bank formats</li>
+          <li>✓ Workflow customization</li>
+          <li>✓ Business support</li>
+        </ul>
+        <a class="btn ghost" href="#about" style="width:100%;text-align:center;display:block">Talk to Suman</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="container">
+    <div class="center"><div class="kicker">About</div><h2>Meet Suman</h2><p class="lead">The person behind TallySync by Suman.</p></div>
+    <div class="about-grid">
+      <div><img class="profile-photo" src="suman-thakur.jpg" alt="Suman Thakur, Data Analyst"></div>
+      <div class="about-copy">
+        <div class="about-tag">TallySync by Suman</div>
+        <h3>Suman Thakur</h3>
+        <div style="font-weight:800;color:var(--brand);font-size:15px;margin-bottom:12px">Data Analyst</div>
+        <p>I’m Suman Thakur, a Data Analyst focused on turning repetitive data and accounting workflows into simple, practical digital tools.</p>
+        <p>TallySync was created to make bank-statement conversion easier for accountants, bookkeepers and businesses — reducing manual entry and helping prepare cleaner data for Tally.</p>
+        <p style="font-size:13px;color:#6f7f93">TallySync by Suman is built around one goal: <strong style="color:#26364d">save time, reduce repetitive work, and make bank data easier to use.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section white"><div class="container"><div class="center"><div class="kicker">FAQ</div><h2>Questions, answered.</h2></div><div class="faq">
+<details open><summary>What kind of PDF should I upload?</summary><p>Use a bank-generated digital PDF downloaded from internet banking, a banking app, or email. Scanned image-only statements need OCR and are not handled by this browser-only demo.</p></details>
+<details><summary>Can it handle password-protected PDFs?</summary><p>Yes. If the PDF requires a password, the converter asks for it and passes it to the PDF reader. The password is not stored.</p></details>
+<details><summary>What if my bank's columns look different?</summary><p>The converter uses generic transaction detection. For production use, add a bank-specific parser for each statement format you need to support.</p></details>
+<details><summary>Does this upload my financial data?</summary><p>This implementation performs PDF extraction in the browser and does not send the selected PDF to a server. The external libraries are loaded from public CDNs.</p></details>
+</div></div></section>
+</main>
+
+<footer class="footer"><div class="container"><div class="footer-grid"><div><h3>TallySync by Suman</h3><p>A focused bank statement converter for accountants, bookkeepers and businesses. Convert bank PDFs into structured accounting data.</p></div><div><h3>Product</h3><a href="#converter">Converter</a><a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#about">About Suman</a></div><div><h3>Support</h3><a href="#faq">FAQ</a><a href="#converter">Start a conversion</a></div></div><div class="copyright">© 2026 TallySync by Suman. Bank statement conversion only.</div></div></footer>
+<div id="toast" class="toast"></div>
+<div id="passwordModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+  <div class="modal-card">
+    <div class="modal-icon">🔒</div>
+    <h3 id="passwordTitle">Password-protected PDF</h3>
+    <p id="passwordMessage">This bank statement is encrypted. Enter the PDF password to continue. Your password is used only in your browser and is not stored.</p>
+    <div id="passwordError" class="modal-error" role="alert">Incorrect password. Please try again.</div>
+    <form id="passwordForm">
+      <label class="field" for="passwordInput"><span style="display:block;font-size:12px;font-weight:750;color:#5b6c82;margin-bottom:7px">PDF password</span>
+        <div class="password-wrap"><input id="passwordInput" class="input" type="password" autocomplete="off" spellcheck="false" placeholder="Enter password" required><button id="passwordToggle" class="password-toggle" type="button" aria-label="Show password">👁</button></div>
+      </label>
+      <div class="modal-actions"><button id="passwordCancel" class="btn ghost" type="button">Cancel</button><button class="btn primary" type="submit">Unlock PDF</button></div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+
+const $=s=>document.querySelector(s), drop=$("#drop"), fileInput=$("#file"), convert=$("#convert");
+let selectedFile=null, transactions=[];
+
+drop.addEventListener("click",()=>fileInput.click());
+fileInput.addEventListener("change",e=>pick(e.target.files[0]));
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
+drop.addEventListener("drop",e=>pick(e.dataTransfer.files[0]));
+
+const passwordModal=$("#passwordModal"), passwordForm=$("#passwordForm"), passwordInput=$("#passwordInput"), passwordError=$("#passwordError"), passwordMessage=$("#passwordMessage"), passwordToggle=$("#passwordToggle"), passwordCancel=$("#passwordCancel");
+let passwordResolver=null, passwordRejecter=null;
+
+function requestPassword(reason){
+  return new Promise((resolve,reject)=>{
+    passwordResolver=resolve; passwordRejecter=reject;
+    const wrong=reason===pdfjsLib.PasswordResponses?.INCORRECT_PASSWORD || reason===2;
+    passwordError.classList.toggle("show",wrong);
+    passwordMessage.textContent=wrong
+      ? "That password was not accepted. Enter the correct PDF password to try again. Your password is used only in your browser and is not stored."
+      : "This bank statement is encrypted. Enter the PDF password to continue. Your password is used only in your browser and is not stored.";
+    passwordInput.value="";
+    passwordModal.classList.add("show");
+    setTimeout(()=>passwordInput.focus(),50);
+  });
+}
+
+function closePasswordModal(){passwordModal.classList.remove("show");}
+passwordForm.addEventListener("submit",e=>{
+  e.preventDefault();
+  const value=passwordInput.value;
+  if(!value)return;
+  const resolve=passwordResolver; passwordResolver=null; passwordRejecter=null; closePasswordModal();
+  resolve?.(value);
+});
+passwordCancel.addEventListener("click",()=>{
+  const reject=passwordRejecter; passwordResolver=null; passwordRejecter=null; closePasswordModal();
+  reject?.(new Error("Password entry cancelled"));
+});
+passwordToggle.addEventListener("click",()=>{
+  const hidden=passwordInput.type==="password"; passwordInput.type=hidden?"text":"password";
+  passwordToggle.textContent=hidden?"🙈":"👁";
+  passwordToggle.setAttribute("aria-label",hidden?"Hide password":"Show password");
+});
+passwordModal.addEventListener("click",e=>{if(e.target===passwordModal)passwordCancel.click()});
+
+function pick(file){
+  if(!file)return;
+  if(file.type!=="application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) return toast("Please select a PDF bank statement.");
+  selectedFile=file; convert.disabled=false;
+  drop.querySelector("h3").textContent=file.name;
+  drop.querySelector("p").textContent=`${(file.size/1024/1024).toFixed(2)} MB · Ready to convert`;
+  $("#result").classList.remove("show");
+}
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3200)}
+function setProgress(p,msg){$("#progress").style.display="block";$("#bar").style.width=p+"%";$("#status").textContent=msg}
+
+convert.addEventListener("click",async()=>{
+ if(!selectedFile)return;
+ convert.disabled=true; transactions=[];
+ try{
+  setProgress(8,"Opening PDF…");
+  const buf=await selectedFile.arrayBuffer();
+  // PDF.js expects the password handler on the loading task, not as the
+  // value of the "password" option. This is what makes the modal appear
+  // when an encrypted PDF is opened.
+  const loadingTask=pdfjsLib.getDocument({data:buf});
+
+  loadingTask.onPassword=(callback,reason)=>{
+    requestPassword(reason)
+      .then(password=>callback(password))
+      .catch(()=>callback(null));
+  };
+
+  const pdf=await loadingTask.promise;
+  let text="";
+  for(let i=1;i<=pdf.numPages;i++){
+    setProgress(8+Math.round(i/pdf.numPages*55),`Reading page ${i} of ${pdf.numPages}…`);
+    const page=await pdf.getPage(i);
+    const content=await page.getTextContent();
+    const pageLines=buildPdfLines(content.items);
+    text += "\n"+pageLines.join("\n");
+  }
+  setProgress(70,"Detecting transactions…");
+  transactions=parseTransactions(text);
+  renderPreview();
+  setProgress(88,"Preparing exports…");
+  await new Promise(r=>setTimeout(r,250));
+  renderResults(pdf.numPages);
+  setProgress(100,`Done — ${transactions.length} transaction${transactions.length===1?"":"s"} detected.`);
+ }catch(err){
+  console.error(err);
+  if(err?.message === "Password entry cancelled"){
+    setProgress(0,"Conversion cancelled.");
+  } else if(err?.name === "PasswordException"){
+    toast("The PDF password was not accepted. Please try again.");
+    setProgress(0,"Password required.");
+  } else {
+    toast("Could not read this PDF. It may be scanned, encrypted, or use an unsupported layout.");
+    setProgress(0,"Conversion failed.");
+  }
+ }finally{convert.disabled=false}
+});
+
+function buildPdfLines(items){
+ const rows=[];
+ for(const item of items){
+   const value=(item.str||"").trim();
+   if(!value)continue;
+   const tr=item.transform||[];
+   const x=Number(tr[4]||0), y=Number(tr[5]||0);
+   let row=rows.find(r=>Math.abs(r.y-y)<=3);
+   if(!row){row={y,items:[]};rows.push(row)}
+   row.items.push({x,value});
+ }
+ return rows.sort((a,b)=>b.y-a.y).map(r=>r.items.sort((a,b)=>a.x-b.x).map(x=>x.value).join(" ").replace(/\s+/g," ").trim()).filter(Boolean);
+}
+
+function cleanNum(s){
+ if(!s)return "";
+ const neg=/[-(]/.test(s);
+ const n=s.replace(/[₹,\s()]/g,"").replace(/CR|DR/gi,"");
+ const v=parseFloat(n.replace(/[^\d.-]/g,""));
+ if(Number.isNaN(v))return "";
+ return (neg?-1:1)*v;
+}
+
+function parseTransactions(text){
+ const raw=text.replace(/\u00a0/g," ").replace(/\r/g,"");
+ const lines=raw.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+ const out=[];
+ const date=/^(?:(\d{1,2})[\/.-](?:\d{1,2}|[A-Za-z]{3,9})[\/.-](\d{2,4})|(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{2,4}))/;
+ const money=/(?<![A-Za-z0-9@])(?:₹\s*)?[\d,]+\.\d{1,2}(?:\s*(?:CR|DR))?\.?(?=\s|$)/ig;
+ let previousBalance=null;
+
+ for(let i=0;i<lines.length;i++){
+   const line=lines[i];
+   const lower=line.toLowerCase();
+
+   const opening=line.match(/opening\s+balance\s+([\d,]+(?:\.\d{1,2})?)(?:\s*(?:cr|dr))?/i);
+   if(opening){
+     previousBalance=cleanNum(opening[1]);
+     continue;
+   }
+   if(/closing\s+balance/i.test(line)){
+     const m=line.match(/closing\s+balance\s+([\d,]+(?:\.\d{1,2})?)/i);
+     if(m) previousBalance=cleanNum(m[1]);
+     continue;
+   }
+
+   const m=line.match(date);
+   if(!m)continue;
+   const d=m[0];
+   const amounts=[...(line.matchAll(money))].map(x=>x[0]);
+   if(!amounts.length && i+1<lines.length) amounts.push(...(lines[i+1].match(money)||[]));
+   if(!amounts.length)continue;
+   const nums=amounts.map(cleanNum).filter(v=>v!=="");
+   if(!nums.length)continue;
+
+   const desc=line.slice(d.length).replace(money," ").replace(/\s+/g," ").trim() || (lines[i+1]||"");
+   let debit="",credit="",balance="";
+
+   if(nums.length>=3){
+     debit=nums[nums.length-3];
+     credit=nums[nums.length-2];
+     balance=nums[nums.length-1];
+   }else if(nums.length===2){
+     const amount=nums[0];
+     balance=nums[1];
+     // PNB statements commonly print only the populated Withdrawal/Deposit
+     // value followed by Balance. Use the balance movement to identify it.
+     if(previousBalance!==null){
+       const delta=balance-previousBalance;
+       const tolerance=0.02;
+       if(Math.abs(delta+amount)<=tolerance) debit=amount;
+       else if(Math.abs(delta-amount)<=tolerance) credit=amount;
+       else if(/\/dr\//i.test(desc)||/\batm\s+wdr\b/i.test(desc)) debit=amount;
+       else credit=amount;
+     }else if(/\/dr\//i.test(desc)||/\batm\s+wdr\b/i.test(desc)) debit=amount;
+     else credit=amount;
+   }else{
+     balance=nums[0];
+   }
+
+   out.push({date:d,description:desc.slice(0,180),debit,credit,balance});
+   previousBalance=balance;
+ }
+ const seen=new Set();
+ return out.filter(r=>{
+   const k=[r.date,r.description,r.debit,r.credit,r.balance].join("|");
+   if(seen.has(k))return false;
+   seen.add(k);return true;
+ }).slice(0,10000);
+}
+
+function renderResults(pages){
+ $("#result").classList.add("show");
+ $("#resultTitle").textContent=transactions.length? "Conversion complete":"PDF read successfully";
+ $("#resultMeta").textContent=`${selectedFile.name} · ${pages} page${pages===1?"":"s"} · ${transactions.length} transaction${transactions.length===1?"":"s"} detected`;
+ const d=$("#downloads");d.innerHTML="";
+ const choice=$("#output").value;
+ const add=(label,fn)=>{const b=document.createElement("button");b.className="btn ghost";b.textContent="↓ "+label;b.onclick=fn;d.appendChild(b)};
+ if(choice==="all"||choice==="csv")add("CSV",downloadCSV);
+ if(choice==="all"||choice==="xlsx")add("Excel",downloadXLSX);
+ if(choice==="all"||choice==="xml"){add("Tally Reference Ledger XML",downloadReferenceMasterXML);add("Tally Payment/Receipt XML",downloadXML);}
+ if(!transactions.length) add("Download raw text",()=>downloadText());
+}
+
+function csvEscape(v){return `"${String(v??"").replaceAll('"','""')}"`}
+function downloadBlob(content,name,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function bankLedger(){return $("#bankLedger").value.trim()||"Bank Account"}
+function referenceLedger(){return $("#referenceLedger").value.trim()||"Suspense"}
+function rows(){return transactions.map((r,i)=>({SNo:i+1,Date:r.date,Description:r.description,Debit:r.debit,Credit:r.credit,Balance:r.balance,"Tally Bank Ledger":bankLedger(),"Reference Ledger":referenceLedger(),"Voucher Type":r.debit?"Payment":"Receipt"}))}
+function renderPreview(){const body=$("#previewBody");body.innerHTML="";$("#previewBankLedger").textContent=bankLedger();transactions.forEach((r,i)=>{const tr=document.createElement("tr");tr.style.borderTop="1px solid #edf1f6";tr.innerHTML=`<td style="padding:8px 9px">${escapeHtml(r.date)}</td><td style="padding:8px 9px;max-width:420px">${escapeHtml(r.description)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.debit)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.credit)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.balance)}</td>`;body.appendChild(tr)})}
+function escapeHtml(v){return String(v??"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
+function escapeAttr(v){return String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function downloadCSV(){const r=rows();const csv=[Object.keys(r[0]||{SNo:"",Date:"",Description:"",Debit:"",Credit:"",Balance:"","Tally Bank Ledger":""}).join(","),...r.map(x=>Object.values(x).map(csvEscape).join(","))].join("\n");downloadBlob(csv,base()+".csv","text/csv;charset=utf-8")}
+function downloadXLSX(){const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(rows());ws["!cols"]=[{wch:7},{wch:15},{wch:55},{wch:15},{wch:15},{wch:15},{wch:28}];XLSX.utils.book_append_sheet(wb,ws,"Transactions");XLSX.writeFile(wb,base()+".xlsx")}
+function downloadXML(){
+ const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+ const bank=bankLedger(), ref=referenceLedger();
+ const voucher=transactions.map((r,i)=>{
+   const amount=Number(r.debit||r.credit||0);
+   const isPayment=!!r.debit;
+   const type=isPayment?"Payment":"Receipt";
+   // Tally convention: debit ledger = negative AMOUNT + ISDEEMEDPOSITIVE Yes;
+   // credit ledger = positive AMOUNT + ISDEEMEDPOSITIVE No.
+   const bankAmount=isPayment?amount:-amount;
+   const refAmount=isPayment?-amount:amount;
+   const remoteId=(crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+i);
+   return `<TALLYMESSAGE><VOUCHER REMOTEID="${remoteId}" VCHTYPE="${type}" ACTION="Create" OBJVIEW="Accounting Voucher View"><DATE>${esc(normalizeDate(r.date))}</DATE><VOUCHERTYPENAME>${type}</VOUCHERTYPENAME><PERSISTEDVIEW>Accounting Voucher View</PERSISTEDVIEW><ISINVOICE>No</ISINVOICE><VOUCHERNUMBER>${i+1}</VOUCHERNUMBER><NARRATION>${esc(r.description)}</NARRATION><ALLLEDGERENTRIES.LIST><LEDGERNAME>${esc(ref)}</LEDGERNAME><ISDEEMEDPOSITIVE>${isPayment?"Yes":"No"}</ISDEEMEDPOSITIVE><AMOUNT>${refAmount.toFixed(2)}</AMOUNT></ALLLEDGERENTRIES.LIST><ALLLEDGERENTRIES.LIST><LEDGERNAME>${esc(bank)}</LEDGERNAME><ISDEEMEDPOSITIVE>${isPayment?"No":"Yes"}</ISDEEMEDPOSITIVE><AMOUNT>${bankAmount.toFixed(2)}</AMOUNT></ALLLEDGERENTRIES.LIST></VOUCHER></TALLYMESSAGE>`;
+ }).join("");
+ const xml=`<?xml version="1.0" encoding="UTF-8"?><ENVELOPE><HEADER><VERSION>1</VERSION><TALLYREQUEST>Import</TALLYREQUEST><TYPE>Data</TYPE><ID>Vouchers</ID></HEADER><BODY><DESC></DESC><DATA>${voucher}</DATA></BODY></ENVELOPE>`;
+ downloadBlob(xml,base()+"-02-Vouchers.xml","application/xml;charset=utf-8")
+}
+function downloadReferenceMasterXML(){
+ const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+ const ref=referenceLedger();
+ const xml=`<?xml version="1.0" encoding="UTF-8"?><ENVELOPE><HEADER><VERSION>1</VERSION><TALLYREQUEST>Import</TALLYREQUEST><TYPE>Data</TYPE><ID>All Masters</ID></HEADER><BODY><DESC><STATICVARIABLES><IMPORTDUPS>@@DUPIGNORE</IMPORTDUPS></STATICVARIABLES></DESC><DATA><TALLYMESSAGE><LEDGER Action="Create"><NAME>${esc(ref)}</NAME><PARENT>Current Assets</PARENT></LEDGER></TALLYMESSAGE></DATA></BODY></ENVELOPE>`;
+ downloadBlob(xml,base()+"-01-Reference-Ledger.xml","application/xml;charset=utf-8")
+}
+function normalizeDate(s){let m=s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);if(m){let y=m[3].length===2?"20"+m[3]:m[3];return `${y}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`}return s.replace(/\D/g,"").slice(0,8)}
+function downloadText(){downloadBlob((window._rawText||"No raw text retained"),base()+".txt","text/plain")}
+function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,"").replace(/\s+/g,"-")}
+</script>
+</body>
+</html>

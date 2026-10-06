@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="icon" type="image/png" href="tallysync-logo.png">
 <title>TallySync by Suman — Bank Statement Converter</title>
 <meta name="description" content="TallySync by Suman — convert bank statement PDFs into CSV, Excel and Tally-ready XML.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
@@ -18,7 +17,7 @@
 @media(max-width:900px){.settings{grid-template-columns:1fr 1fr}}@media(max-width:560px){.container{width:min(100% - 24px,1160px)}.nav{height:66px}.hero{padding-top:45px}.hero h1{letter-spacing:-2px}.hero-card{padding:15px}.settings{grid-template-columns:1fr}.features,.footer-grid{grid-template-columns:1fr}.section{padding:62px 0}.section h2{font-size:31px}.hero-actions .btn{width:100%}}
 .preview-input{width:100%;min-width:170px;padding:7px 9px;border:1px solid #d7dfeb;border-radius:8px;font:inherit;font-size:12px;background:#fff}.preview-input:focus{outline:2px solid rgba(47,91,255,.15);border-color:#6b8cff}
 
-.brand-logo{display:block;width:156px;height:58px;object-fit:contain;object-position:left center}.brand-lockup{display:flex;align-items:center;min-width:156px;height:62px}.brand-lockup:hover{opacity:.92}.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 18px rgba(35,87,255,.18)}
+.brand-lockup{display:flex;align-items:center;gap:10px}.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 18px rgba(35,87,255,.18)}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px;align-items:stretch}.price-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;position:relative}.price-card.featured{border:2px solid var(--brand);box-shadow:0 18px 55px rgba(35,87,255,.12)}.price-badge{position:absolute;right:18px;top:18px;background:#edf2ff;color:var(--brand);font-size:11px;font-weight:850;padding:7px 10px;border-radius:999px}.price-card h3{margin:0 0 9px;font-size:19px}.price{font-size:42px;font-weight:900;letter-spacing:-2px;margin:8px 0}.price small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}.price-card p{color:var(--muted);font-size:13px;line-height:1.6}.price-list{list-style:none;padding:0;margin:20px 0}.price-list li{padding:7px 0;color:#53647a;font-size:13px}.about-grid{display:grid;grid-template-columns:280px 1fr;gap:45px;align-items:center;margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto}.profile-photo{width:230px;height:230px;border-radius:50%;object-fit:cover;object-position:center 28%;border:8px solid #fff;box-shadow:0 18px 45px rgba(25,48,83,.14);margin:auto;display:block}.about-copy h3{font-size:28px;letter-spacing:-.8px;margin:0 0 8px}.about-copy p{color:var(--muted);line-height:1.75;font-size:14px;margin:10px 0}.about-tag{display:inline-flex;background:#edf2ff;color:var(--brand);border:1px solid #dbe4ff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;margin-bottom:13px}
 
 .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}.service-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:25px;transition:.2s}.service-card:hover{transform:translateY(-3px);box-shadow:0 14px 35px rgba(24,44,78,.08)}.service-icon{width:48px;height:48px;border-radius:14px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:23px;margin-bottom:15px}.service-card h3{margin:0 0 8px;font-size:18px}.service-card p{color:var(--muted);font-size:13px;line-height:1.7;margin:0}.service-list{margin:14px 0 0;padding-left:18px;color:#596b82;font-size:13px;line-height:1.8}.service-note{margin-top:35px;padding:18px 20px;border-radius:15px;background:#f4f7ff;border:1px solid #dfe7ff;color:#52637a;font-size:13px;line-height:1.7}.about-role{font-size:15px;color:#52637a;font-weight:750;margin-bottom:15px}.about-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.about-stat{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12px;color:#53647a}.contact-box{margin-top:35px;padding:24px;border-radius:18px;background:#111c2b;color:#fff;display:flex;justify-content:space-between;gap:20px;align-items:center}.contact-box p{margin:5px 0 0;color:#aebacd;font-size:13px}.contact-box a{white-space:nowrap}
@@ -27,8 +26,9 @@
 </head>
 <body>
 <header class="nav"><div class="container navin">
-  <a class="logo brand-lockup" href="#" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a>
-  <nav class="links"><a href="#converter">Converter</a><a href="what-we-do.html">What We Do</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#how">How it works</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Convert Statement</a></nav>
+  <a class="logo brand-lockup" href="#"><span class="brand-mark">TS</span><span style="color:var(--ink)">Tally<span style="color:var(--brand)">Sync</span> <em style="font-style:normal;font-size:12px;color:#728198;font-weight:750">by Suman</em></span></a>
+  <nav class="links"><a href="#converter">Converter</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#how">How it works</a><a href="pdf-compressor.html">PDF Tools</a>
+      <a href="#faq">FAQ</a><a class="btn primary" href="#converter">Convert Statement</a></nav>
 </div></header>
 
 <main>
@@ -153,15 +153,16 @@
     <div><img class="profile-photo" src="suman-thakur.jpg" alt="Suman Thakur, Data Analyst and Senior Accountant"></div>
     <div class="about-copy">
       <div class="about-tag">Suman Thakur</div>
-      <h3>Account Executive & Data Analyst</h3>
-      <div class="about-role">Accounting · GST · Reconciliation · Reporting · Excel</div>
-      <p>I am Suman Thakur, An account Executive with 6+ years of experience in end-to-end accounting operations, GST compliance, TDS/TCS, bank and vendor reconciliations, audit support and financial reporting.</p>
+      <h3>Senior Accountant & Data Analyst</h3>
+      <div class="about-role">Accounting · GST · TDS/TCS · Reconciliation · Reporting · Excel</div>
+      <p>I am Suman Thakur, a Senior Accountant with 6+ years of experience in end-to-end accounting operations, GST compliance, TDS/TCS, bank and vendor reconciliations, audit support and financial reporting.</p>
       <p>My work combines accounting knowledge with practical data skills in Tally ERP and Microsoft Excel, including VLOOKUP, Pivot Tables and advanced formulas. I use these skills to clean data, resolve mismatches, prepare reports and make financial information easier to understand.</p>
       <p><strong>TallySync</strong> is built from that practical workflow — starting with bank statement conversion and expanding into accounting, data cleaning, reporting and dashboard understanding services.</p>
       <div class="about-stats"><span class="about-stat">6+ years accounting experience</span><span class="about-stat">Tally ERP</span><span class="about-stat">Advanced Excel</span><span class="about-stat">MIS & Financial Reporting</span></div>
     </div>
   </div>
-  <div class="contact-box"><div><strong>Need accounting or data support?</strong><p>Tell me what you are working with and what output you need.</p></div><a class="btn primary" href="https://wa.me/919661905883" target="_blank" rel="noopener">>Contact Suman →</a></div>
+  <div class="contact-box"><div><strong>Need accounting or data support?</strong><p>Tell me what you are working with and what output you need.</p></div><a class="btn primary" href="mailto:sumanthakur9661@gmail.com">Contact Suman →</a></div>
+</div></section>
 
 <section id="faq" class="section white"><div class="container"><div class="center"><div class="kicker">FAQ</div><h2>Questions, answered.</h2></div><div class="faq">
 <details open><summary>What kind of PDF should I upload?</summary><p>Use a bank-generated digital PDF downloaded from internet banking, a banking app, or email. Scanned image-only statements need OCR and are not handled by this browser-only demo.</p></details>

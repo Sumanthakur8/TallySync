@@ -7,7 +7,7 @@
 <title>TallySync by Suman — Bank Statement Converter</title>
 <meta name="description" content="TallySync by Suman — convert bank statement PDFs into CSV, Excel and Tally-ready XML.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>\n<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 :root{--ink:#122033;--muted:#607087;--line:#e5ebf2;--bg:#f7f9fc;--card:#fff;--brand:#2357ff;--brand2:#5b7cff;--good:#12966b;--shadow:0 18px 55px rgba(24,44,78,.09)}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}a{text-decoration:none;color:inherit}
@@ -15,7 +15,7 @@
 .toast{position:fixed;right:20px;bottom:20px;background:#172338;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;z-index:80;font-size:13px}.toast.show{display:block}
 .modal{position:fixed;inset:0;background:rgba(11,22,39,.58);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:70}.modal.show{display:flex}.modal-card{width:min(430px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 24px 80px rgba(15,35,65,.22);padding:24px}.modal-icon{width:46px;height:46px;border-radius:13px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:21px;margin-bottom:14px}.modal-card h3{margin:0;font-size:20px;letter-spacing:-.4px}.modal-card p{margin:8px 0 16px;color:var(--muted);font-size:13px;line-height:1.6}.modal-error{display:none;background:#fff2f2;border:1px solid #ffd6d6;color:#b42318;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:12px}.modal-error.show{display:block}.modal-actions{display:flex;gap:9px;margin-top:12px}.modal-actions .btn{flex:1}.password-wrap{position:relative}.password-wrap .input{padding-right:44px}.password-toggle{position:absolute;right:8px;top:7px;height:30px;width:34px;border:0;background:transparent;color:#68788d;cursor:pointer;border-radius:8px}.password-toggle:hover{background:#f1f4f8}
 @media(max-width:900px){.hero-grid{grid-template-columns:1fr}.features{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.links a:not(.btn){display:none}}
-@media(max-width:900px){.settings{grid-template-columns:1fr 1fr}}@media(max-width:560px){.pdfc-result-grid{grid-template-columns:1fr!important}.container{width:min(100% - 24px,1160px)}.nav{height:66px}.hero{padding-top:45px}.hero h1{letter-spacing:-2px}.hero-card{padding:15px}.settings{grid-template-columns:1fr}.features,.footer-grid{grid-template-columns:1fr}.section{padding:62px 0}.section h2{font-size:31px}.hero-actions .btn{width:100%}}
+@media(max-width:900px){.settings{grid-template-columns:1fr 1fr}}@media(max-width:560px){.container{width:min(100% - 24px,1160px)}.nav{height:66px}.hero{padding-top:45px}.hero h1{letter-spacing:-2px}.hero-card{padding:15px}.settings{grid-template-columns:1fr}.features,.footer-grid{grid-template-columns:1fr}.section{padding:62px 0}.section h2{font-size:31px}.hero-actions .btn{width:100%}}
 .preview-input{width:100%;min-width:170px;padding:7px 9px;border:1px solid #d7dfeb;border-radius:8px;font:inherit;font-size:12px;background:#fff}.preview-input:focus{outline:2px solid rgba(47,91,255,.15);border-color:#6b8cff}
 
 .brand-logo{display:block;width:156px;height:58px;object-fit:contain;object-position:left center}.brand-lockup{display:flex;align-items:center;min-width:156px;height:62px}.brand-lockup:hover{opacity:.92}.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 18px rgba(35,87,255,.18)}
@@ -28,7 +28,7 @@
 <body>
 <header class="nav"><div class="container navin">
   <a class="logo brand-lockup" href="#" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a>
-  <nav class="links"><a href="#converter">Converter</a><a href="#pdf-compressor">PDF Compressor</a><a href="tools/tools.html">All Tools</a><a href="what-we-do.html">What We Do</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#how">How it works</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Convert Statement</a></nav>
+  <nav class="links"><a href="#converter">Converter</a><a href="what-we-do.html">What We Do</a><a href="#services">Services</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#how">How it works</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Convert Statement</a></nav>
 </div></header>
 
 <main>
@@ -70,63 +70,15 @@
   </div>
 </div></section>
 
-<section id="pdf-compressor" class="section white" style="padding-top:70px;padding-bottom:70px">
-  <div class="container">
-    <div class="center">
-      <div class="kicker">PDF Tool</div>
-      <h2>Reduce your PDF size</h2>
-      <p class="lead">Compress PDF files for email, uploads and sharing. Your document is processed locally in your browser.</p>
-    </div>
-    <div style="max-width:900px;margin:34px auto 0;background:#fff;border:1px solid var(--line);border-radius:24px;padding:25px;box-shadow:var(--shadow)">
-      <div id="pdfc-drop" style="border:2px dashed #cbd6e5;border-radius:18px;padding:42px 20px;text-align:center;cursor:pointer;background:#fbfcfe;transition:.2s">
-        <div style="width:58px;height:58px;margin:0 auto 14px;border-radius:17px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:27px">📄</div>
-        <h3 style="margin:0 0 8px;font-size:19px">Drop your PDF here</h3>
-        <p style="margin:0;color:#7a899d;font-size:13px">or click to choose a PDF from your device</p>
-        <input id="pdfc-file" class="file" type="file" accept="application/pdf,.pdf">
-      </div>
-      <div id="pdfc-info" style="display:none;margin-top:16px;padding:13px 15px;border:1px solid var(--line);border-radius:12px;background:#fbfcfe;justify-content:space-between;gap:15px;align-items:center">
-        <div><strong id="pdfc-name">—</strong><br><small id="pdfc-size" style="color:var(--muted)">—</small></div>
-        <button id="pdfc-remove" class="btn ghost" type="button">Remove</button>
-      </div>
-      <div class="settings" style="margin-top:15px">
-        <div class="field"><label for="pdfc-target">Target size</label><input id="pdfc-target" class="input" type="number" min="1" step="1" value="100"></div>
-        <div class="field"><label for="pdfc-unit">Unit</label><select id="pdfc-unit" class="select"><option value="KB" selected>KB</option><option value="MB">MB</option></select></div>
-        <div class="field"><label for="pdfc-quality">Maximum quality</label><select id="pdfc-quality" class="select"><option value="72">72 DPI · strongest reduction</option><option value="96" selected>96 DPI · balanced</option><option value="120">120 DPI · clearer</option></select></div>
-      </div>
-      <div style="margin-top:10px;color:#6d7d92;font-size:12px">The compressor automatically tests different quality levels and tries to produce the best-quality PDF close to your target size.</div>
-      <div style="display:flex;gap:10px;margin-top:15px">
-        <button id="pdfc-reduce" class="btn primary" disabled style="flex:1">Reduce PDF</button>
-        <button id="pdfc-reset" class="btn ghost" type="button" style="flex:1">Reset</button>
-      </div>
-      <div id="pdfc-progress" style="display:none;margin-top:18px">
-        <div class="bar"><i id="pdfc-bar"></i></div><div id="pdfc-status" class="status">Preparing…</div>
-      </div>
-      <div id="pdfc-result" class="result">
-        <div class="pdfc-result-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
-          <div style="background:#fff;border:1px solid #e2eee8;border-radius:12px;padding:13px"><small style="display:block;color:#708094;font-size:11px">Original size</small><strong id="pdfc-before" style="display:block;margin-top:5px">—</strong></div>
-          <div style="background:#fff;border:1px solid #e2eee8;border-radius:12px;padding:13px"><small style="display:block;color:#708094;font-size:11px">Compressed size</small><strong id="pdfc-after" style="display:block;margin-top:5px">—</strong></div>
-          <div style="background:#fff;border:1px solid #e2eee8;border-radius:12px;padding:13px"><small style="display:block;color:#708094;font-size:11px">Reduction</small><strong id="pdfc-reduction" style="display:block;margin-top:5px">—</strong></div>
-        </div>
-        <a id="pdfc-download" download="reduced.pdf" style="display:inline-block;margin-top:14px"><button class="btn primary" type="button">Download reduced PDF</button></a>
-        <div id="pdfc-warning" style="margin-top:10px;font-size:12px;color:#6d7d92"></div>
-      </div>
-    </div>
-    <div style="max-width:900px;margin:18px auto 0;padding:14px 17px;border-radius:14px;background:#fff9e9;border:1px solid #f2dfab;color:#6d5a28;font-size:12px;line-height:1.6">
-      <strong>Important:</strong> This compressor renders pages as optimized JPEG images. It works especially well for scanned and image-heavy PDFs, but the resulting text may no longer be selectable/searchable.
-    </div>
-  </div>
-</section>
-
-<section id="tools" class="section"><div class="container"><div class="center"><div class="kicker">TallySync utilities</div><h2>Accounting, GST, tax & document tools</h2><p class="lead">Use dedicated browser-based tools for everyday accounting and compliance calculations.</p></div><div class="services-grid"><div class="service-card"><div class="service-icon">▣</div><h3>GST Calculator</h3><p>Calculate GST inclusive/exclusive amounts.</p><a class="btn primary service-contact" href="tools/gst-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>GST Invoice Calculator</h3><p>Calculate multi-item GST invoices.</p><a class="btn primary service-contact" href="tools/gst-invoice-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>ITC Calculator</h3><p>Estimate ITC and net GST payable.</p><a class="btn primary service-contact" href="tools/itc-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>TDS Calculator</h3><p>Calculate TDS deduction and net payment.</p><a class="btn primary service-contact" href="tools/tds-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>Income Tax Calculator</h3><p>Estimate AY 2026-27 individual tax.</p><a class="btn primary service-contact" href="tools/income-tax-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>GSTIN Validator</h3><p>Check GSTIN structure and checksum.</p><a class="btn primary service-contact" href="tools/gstin-validator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>HSN / SAC Finder</h3><p>Search a common-code reference list.</p><a class="btn primary service-contact" href="tools/hsn-sac-finder.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>GST Invoice Generator</h3><p>Create a printable invoice draft.</p><a class="btn primary service-contact" href="tools/invoice-generator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">▣</div><h3>Profit & Loss Calculator</h3><p>Calculate profit and margins.</p><a class="btn primary service-contact" href="tools/profit-loss-calculator.html">Open tool →</a></div><div class="service-card"><div class="service-icon">PDF</div><h3>PDF Tools</h3><p>Convert PDF and image files in your browser.</p><a class="btn primary service-contact" href="tools/pdf-to-jpg.html">Open PDF tools →</a></div></div></div></section>
 <section id="services" class="section"><div class="container">
   <div class="center"><div class="kicker">Professional services</div><h2>Accounting, data & reporting support</h2><p class="lead">Along with TallySync, I provide practical accounting and data services for businesses that need cleaner records, reliable reports and better understanding of their numbers.</p></div>
   <div class="services-grid">
-    <div class="service-card"><div class="service-icon">▤</div><h3>Accounting & Tally Support</h3><p>Hands-on accounting support built around accurate books, reconciliations and day-to-day Tally workflows.</p><ul class="service-list"><li>Tally ERP bookkeeping & ledger maintenance</li><li>Accounts payable / receivable</li><li>Bank & vendor reconciliation</li><li>Trial Balance, P&L and Balance Sheet support</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
-    <div class="service-card"><div class="service-icon">✦</div><h3>Data Cleaning</h3><p>Turn messy spreadsheets and transaction data into structured, usable datasets ready for analysis and reporting.</p><ul class="service-list"><li>Duplicate and error cleanup</li><li>Formatting & standardization</li><li>Missing / inconsistent data checks</li><li>Excel-based data preparation</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
-    <div class="service-card"><div class="service-icon">▥</div><h3>Reporting & MIS</h3><p>Convert accounting and business data into clear management reports that make recurring numbers easier to track.</p><ul class="service-list"><li>MIS and management reporting</li><li>Monthly reporting packs</li><li>Financial summaries & reconciliations</li><li>Excel reports using Pivot Tables & formulas</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
-    <div class="service-card"><div class="service-icon">◈</div><h3>Dashboard Understanding</h3><p>Help you understand what your dashboards and KPIs are actually saying, where the numbers are moving and what needs attention.</p><ul class="service-list"><li>KPI interpretation</li><li>Trend and variance understanding</li><li>Business performance review</li><li>Action-focused insights from reports</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
-    <div class="service-card"><div class="service-icon">✓</div><h3>GST, TDS & TCS Support</h3><p>Accounting and compliance support based on practical experience with recurring statutory processes and reconciliations.</p><ul class="service-list"><li>GST reporting support</li><li>ITC reconciliation</li><li>TDS / TCS deduction tracking</li><li>Compliance documentation & audit support</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
-    <div class="service-card"><div class="service-icon">⌕</div><h3>Reconciliation & Audit Support</h3><p>Identify mismatches, organize supporting schedules and keep financial records ready for review.</p><ul class="service-list"><li>Bank, vendor & ledger reconciliation</li><li>Mismatch investigation</li><li>Audit schedules & documentation</li><li>Internal control support</li></ul><a class="btn primary service-contact" href="https://wa.me/918581018617" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">▤</div><h3>Accounting & Tally Support</h3><p>Hands-on accounting support built around accurate books, reconciliations and day-to-day Tally workflows.</p><ul class="service-list"><li>Tally ERP bookkeeping & ledger maintenance</li><li>Accounts payable / receivable</li><li>Bank & vendor reconciliation</li><li>Trial Balance, P&L and Balance Sheet support</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">✦</div><h3>Data Cleaning</h3><p>Turn messy spreadsheets and transaction data into structured, usable datasets ready for analysis and reporting.</p><ul class="service-list"><li>Duplicate and error cleanup</li><li>Formatting & standardization</li><li>Missing / inconsistent data checks</li><li>Excel-based data preparation</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">▥</div><h3>Reporting & MIS</h3><p>Convert accounting and business data into clear management reports that make recurring numbers easier to track.</p><ul class="service-list"><li>MIS and management reporting</li><li>Monthly reporting packs</li><li>Financial summaries & reconciliations</li><li>Excel reports using Pivot Tables & formulas</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">◈</div><h3>Dashboard Understanding</h3><p>Help you understand what your dashboards and KPIs are actually saying, where the numbers are moving and what needs attention.</p><ul class="service-list"><li>KPI interpretation</li><li>Trend and variance understanding</li><li>Business performance review</li><li>Action-focused insights from reports</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">✓</div><h3>GST, TDS & TCS Support</h3><p>Accounting and compliance support based on practical experience with recurring statutory processes and reconciliations.</p><ul class="service-list"><li>GST reporting support</li><li>ITC reconciliation</li><li>TDS / TCS deduction tracking</li><li>Compliance documentation & audit support</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
+    <div class="service-card"><div class="service-icon">⌕</div><h3>Reconciliation & Audit Support</h3><p>Identify mismatches, organize supporting schedules and keep financial records ready for review.</p><ul class="service-list"><li>Bank, vendor & ledger reconciliation</li><li>Mismatch investigation</li><li>Audit schedules & documentation</li><li>Internal control support</li></ul><a class="btn primary service-contact" href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp about this service →</a></div>
   </div>
   <div class="service-note"><strong>Best fit:</strong> small businesses, professionals, accountants and teams that need reliable accounting support, cleaned data, management reporting or help interpreting existing dashboards.</div>
 </div></section>
@@ -209,7 +161,7 @@
       <div class="about-stats"><span class="about-stat">6+ years accounting experience</span><span class="about-stat">Tally ERP</span><span class="about-stat">Advanced Excel</span><span class="about-stat">MIS & Financial Reporting</span></div>
     </div>
   </div>
-  <div class="contact-box"><div><strong>Need accounting or data support?</strong><p>Tell me what you are working with and what output you need.</p></div><a class="btn primary" href="https://wa.me/918581018617" target="_blank" rel="noopener"Contact Suman →</a></div>
+  <div class="contact-box"><div><strong>Need accounting or data support?</strong><p>Tell me what you are working with and what output you need.</p></div><a class="btn primary" href="https://wa.me/919661905883" target="_blank" rel="noopener"Contact Suman →</a></div>
 
 
 <section id="faq" class="section white"><div class="container"><div class="center"><div class="kicker">FAQ</div><h2>Questions, answered.</h2></div><div class="faq">
@@ -220,7 +172,7 @@
 </div></div></section>
 </main>
 
-<footer class="footer"><div class="container"><div class="footer-grid"><div><h3>TallySync by Suman</h3><p>Accounting, data cleaning, reporting and bank statement conversion services by Suman Thakur.</p><p><strong>Address:</strong><br>Nehra, Darbhanga, 847233 (Bihar)</p></div><div><h3>Services</h3><a href="#services">Accounting & Tally Support</a><a href="#services">Data Cleaning</a><a href="#services">Reporting & MIS</a><a href="#services">Dashboard Understanding</a><a href="#services">GST, TDS & TCS Support</a><a href="#services">Reconciliation & Audit Support</a></div><div class="footer-contact"><h3>Quick Contact</h3><a href="https://wa.me/918581018617" target="_blank" rel="noopener">💬 WhatsApp: 9661905883</a><a href="tel:+919661905883">☎ Call: 9661905883</a><a href="mailto:sumanthakur9661@gmail.com">✉ Email: sumanthakur9661@gmail.com</a><a href="#converter">Start a conversion</a></div></div><div class="copyright">© 2026 TallySync by Suman. Accounting, data & reporting services.</div></div></footer><a class="quick-whatsapp" href="https://wa.me/918581018617" target="_blank" rel="noopener" aria-label="Quick contact on WhatsApp" title="Chat on WhatsApp">💬</a>
+<footer class="footer"><div class="container"><div class="footer-grid"><div><h3>TallySync by Suman</h3><p>Accounting, data cleaning, reporting and bank statement conversion services by Suman Thakur.</p><p><strong>Address:</strong><br>Nehra, Darbhanga, 847233 (Bihar)</p></div><div><h3>Services</h3><a href="#services">Accounting & Tally Support</a><a href="#services">Data Cleaning</a><a href="#services">Reporting & MIS</a><a href="#services">Dashboard Understanding</a><a href="#services">GST, TDS & TCS Support</a><a href="#services">Reconciliation & Audit Support</a></div><div class="footer-contact"><h3>Quick Contact</h3><a href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 WhatsApp: 9661905883</a><a href="tel:+919661905883">☎ Call: 9661905883</a><a href="mailto:sumanthakur9661@gmail.com">✉ Email: sumanthakur9661@gmail.com</a><a href="#converter">Start a conversion</a></div></div><div class="copyright">© 2026 TallySync by Suman. Accounting, data & reporting services.</div></div></footer><a class="quick-whatsapp" href="https://wa.me/919661905883" target="_blank" rel="noopener" aria-label="Quick contact on WhatsApp" title="Chat on WhatsApp">💬</a>
 <div id="toast" class="toast"></div>
 <div id="passwordModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
   <div class="modal-card">
@@ -484,73 +436,6 @@ function downloadReferenceMasterXML(){
 function normalizeDate(s){let m=s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);if(m){let y=m[3].length===2?"20"+m[3]:m[3];return `${y}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`}return s.replace(/\D/g,"").slice(0,8)}
 function downloadText(){downloadBlob((window._rawText||"No raw text retained"),base()+".txt","text/plain")}
 function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,"").replace(/\s+/g,"-")}
-
-
-/* PDF Compressor */
-(()=>{
-  const { jsPDF } = window.jspdf;
-  const drop=document.querySelector("#pdfc-drop"), file=document.querySelector("#pdfc-file"), reduce=document.querySelector("#pdfc-reduce");
-  if(!drop||!file||!reduce)return;
-  const $c=id=>document.getElementById(id); let selected=null;
-  const fmt=b=>b<1024?b+" B":b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(2)+" MB";
-  const setFile=f=>{
-    if(!f)return;
-    if(f.type!=="application/pdf"&&!f.name.toLowerCase().endsWith(".pdf")){toast("Please choose a PDF file.");return;}
-    selected=f;$c("pdfc-info").style.display="flex";$c("pdfc-name").textContent=f.name;$c("pdfc-size").textContent=fmt(f.size);
-    reduce.disabled=false;$c("pdfc-result").classList.remove("show");
-  };
-  const reset=()=>{selected=null;file.value="";$c("pdfc-info").style.display="none";reduce.disabled=true;$c("pdfc-progress").style.display="none";$c("pdfc-result").classList.remove("show");$c("pdfc-bar").style.width="0%";};
-  drop.addEventListener("click",()=>file.click());file.addEventListener("change",e=>setFile(e.target.files[0]));
-  ["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));
-  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));
-  drop.addEventListener("drop",e=>setFile(e.dataTransfer.files[0]));$c("pdfc-remove").onclick=reset;$c("pdfc-reset").onclick=reset;
-
-  async function buildPdf(pdf,dpi,quality){
-    const scale=dpi/72;let doc=null;
-    for(let i=1;i<=pdf.numPages;i++){
-      const page=await pdf.getPage(i),viewport=page.getViewport({scale}),canvas=document.createElement("canvas");
-      canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
-      const ctx=canvas.getContext("2d",{alpha:false});
-      await page.render({canvasContext:ctx,viewport,background:"#fff"}).promise;
-      const jpg=canvas.toDataURL("image/jpeg",quality),base=page.getViewport({scale:1});
-      const w=base.width,h=base.height,orientation=w>h?"landscape":"portrait";
-      if(!doc)doc=new jsPDF({orientation,unit:"pt",format:[w,h],compress:true});
-      else doc.addPage([w,h],orientation);
-      doc.addImage(jpg,"JPEG",0,0,w,h,undefined,"FAST");canvas.width=1;canvas.height=1;
-      await new Promise(r=>setTimeout(r,0));
-    }
-    return doc.output("blob");
-  }
-  const targetBytes=()=>{const n=Number($c("pdfc-target").value);return Number.isFinite(n)&&n>0?n*($c("pdfc-unit").value==="MB"?1048576:1024):0;};
-
-  reduce.addEventListener("click",async()=>{
-    if(!selected)return;const target=targetBytes();
-    if(!target){alert("Enter a valid target size.");return;}
-    if(target>=selected.size){alert("The target size must be smaller than the original PDF.");return;}
-    reduce.disabled=true;$c("pdfc-progress").style.display="block";$c("pdfc-result").classList.remove("show");
-    const progress=(p,msg)=>{$c("pdfc-bar").style.width=p+"%";$c("pdfc-status").textContent=msg};
-    try{
-      progress(3,"Reading PDF…");const data=await selected.arrayBuffer();
-      const pdf=await pdfjsLib.getDocument({data}).promise,preferred=Number($c("pdfc-quality").value);
-      const dpis=[preferred,96,72].filter((v,i,a)=>a.indexOf(v)===i),qs=[.82,.72,.62,.52,.44,.36,.30,.25,.20,.16,.12];
-      let best=null,bestUnder=null,attempt=0,total=dpis.length*qs.length;
-      for(const dpi of dpis){for(const q of qs){
-        attempt++;progress(5+Math.round((attempt-1)/total*88),`Testing compression ${attempt} of ${total}…`);
-        const blob=await buildPdf(pdf,dpi,q),candidate={blob,dpi,q,size:blob.size};
-        if(candidate.size<=target&&(!bestUnder||candidate.size>bestUnder.size))bestUnder=candidate;
-        if(!best||Math.abs(candidate.size-target)<Math.abs(best.size-target))best=candidate;
-        if(bestUnder&&bestUnder.size>=target*.92)break;
-      }if(bestUnder&&bestUnder.size>=target*.92)break;}
-      const chosen=bestUnder||best,reduction=(1-chosen.size/selected.size)*100;
-      $c("pdfc-before").textContent=fmt(selected.size);$c("pdfc-after").textContent=fmt(chosen.size);$c("pdfc-reduction").textContent=reduction>0?reduction.toFixed(1)+"% smaller":"No reduction";
-      const url=URL.createObjectURL(chosen.blob);$c("pdfc-download").href=url;$c("pdfc-download").download=selected.name.replace(/\.pdf$/i,"")+"_reduced.pdf";
-      $c("pdfc-warning").textContent=chosen.size<=target?`Target: ${fmt(target)}. Result: ${fmt(chosen.size)}. Quality: ${chosen.dpi} DPI / ${Math.round(chosen.q*100)}% JPEG.`:`Target: ${fmt(target)}. Closest result: ${fmt(chosen.size)}. Some PDFs cannot reach very small targets without severe quality loss.`;
-      $c("pdfc-result").classList.add("show");progress(100,"Done");
-    }catch(err){console.error(err);toast("Reduction failed. Password-protected or unusual PDFs may need to be unlocked first.");progress(0,"Compression failed.");}
-    finally{reduce.disabled=false;}
-  });
-})();
-
 </script>
 </body>
 </html>

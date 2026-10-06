@@ -9,7 +9,15 @@
 .invoice-editor .section-title{margin:22px 0 10px;font-size:16px}.invoice-editor .mini{font-size:12px;color:#667085}.invoice-preview{background:#fff;color:#111827;border:1px solid #cfd4dc;margin-top:22px;overflow:auto}.tax-invoice{min-width:900px;font-family:Arial,Helvetica,sans-serif;font-size:12px}.tax-invoice *{box-sizing:border-box}.inv-title{text-align:center;font-size:18px;font-weight:700;border-bottom:1px solid #222;padding:9px}.inv-top{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #222}.inv-box{padding:9px;border-right:1px solid #222}.inv-box:last-child{border-right:0}.seller-name{font-size:16px;font-weight:700}.inv-meta{display:grid;grid-template-columns:1fr 1fr}.meta-row{padding:6px 7px;border-right:1px solid #222;border-bottom:1px solid #222}.meta-row:nth-child(even){border-right:0}.meta-row b{display:block;font-size:10px;color:#555;margin-bottom:2px}.party-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #222}.party{padding:9px;min-height:125px;border-right:1px solid #222}.party:last-child{border-right:0}.party h4{margin:0 0 6px;font-size:11px;text-transform:uppercase}.items-table{width:100%;border-collapse:collapse}.items-table th,.items-table td{border:1px solid #222;padding:6px 5px;vertical-align:top}.items-table th{background:#f2f3f5;text-align:center;font-size:10px}.items-table td.num{text-align:right}.items-table tfoot td{font-weight:700}.summary-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #222}.summary-box{padding:9px;border-right:1px solid #222}.summary-box:last-child{border-right:0}.bank-decl{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #222}.bank,.decl{padding:9px;border-right:1px solid #222;min-height:125px}.decl{border-right:0}.amount-words{padding:9px;border-bottom:1px solid #222}.signature{padding:14px 9px 20px;text-align:right;min-height:90px}.remove-btn{border:0;background:#fee2e2;color:#991b1b;border-radius:6px;padding:7px 10px;cursor:pointer}.item-editor{border:1px solid #d9dee7;border-radius:10px;padding:12px;margin-top:12px}.item-editor .grid{margin-top:0}.tool-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}@media(max-width:760px){.tax-invoice{min-width:760px}.inv-top,.party-grid,.summary-grid,.bank-decl{grid-template-columns:1fr}.inv-box,.party,.summary-box,.bank,.decl{border-right:0;border-bottom:1px solid #222}}
 @media print{body>*:not(.print-root){display:none!important}.print-root{display:block!important}.invoice-preview{border:0;margin:0}.tax-invoice{min-width:0;font-size:10px}.tax-invoice .inv-title{font-size:16px}@page{size:A4;margin:8mm}}
 </style>
-</head>
+<style>
+.tallysync-mini-about{margin:36px 0 28px;padding:22px 24px;border:1px solid #e5e7eb;border-radius:18px;background:linear-gradient(135deg,#f8fbff,#ffffff);box-shadow:0 10px 30px rgba(15,23,42,.06);display:flex;align-items:center;gap:18px}
+.tallysync-mini-about .mini-avatar{width:52px;height:52px;border-radius:14px;object-fit:cover;flex:0 0 52px;border:1px solid #e2e8f0}
+.tallysync-mini-about .mini-kicker{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#2563eb;margin-bottom:4px}
+.tallysync-mini-about h3{margin:0 0 5px;font-size:18px;color:#0f172a}
+.tallysync-mini-about p{margin:0;color:#64748b;font-size:14px;line-height:1.65;max-width:850px}
+.tallysync-mini-about a{color:#2563eb;text-decoration:none;font-weight:700}
+@media(max-width:640px){.tallysync-mini-about{padding:18px;align-items:flex-start}.tallysync-mini-about .mini-avatar{width:46px;height:46px;flex-basis:46px;border-radius:12px}}
+</style></head>
 <body>
 <header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header>
 <main class="wrap">
@@ -47,7 +55,11 @@
 </div>
 <h3 class="section-title">Items</h3><div class="mini">Columns follow the reference format: Description, HSN/SAC, Quantity, Rate, Per, Discount %, taxable amount and GST.</div>
 <div id="items"></div>
-<div class="tool-actions"><button class="btn primary" onclick="addItem()">+ Add Item</button><button class="btn ghost" onclick="calc()">Update Invoice</button><button class="btn ghost" onclick="downloadPDF()">Download PDF</button><button class="btn ghost" onclick="printInvoice()">Print</button></div>
+<div class="tool-actions"><button class="btn primary" onclick="addItem()">+ Add Item</button><button class="btn ghost" onclick="calc()">Update Invoice</button><button class="btn ghost" onclick="downloadPDF()">Download PDF</button><button class="btn ghost" onclick="printInvoice()">Print</button></d<section class="tallysync-mini-about" aria-label="About Suman Thakur">
+  <img class="mini-avatar" src="suman-thakur.jpg" alt="Suman Thakur">
+  <div><div class="mini-kicker">About the creator</div><h3>Suman Thakur · Accounts Executive & Data Analyst</h3><p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools for everyday accounting and data work. <a href="index.html#about">Learn more →</a></p></div>
+</section>
+iv>
 <h3 class="section-title">Bank Details & Declaration</h3>
 <div class="grid">
 <div class="field"><label>A/c Holder's Name</label><input class="input" id="bankHolder" value=""></div>

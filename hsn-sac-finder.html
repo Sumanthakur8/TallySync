@@ -1,1 +1,109 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HSN/SAC Finder — TallySync</title><meta name="description" content="Search a small built-in directory of common HSN and SAC codes."><link rel="stylesheet" href="tool.css"></head><body><header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header><main class="wrap"><section class="hero"><div class="kicker">GST Tools</div><h1>HSN / SAC Finder</h1><p>Search common codes by description. This is a convenience directory, not an exhaustive statutory classification database.</p></section><section class="card"><div class="field"><label>Search</label><input class="input" id="q" placeholder="e.g. accounting, software, rice, garments" oninput="search()"></div><div id="result" style="margin-top:18px"></div></section><script>const data=[['998221','Accounting and bookkeeping services','SAC'],['998222','Auditing services','SAC'],['998223','Tax consultancy services','SAC'],['998311','Management consulting services','SAC'],['998313','IT design and development services','SAC'],['998314','IT infrastructure and network management','SAC'],['998431','Online information / database services','SAC'],['1006','Rice','HSN'],['6109','T-shirts, singlets and other vests, knitted/crocheted','HSN'],['6203','Men’s or boys’ suits, ensembles, jackets, trousers','HSN'],['8471','Computers and data processing machines','HSN'],['8517','Telephones and data transmission equipment','HSN'],['9403','Other furniture','HSN']];function search(){let q=document.getElementById('q').value.toLowerCase().trim(),rows=data.filter(x=>(x[0]+' '+x[1]+' '+x[2]).toLowerCase().includes(q));document.getElementById('result').innerHTML='<table class="table"><thead><tr><th>Code</th><th>Description</th><th>Type</th></tr></thead><tbody>'+rows.map(x=>'<tr><td><b>'+x[0]+'</b></td><td>'+x[1]+'</td><td>'+x[2]+'</td></tr>').join('')+'</tbody></table>'+(rows.length?'':'<p class="muted">No match in the built-in directory.</p>')}search();</script></main><footer class="footer">© 2026 TallySync by Suman · Browser-based accounting tools</footer><script src="tools.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HSN / SAC Finder — TallySync</title>
+<meta name="description" content="Search the GST HSN and SAC master by code or description. Loads the GSTN master when available, with a current JSON fallback.">
+<link rel="stylesheet" href="tool.css">
+<style>
+.hsn-toolbar{display:grid;grid-template-columns:minmax(0,1fr) 180px auto;gap:12px;align-items:end}
+.hsn-status{margin-top:14px;padding:10px 12px;border-radius:10px;background:#f6f7f9;font-size:13px}
+.hsn-status.ok{background:#eefbf3}.hsn-status.warn{background:#fff8e8}.hsn-status.err{background:#fff0f0}
+.hsn-stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.hsn-stat{padding:10px 14px;border:1px solid #e6e8ec;border-radius:12px;background:#fff}.hsn-stat b{font-size:18px}
+.result-card{border:1px solid #e5e7eb;border-radius:14px;padding:16px;margin-top:12px;background:#fff}.result-top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.code{font-size:19px;font-weight:800;letter-spacing:.3px}.badge{display:inline-block;font-size:11px;font-weight:700;padding:4px 7px;border-radius:999px;background:#f1f3f5;margin-left:6px}.desc{margin:8px 0 10px;line-height:1.55}.path{font-size:12px;color:#6b7280;line-height:1.5}.result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.small-btn{border:1px solid #d7dbe0;background:#fff;border-radius:8px;padding:7px 10px;cursor:pointer}.small-btn:hover{background:#f5f6f7}
+.hsn-empty{padding:30px;text-align:center;color:#6b7280}.loading{padding:20px;text-align:center}
+@media(max-width:760px){.hsn-toolbar{grid-template-columns:1fr}.result-top{display:block}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header>
+
+<main class="wrap">
+<section class="hero">
+<div class="kicker">GST Tools</div>
+<h1>HSN / SAC Finder</h1>
+<p>Search HSN codes for goods and SAC codes for services by code or description. The finder attempts to load the official GSTN master directly; if browser security prevents that, it uses a current JSON mirror generated from the GSTN master.</p>
+</section>
+
+<section class="card">
+<div class="hsn-toolbar">
+<div class="field"><label for="q">Search HSN / SAC</label><input class="input" id="q" maxlength="40" autocomplete="off" placeholder="e.g. rice, laptop, accounting, 8471, 9983"></div>
+<div class="field"><label for="type">Category</label><select class="select" id="type"><option value="all">All</option><option value="goods">Goods — HSN</option><option value="services">Services — SAC</option></select></div>
+<button class="btn primary" id="downloadBtn" type="button">Download Results CSV</button>
+</div>
+<div id="status" class="hsn-status">Loading HSN/SAC master…</div>
+<div class="hsn-stats" id="stats"></div>
+<div id="result" class="loading">Preparing the searchable database…</div>
+</section>
+
+<section class="card" style="margin-top:18px">
+<h3>Important GSTN note</h3>
+<p class="muted">GSTN's Search HSN facility is a classification aid. GSTN says its descriptions are based on the Customs Tariff and taxpayer trade declarations and are not legally binding advice. Always verify the exact classification and applicable rate before filing or invoicing.</p>
+<p><a href="https://services.gst.gov.in/services/searchhsnsac" target="_blank" rel="noopener">Open official GSTN Search HSN ↗</a></p>
+</section>
+</main>
+<footer class="footer">© 2026 TallySync by Suman · Browser-based accounting tools</footer>
+<script src="tools.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+'use strict';
+const GSTN_XLSX='https://tutorial.gst.gov.in/downloads/HSN_SAC.xlsx';
+const JSON_MIRROR='https://raw.githubusercontent.com/mhdstk/gst-master-data/main/data/master_hsn_sac.json';
+let DATA=[]; let filtered=[]; let source='';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function setStatus(msg,cls=''){ $('status').className='hsn-status '+cls; $('status').textContent=msg; }
+function normaliseCode(v){return String(v??'').replace(/\s+/g,'').replace(/\.0$/,'');}
+function normaliseRows(rows,type){return rows.map(r=>{let code=normaliseCode(r[0]),desc=String(r[1]??'').trim();if(!code||!desc||code.toLowerCase().includes('code'))return null;return {code,desc,type};}).filter(Boolean);}
+async function loadOfficial(){
+ const res=await fetch(GSTN_XLSX,{cache:'no-store'}); if(!res.ok) throw new Error('GSTN file returned '+res.status);
+ const buf=await res.arrayBuffer();
+ if(!window.XLSX) throw new Error('Spreadsheet parser unavailable');
+ const wb=XLSX.read(buf,{type:'array'});
+ const h=wb.Sheets['HSN_MSTR']||wb.Sheets[wb.SheetNames[0]];
+ const s=wb.Sheets['SAC_MSTR'];
+ const hrows=XLSX.utils.sheet_to_json(h,{header:1,defval:''});
+ const srows=s?XLSX.utils.sheet_to_json(s,{header:1,defval:''}):[];
+ return [...normaliseRows(hrows,'goods'),...normaliseRows(srows,'services')];
+}
+async function loadMirror(){
+ const res=await fetch(JSON_MIRROR,{cache:'no-store'}); if(!res.ok) throw new Error('Mirror returned '+res.status);
+ const data=await res.json();
+ return data.map(x=>({code:normaliseCode(x.code),desc:String(x.desc??'').trim(),type:x.type==='services'?'services':'goods'})).filter(x=>x.code&&x.desc);
+}
+function stats(){
+ const goods=DATA.filter(x=>x.type==='goods').length, services=DATA.filter(x=>x.type==='services').length;
+ $('stats').innerHTML='<div class="hsn-stat"><b>'+goods.toLocaleString('en-IN')+'</b><br><span class="muted">Goods / HSN entries</span></div><div class="hsn-stat"><b>'+services.toLocaleString('en-IN')+'</b><br><span class="muted">Services / SAC entries</span></div><div class="hsn-stat"><b>'+DATA.length.toLocaleString('en-IN')+'</b><br><span class="muted">Total entries loaded</span></div>';
+}
+function search(){
+ const q=$('q').value.trim().toLowerCase(), type=$('type').value;
+ let rows=DATA.filter(x=>type==='all'||x.type===type);
+ if(q){const tokens=q.split(/\s+/).filter(Boolean);rows=rows.filter(x=>{const hay=(x.code+' '+x.desc).toLowerCase();return tokens.every(t=>hay.includes(t));});}
+ filtered=rows.slice(0,100); render(q,rows.length);
+}
+function render(q,total){
+ if(!q){$('result').innerHTML='<div class="hsn-empty">Start typing a product, service or HSN/SAC code. Examples: <b>rice</b>, <b>laptop</b>, <b>accounting</b>, <b>8471</b>, <b>9983</b>.</div>';return;}
+ if(!filtered.length){$('result').innerHTML='<div class="hsn-empty">No match found. Try fewer words, a broader description, or a 2–8 digit code.</div>';return;}
+ let html='<p class="muted" style="margin:0 0 8px">Showing '+filtered.length+' of '+total.toLocaleString('en-IN')+' matches.</p>';
+ html+=filtered.map((x,i)=>{const type=x.type==='goods'?'HSN':'SAC';return '<article class="result-card"><div class="result-top"><div><span class="code">'+esc(x.code)+'</span><span class="badge">'+type+'</span></div></div><div class="desc">'+esc(x.desc)+'</div><div class="path">Code level: '+x.code.length+' digit'+(x.code.length===1?'':'s')+' · Search GSTN for the complete legal classification and related codes.</div><div class="result-actions"><button class="small-btn" onclick="copyText('+JSON.stringify(x.code)+')">Copy Code</button><button class="small-btn" onclick="copyText('+JSON.stringify(x.code+' — '+x.desc)+')">Copy with Description</button><button class="small-btn" onclick="searchCode('+JSON.stringify(x.code)+')">Find Related Codes</button></div></article>';}).join('');
+ $('result').innerHTML=html;
+}
+function searchCode(code){$('q').value=code;$('type').value='all';search();window.scrollTo({top:$('result').getBoundingClientRect().top+window.scrollY-90,behavior:'smooth'});}
+async function copyText(t){try{await navigator.clipboard.writeText(t);alert('Copied: '+t);}catch(e){prompt('Copy this text:',t);}}
+function csvEscape(v){return '"'+String(v??'').replace(/"/g,'""')+'"';}
+function downloadCSV(){
+ if(!filtered.length){alert('Search for something first.');return;}
+ const rows=[['Code','Description','Type'],...filtered.map(x=>[x.code,x.desc,x.type==='goods'?'HSN':'SAC'])];
+ const csv='\uFEFF'+rows.map(r=>r.map(csvEscape).join(',')).join('\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='TallySync-HSN-SAC-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+$('q').addEventListener('input',search);$('type').addEventListener('change',search);$('downloadBtn').addEventListener('click',downloadCSV);
+(async()=>{
+ try{DATA=await loadOfficial();source='official GSTN HSN_SAC.xlsx';setStatus('Loaded '+DATA.length.toLocaleString('en-IN')+' entries from the GSTN HSN/SAC master.','ok');}
+ catch(e){console.warn('GSTN master load failed:',e);try{DATA=await loadMirror();source='current JSON mirror generated from the GSTN master';setStatus('GSTN direct loading was blocked by the browser. Loaded '+DATA.length.toLocaleString('en-IN')+' entries from the current GSTN-master JSON mirror instead.','warn');}catch(e2){console.error(e2);DATA=[['1006','Rice','goods'],['8471','Automatic data processing machines','goods'],['8517','Telephones and other communication equipment','goods'],['9403','Other furniture','goods'],['998221','Accounting and bookkeeping services','services'],['998222','Auditing services','services'],['998223','Tax consultancy services','services'],['998313','Information technology design and development services','services']].map(x=>({code:x[0],desc:x[1],type:x[2]}));setStatus('The live databases could not be loaded. A small offline fallback is active; reconnect and refresh to load the full master.','err');}}
+ stats();search();
+})();
+</script>
+</body>
+</html>

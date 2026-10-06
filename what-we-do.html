@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="tallysync-logo.png">
+<title>What We Do — TallySync by Suman</title>
+<meta name="description" content="What TallySync by Suman does: bank statement conversion, Tally support, accounting, data cleaning, MIS reporting, dashboard understanding, GST, TDS, TCS and reconciliation support.">
+<style>
+
+:root{--ink:#122033;--muted:#607087;--line:#e5ebf2;--bg:#f7f9fc;--card:#fff;--brand:#2357ff;--brand2:#5b7cff;--good:#12966b;--shadow:0 18px 55px rgba(24,44,78,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}a{text-decoration:none;color:inherit}
+.container{width:min(1160px,calc(100% - 40px));margin:auto}.nav{height:76px;background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}.navin{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:850;font-size:22px;letter-spacing:-.7px}.logo span{color:var(--brand)}.links{display:flex;gap:28px;align-items:center;color:#4f6075;font-size:14px}.links a:hover{color:var(--brand)}.btn{border:0;border-radius:12px;padding:13px 19px;font-weight:750;cursor:pointer;font-size:14px;transition:.2s}.btn.primary{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 9px 22px rgba(35,87,255,.2)}.btn.primary:hover{transform:translateY(-1px);box-shadow:0 12px 28px rgba(35,87,255,.26)}.btn.ghost{background:#eef3ff;color:var(--brand)}.hero{padding:78px 0 55px;background:radial-gradient(circle at 80% 15%,#e9efff 0,transparent 34%),linear-gradient(#fff,#f8faff)}.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:58px;align-items:center}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--brand);font-size:13px;font-weight:800;background:#edf2ff;border:1px solid #dbe4ff;padding:8px 12px;border-radius:999px}.hero h1{font-size:clamp(42px,5.5vw,68px);line-height:1.02;letter-spacing:-3px;margin:18px 0}.hero h1 span{color:var(--brand)}.hero p{font-size:18px;line-height:1.7;color:var(--muted);max-width:600px}.hero-actions{display:flex;gap:12px;margin-top:27px;flex-wrap:wrap}.trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:25px;color:#718096;font-size:13px}.trust b{color:#24344c}.hero-card{background:#fff;border:1px solid #e3e9f2;border-radius:24px;box-shadow:var(--shadow);padding:24px}.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.pill{font-size:11px;font-weight:800;padding:7px 10px;border-radius:999px;background:#eafaf4;color:var(--good)}.drop{border:2px dashed #cdd8e8;border-radius:18px;padding:42px 24px;text-align:center;background:#fbfcfe;cursor:pointer;transition:.2s}.drop.drag{border-color:var(--brand);background:#f2f6ff}.upload-icon{width:58px;height:58px;border-radius:17px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:26px;margin:0 auto 14px}.drop h3{margin:0 0 7px;font-size:18px}.drop p{margin:0;color:#77869a;font-size:13px}.file{display:none}.settings{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}.field label{display:block;font-size:12px;font-weight:750;color:#5b6c82;margin-bottom:7px}.select,.input{width:100%;height:44px;border:1px solid #dce4ee;border-radius:10px;background:#fff;padding:0 12px;font:inherit;color:var(--ink);outline:none}.select:focus,.input:focus{border-color:#9bb0ff;box-shadow:0 0 0 3px #edf2ff}.convert{width:100%;margin-top:14px}.progress{margin-top:14px;display:none}.bar{height:7px;border-radius:99px;background:#edf1f6;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#6b86ff);transition:width .25s}.status{font-size:12px;color:#708096;margin-top:8px}.section{padding:82px 0}.section.white{background:#fff}.center{text-align:center}.kicker{color:var(--brand);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:1.3px}.section h2{font-size:40px;letter-spacing:-1.7px;margin:10px 0 13px}.section .lead{max-width:650px;margin:auto;color:var(--muted);line-height:1.7}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}.step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px}.num{width:38px;height:38px;display:grid;place-items:center;background:#edf2ff;color:var(--brand);border-radius:11px;font-weight:850}.step h3{margin:18px 0 8px}.step p{color:var(--muted);line-height:1.65;font-size:14px}.features{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}.feature{padding:22px;border:1px solid var(--line);border-radius:17px;background:#fff}.feature .ico{font-size:23px}.feature h3{font-size:16px;margin:14px 0 7px}.feature p{font-size:13px;color:var(--muted);line-height:1.6}.banks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}.bank{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:10px;color:#586a80;font-size:13px;font-weight:700}.result{display:none;margin-top:18px;border:1px solid #dce7df;background:#f8fffb;border-radius:16px;padding:17px}.result.show{display:block}.result-top{display:flex;justify-content:space-between;gap:15px;align-items:center}.result strong{font-size:14px}.result small{color:#63758b}.downloads{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.faq{max-width:820px;margin:38px auto 0}.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:17px 19px}.faq summary{cursor:pointer;font-weight:750}.faq p{color:var(--muted);line-height:1.65;font-size:14px;margin:12px 0 0}.footer{background:#111c2b;color:#c6d0de;padding:48px 0 25px}.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:35px}.footer h3{color:#fff;margin-top:0}.footer p{font-size:13px;line-height:1.7;color:#96a4b8}.footer a{display:block;font-size:13px;margin:9px 0;color:#b9c5d5}.copyright{border-top:1px solid #263448;margin-top:32px;padding-top:20px;font-size:12px;color:#8090a5}
+.toast{position:fixed;right:20px;bottom:20px;background:#172338;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;z-index:80;font-size:13px}.toast.show{display:block}
+.modal{position:fixed;inset:0;background:rgba(11,22,39,.58);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:70}.modal.show{display:flex}.modal-card{width:min(430px,100%);background:#fff;border:1px solid #e2e8f0;border-radius:20px;box-shadow:0 24px 80px rgba(15,35,65,.22);padding:24px}.modal-icon{width:46px;height:46px;border-radius:13px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:21px;margin-bottom:14px}.modal-card h3{margin:0;font-size:20px;letter-spacing:-.4px}.modal-card p{margin:8px 0 16px;color:var(--muted);font-size:13px;line-height:1.6}.modal-error{display:none;background:#fff2f2;border:1px solid #ffd6d6;color:#b42318;border-radius:10px;padding:10px 12px;font-size:12px;margin-bottom:12px}.modal-error.show{display:block}.modal-actions{display:flex;gap:9px;margin-top:12px}.modal-actions .btn{flex:1}.password-wrap{position:relative}.password-wrap .input{padding-right:44px}.password-toggle{position:absolute;right:8px;top:7px;height:30px;width:34px;border:0;background:transparent;color:#68788d;cursor:pointer;border-radius:8px}.password-toggle:hover{background:#f1f4f8}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.features{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.links a:not(.btn){display:none}}
+@media(max-width:900px){.settings{grid-template-columns:1fr 1fr}}@media(max-width:560px){.container{width:min(100% - 24px,1160px)}.nav{height:66px}.hero{padding-top:45px}.hero h1{letter-spacing:-2px}.hero-card{padding:15px}.settings{grid-template-columns:1fr}.features,.footer-grid{grid-template-columns:1fr}.section{padding:62px 0}.section h2{font-size:31px}.hero-actions .btn{width:100%}}
+.preview-input{width:100%;min-width:170px;padding:7px 9px;border:1px solid #d7dfeb;border-radius:8px;font:inherit;font-size:12px;background:#fff}.preview-input:focus{outline:2px solid rgba(47,91,255,.15);border-color:#6b8cff}
+
+.brand-logo{display:block;width:156px;height:58px;object-fit:contain;object-position:left center}.brand-lockup{display:flex;align-items:center;min-width:156px;height:62px}.brand-lockup:hover{opacity:.92}.brand-mark{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 18px rgba(35,87,255,.18)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:38px;align-items:stretch}.price-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px;position:relative}.price-card.featured{border:2px solid var(--brand);box-shadow:0 18px 55px rgba(35,87,255,.12)}.price-badge{position:absolute;right:18px;top:18px;background:#edf2ff;color:var(--brand);font-size:11px;font-weight:850;padding:7px 10px;border-radius:999px}.price-card h3{margin:0 0 9px;font-size:19px}.price{font-size:42px;font-weight:900;letter-spacing:-2px;margin:8px 0}.price small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}.price-card p{color:var(--muted);font-size:13px;line-height:1.6}.price-list{list-style:none;padding:0;margin:20px 0}.price-list li{padding:7px 0;color:#53647a;font-size:13px}.about-grid{display:grid;grid-template-columns:280px 1fr;gap:45px;align-items:center;margin-top:40px;max-width:900px;margin-left:auto;margin-right:auto}.profile-photo{width:230px;height:230px;border-radius:50%;object-fit:cover;object-position:center 28%;border:8px solid #fff;box-shadow:0 18px 45px rgba(25,48,83,.14);margin:auto;display:block}.about-copy h3{font-size:28px;letter-spacing:-.8px;margin:0 0 8px}.about-copy p{color:var(--muted);line-height:1.75;font-size:14px;margin:10px 0}.about-tag{display:inline-flex;background:#edf2ff;color:var(--brand);border:1px solid #dbe4ff;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:800;margin-bottom:13px}
+
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}.service-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:25px;transition:.2s}.service-card:hover{transform:translateY(-3px);box-shadow:0 14px 35px rgba(24,44,78,.08)}.service-icon{width:48px;height:48px;border-radius:14px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:23px;margin-bottom:15px}.service-card h3{margin:0 0 8px;font-size:18px}.service-card p{color:var(--muted);font-size:13px;line-height:1.7;margin:0}.service-list{margin:14px 0 0;padding-left:18px;color:#596b82;font-size:13px;line-height:1.8}.service-note{margin-top:35px;padding:18px 20px;border-radius:15px;background:#f4f7ff;border:1px solid #dfe7ff;color:#52637a;font-size:13px;line-height:1.7}.about-role{font-size:15px;color:#52637a;font-weight:750;margin-bottom:15px}.about-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.about-stat{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12px;color:#53647a}.contact-box{margin-top:35px;padding:24px;border-radius:18px;background:#111c2b;color:#fff;display:flex;justify-content:space-between;gap:20px;align-items:center}.contact-box p{margin:5px 0 0;color:#aebacd;font-size:13px}.contact-box a{white-space:nowrap}
+@media(max-width:760px){.pricing-grid{grid-template-columns:1fr}.about-grid{grid-template-columns:1fr;text-align:center}.profile-photo{width:190px;height:190px}}
+.service-contact{display:inline-flex;align-items:center;justify-content:center;gap:7px;margin-top:18px;text-decoration:none}.footer-contact a{display:flex;align-items:center;gap:8px}.quick-whatsapp{position:fixed;right:22px;bottom:22px;z-index:50;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;text-decoration:none;font-size:25px;box-shadow:0 12px 30px rgba(0,0,0,.2)}.quick-whatsapp:hover{transform:translateY(-2px)}@media(max-width:560px){.quick-whatsapp{right:15px;bottom:15px}}
+.what-hero{padding:78px 0 62px;background:radial-gradient(circle at 82% 12%,#e9efff 0,transparent 35%),linear-gradient(#fff,#f8faff)}
+.what-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:55px;align-items:center}
+.what-hero h1{font-size:clamp(40px,5vw,62px);line-height:1.04;letter-spacing:-2.8px;margin:17px 0}
+.what-hero h1 span{color:var(--brand)}
+.what-hero p{font-size:17px;line-height:1.75;color:var(--muted);max-width:650px}
+.what-hero-card{background:#fff;border:1px solid #e3e9f2;border-radius:24px;box-shadow:var(--shadow);padding:27px}
+.what-hero-card h3{margin:0 0 8px;font-size:20px}
+.what-hero-card p{font-size:13px;line-height:1.65;margin:0;color:var(--muted)}
+.what-points{list-style:none;padding:0;margin:20px 0 0}
+.what-points li{padding:10px 0;border-bottom:1px solid #edf1f6;font-size:13px;color:#52647a}
+.what-points li:last-child{border-bottom:0}
+.what-icon{width:48px;height:48px;border-radius:14px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:22px;margin-bottom:14px}
+.what-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:40px}
+.what-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:27px}
+.what-card h3{font-size:20px;margin:0 0 9px}
+.what-card p{font-size:14px;color:var(--muted);line-height:1.72;margin:0}
+.what-card ul{margin:15px 0 0;padding-left:19px;color:#596b82;font-size:13px;line-height:1.85}
+.what-card .mini{margin-top:17px;padding:12px 14px;background:#f7f9fc;border:1px solid var(--line);border-radius:11px;font-size:12px;color:#5a6c82;line-height:1.6}
+.workflow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:38px}
+.workflow-step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 16px}
+.workflow-step strong{display:block;margin:11px 0 6px;font-size:14px}
+.workflow-step p{font-size:12px;line-height:1.6;color:var(--muted);margin:0}
+.workflow-num{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#edf2ff;color:var(--brand);font-weight:850}
+.import-box{margin-top:40px;border-radius:20px;background:#111c2b;color:#fff;padding:30px}
+.import-box h3{font-size:24px;margin:0 0 10px}
+.import-box p{color:#b5c0d0;line-height:1.7;font-size:13px;margin:0}
+.import-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px}
+.import-item{border:1px solid #2a3a50;border-radius:13px;padding:17px}
+.import-item strong{display:block;font-size:13px;margin-bottom:6px}
+.import-item span{color:#aebacd;font-size:12px;line-height:1.6}
+.callout{margin-top:35px;padding:22px 24px;border-radius:17px;background:#f4f7ff;border:1px solid #dfe7ff;color:#52637a;font-size:13px;line-height:1.7}
+.what-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+@media(max-width:900px){.what-hero-grid{grid-template-columns:1fr}.what-grid{grid-template-columns:1fr}.workflow{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.what-hero{padding-top:48px}.workflow,.import-grid{grid-template-columns:1fr}.what-card,.what-hero-card{padding:21px}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="container navin">
+  <a class="logo brand-lockup" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a>
+  <nav class="links">
+    <a href="index.html#converter">Converter</a>
+    <a href="what-we-do.html">What We Do</a>
+    <a href="index.html#services">Services</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#about">About</a>
+    <a href="index.html#how">How it works</a>
+    <a href="index.html#faq">FAQ</a>
+    <a class="btn primary" href="index.html#converter">Convert Statement</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="what-hero">
+  <div class="container what-hero-grid">
+    <div>
+      <div class="eyebrow">✦ What We Do · TallySync by Suman</div>
+      <h1>Accounting, data & <span>reporting support</span> that works with your workflow.</h1>
+      <p>TallySync by Suman brings together bank statement conversion, Tally support, accounting services and practical data work. The goal is simple: reduce repetitive manual work, improve accuracy and turn financial data into information you can actually use.</p>
+      <div class="what-actions">
+        <a class="btn primary" href="index.html#converter">Convert a statement →</a>
+        <a class="btn ghost" href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 Talk to Suman</a>
+      </div>
+    </div>
+    <div class="what-hero-card">
+      <div class="what-icon">▤</div>
+      <h3>One place for accounting & data work</h3>
+      <p>From a bank PDF at the starting point to reconciled records, reports and clearer business insights at the end.</p>
+      <ul class="what-points">
+        <li>✓ Bank PDF → CSV / Excel / Tally XML</li>
+        <li>✓ Tally bank ledger & voucher workflow</li>
+        <li>✓ Accounting & reconciliation support</li>
+        <li>✓ Data cleaning & standardization</li>
+        <li>✓ MIS, reporting & dashboard understanding</li>
+        <li>✓ GST, TDS/TCS & audit support</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section white">
+  <div class="container">
+    <div class="center">
+      <div class="kicker">What we do</div>
+      <h2>From raw data to useful accounting information</h2>
+      <p class="lead">Each service is designed around practical accounting work: getting the data right, recording it correctly, reconciling it, reporting it and understanding what the numbers mean.</p>
+    </div>
+
+    <div class="what-grid">
+      <article class="what-card"><div class="what-icon">⇩</div><h3>1. Bank Statement Conversion</h3><p>Convert bank-generated digital PDF statements into structured transaction data without manually typing every entry.</p><ul><li>Upload or drag-and-drop a PDF statement</li><li>Password-protected PDF support</li><li>Automatic transaction detection</li><li>Editable transaction preview</li><li>CSV, Excel and Tally XML export</li></ul><div class="mini"><strong>Important:</strong> Scanned/image-only statements may require OCR, and some bank layouts need bank-specific parsing.</div></article>
+
+      <article class="what-card"><div class="what-icon">▣</div><h3>2. Tally & Accounting Support</h3><p>Support day-to-day accounting workflows in Tally ERP and help structure transactions so they are easier to record and reconcile.</p><ul><li>Bookkeeping and ledger maintenance</li><li>Accounts payable and receivable support</li><li>Trial Balance, P&amp;L and Balance Sheet support</li><li>Bank and vendor reconciliation</li><li>Accounting workflow assistance</li></ul></article>
+
+      <article class="what-card"><div class="what-icon">✦</div><h3>3. Data Cleaning</h3><p>Clean messy accounting or spreadsheet data so it becomes consistent, easier to review and ready for reporting or analysis.</p><ul><li>Duplicate and error cleanup</li><li>Formatting and standardization</li><li>Missing or inconsistent data checks</li><li>Transaction and spreadsheet cleanup</li><li>Excel-based data preparation</li></ul></article>
+
+      <article class="what-card"><div class="what-icon">▥</div><h3>4. Reporting & MIS</h3><p>Turn accounting and operational data into recurring reports that make business numbers easier to track and communicate.</p><ul><li>Monthly MIS reporting</li><li>Financial summaries</li><li>Reconciliation reports</li><li>Excel reports using Pivot Tables and formulas</li><li>Management-ready reporting formats</li></ul></article>
+
+      <article class="what-card"><div class="what-icon">◈</div><h3>5. Dashboard Understanding</h3><p>Help you understand what a dashboard is showing, which KPIs are changing and where attention may be required.</p><ul><li>KPI interpretation</li><li>Trend and variance understanding</li><li>Performance review</li><li>Comparing actuals with expectations or prior periods</li><li>Turning report numbers into practical observations</li></ul></article>
+
+      <article class="what-card"><div class="what-icon">✓</div><h3>6. GST, TDS & TCS Support</h3><p>Practical support around recurring statutory accounting processes, documentation and reconciliations.</p><ul><li>GST reporting support</li><li>Input Tax Credit reconciliation</li><li>TDS / TCS deduction tracking</li><li>Compliance documentation support</li><li>Audit-readiness assistance</li></ul><div class="mini"><strong>Note:</strong> Service support is based on the accounting workflow and information provided; statutory filings should be reviewed as appropriate before submission.</div></article>
+
+      <article class="what-card"><div class="what-icon">↔</div><h3>7. Reconciliation & Audit Support</h3><p>Compare records, identify mismatches and organize supporting information so accounting records are easier to review.</p><ul><li>Bank reconciliation</li><li>Vendor and ledger reconciliation</li><li>Mismatch identification</li><li>Supporting-document organization</li><li>Audit preparation and follow-up support</li></ul></article>
+
+      <article class="what-card"><div class="what-icon">▤</div><h3>8. Excel & Financial Data Work</h3><p>Use Excel and accounting knowledge together to prepare, analyze and present financial information more efficiently.</p><ul><li>VLOOKUP and lookup-based work</li><li>Pivot Tables</li><li>Advanced formulas</li><li>Structured templates</li><li>Financial data summaries</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="center">
+      <div class="kicker">Tally workflow</div>
+      <h2>How the bank-to-Tally process works</h2>
+      <p class="lead">The converter is designed to reduce manual entry while keeping the accounting workflow visible and controllable.</p>
+    </div>
+    <div class="workflow">
+      <div class="workflow-step"><div class="workflow-num">1</div><strong>Upload PDF</strong><p>Select a bank-generated digital statement.</p></div>
+      <div class="workflow-step"><div class="workflow-num">2</div><strong>Read & detect</strong><p>Extract transaction dates, descriptions, debit, credit and balance information.</p></div>
+      <div class="workflow-step"><div class="workflow-num">3</div><strong>Review</strong><p>Check the transaction preview before exporting.</p></div>
+      <div class="workflow-step"><div class="workflow-num">4</div><strong>Choose ledgers</strong><p>Select the Tally bank ledger that should receive the records and the reference ledger.</p></div>
+      <div class="workflow-step"><div class="workflow-num">5</div><strong>Export</strong><p>Create CSV, Excel or Tally XML files for the next step in your workflow.</p></div>
+    </div>
+
+    <div class="import-box">
+      <h3>Tally voucher logic</h3>
+      <p>The Tally export is designed around the bank ledger you choose as the account being recorded. The reference ledger can be set to Suspense for the offset side.</p>
+      <div class="import-grid">
+        <div class="import-item"><strong>Payment / Withdrawal</strong><span>Suspense is debited and the selected bank ledger is credited.</span></div>
+        <div class="import-item"><strong>Receipt / Deposit</strong><span>The selected bank ledger is debited and Suspense is credited.</span></div>
+      </div>
+      <div class="callout" style="background:#17263a;border-color:#2a3a50;color:#c4cfdd"><strong style="color:#fff">Reference ledger:</strong> A separate master XML can be generated for the reference ledger so it can be created in Tally if it does not already exist. The exact import result should always be checked against the Tally company configuration.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section white">
+  <div class="container">
+    <div class="center">
+      <div class="kicker">Who it is for</div>
+      <h2>Useful for businesses and accounting teams</h2>
+      <p class="lead">TallySync is aimed at people who regularly work with bank statements, accounting records, spreadsheets and management reports.</p>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="ico">▤</div><h3>Accountants</h3><p>Reduce repetitive bank-entry work and keep transaction workflows structured.</p></div>
+      <div class="feature"><div class="ico">▥</div><h3>Bookkeepers</h3><p>Clean and organize source data before posting and reconciliation.</p></div>
+      <div class="feature"><div class="ico">◈</div><h3>Small Businesses</h3><p>Get clearer accounting records, reports and practical data support.</p></div>
+      <div class="feature"><div class="ico">▣</div><h3>Finance Teams</h3><p>Support recurring reporting, reconciliations and financial data workflows.</p></div>
+    </div>
+
+    <div class="callout"><strong>Browser-based converter:</strong> the current bank statement conversion process extracts PDF data in the browser rather than uploading the selected PDF to an application server. External libraries are loaded from public CDNs. Always review exported accounting files before importing them into Tally.</div>
+
+    <div class="contact-box">
+      <div><strong>Have a statement, spreadsheet or accounting problem?</strong><p>Tell Suman what you have, what needs to be cleaned or converted, and what output you need.</p></div>
+      <a class="btn primary" href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 Contact on WhatsApp</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer"><div class="container"><div class="footer-grid">
+<div><h3>TallySync by Suman</h3><p>Bank statement conversion, accounting, data cleaning, reporting and practical financial data support.</p></div>
+<div><h3>Product</h3><a href="index.html#converter">Converter</a><a href="what-we-do.html">What We Do</a><a href="index.html#services">Services</a><a href="index.html#pricing">Pricing</a><a href="index.html#about">About Suman</a></div>
+<div><h3>Contact</h3><a href="https://wa.me/919661905883" target="_blank" rel="noopener">WhatsApp: 9661905883</a><a href="tel:+919661905883">Call Suman</a><a href="mailto:sumanthakur9661@gmail.com">sumanthakur9661@gmail.com</a><span style="display:block;font-size:13px;margin-top:9px;color:#b9c5d5">Nehra, Darbhanga, 847233 (Bihar)</span></div>
+</div><div class="copyright">© 2026 TallySync by Suman. Accounting, data and bank statement workflow support.</div></div></footer>
+</body>
+</html>

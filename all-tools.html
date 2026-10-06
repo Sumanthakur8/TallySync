@@ -1,4 +1,217 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="tallysync-logo.png"><link rel="apple-touch-icon" href="tallysync-logo.png"><title>All Tools — TallySync</title><meta name="description" content="Directory of TallySync accounting, GST, tax, invoice and PDF tools."><link rel="stylesheet" href="tool.css"><style>
-.tallysync-mini-about{margin:36px 0 28px!important;padding:20px 24px!important;border:1px solid #e5e7eb!important;border-radius:18px!important;background:linear-gradient(135deg,#f8fbff,#ffffff)!important;box-shadow:0 10px 30px rgba(15,23,42,.06)!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:18px!important;width:100%!important;box-sizing:border-box!important;overflow:hidden!important}.tallysync-mini-about .mini-avatar{display:block!important;width:58px!important;height:58px!important;min-width:58px!important;max-width:58px!important;min-height:58px!important;max-height:58px!important;flex:0 0 58px!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;border:2px solid #e2e8f0!important;padding:0!important;margin:0!important;box-sizing:border-box!important}.tallysync-mini-about .mini-content{min-width:0!important;flex:1 1 auto!important}.tallysync-mini-about .mini-kicker{font-size:11px!important;font-weight:800!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#2563eb!important;margin:0 0 4px!important}.tallysync-mini-about h3{margin:0 0 5px!important;font-size:18px!important;line-height:1.35!important;color:#0f172a!important}.tallysync-mini-about p{margin:0!important;color:#64748b!important;font-size:14px!important;line-height:1.6!important;max-width:none!important}.tallysync-mini-about a{color:#2563eb!important;text-decoration:none!important;font-weight:700!important}.tallysync-mini-about a:hover{text-decoration:underline!important}@media(max-width:640px){.tallysync-mini-about{padding:17px!important;gap:13px!important;align-items:flex-start!important}.tallysync-mini-about .mini-avatar{width:48px!important;height:48px!important;min-width:48px!important;max-width:48px!important;min-height:48px!important;max-height:48px!important;flex-basis:48px!important}.tallysync-mini-about h3{font-size:16px!important}.tallysync-mini-about p{font-size:13px!important;line-height:1.55!important}}</style></head><body><header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header><main class="wrap"><section class="hero"><div class="kicker">TallySync Toolkit</div><h1>All Tools</h1><p>Accounting, GST, tax, invoice and PDF utilities designed for everyday Indian business workflows.</p></section><div class="tool-grid"><a class="tool" href="gst-calculator.html"><div class="icon">🧾</div><h3>GST Calculator</h3><p>Calculate GST, CGST, SGST and IGST.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="income-tax-calculator.html"><div class="icon">💰</div><h3>Income Tax Calculator</h3><p>AY 2026–27 old vs new regime estimate.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="hsn-sac-finder.html"><div class="icon">🔎</div><h3>HSN/SAC Finder</h3><p>Search common HSN and SAC entries.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="gst-invoice-generator.html"><div class="icon">🧾</div><h3>GST Invoice Generator</h3><p>Create and print a GST invoice.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="pdf-to-jpg.html"><div class="icon">📄</div><h3>PDF → JPG</h3><p>Convert PDF pages to JPG.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="jpg-to-pdf.html"><div class="icon">🖼️</div><h3>JPG → PDF</h3><p>Combine images into a PDF.</p><span class="btn ghost">Open tool →</span></a>
-<a class="tool" href="pdf-compressor.html"><div class="icon">🗜️</div><h3>PDF Compressor</h3><p>Reduce PDF file size for easier sharing and uploads.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="index.html#converter"><div class="icon">🏦</div><h3>Bank Statement Converter</h3><p>Convert bank PDFs to CSV, Excel and Tally XML.</p><span class="btn ghost">Open tool →</span></a></div><div class="notice">Tax calculators are estimates. Verify applicable provisions, rates, thresholds, special-rate income and transaction-specific facts before filing or making a compliance decision.</div></main><section class="tallysync-mini-about" aria-label="About Suman Thakur"><img class="mini-avatar" src="suman-thakur.jpg" alt="Suman Thakur"><div class="mini-content"><div class="mini-kicker">About the creator</div><h3>Suman Thakur · Accounts Executive &amp; Data Analyst</h3><p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools. <a href="index.html#about">Learn more →</a></p></div></section>
+.tallysync-mini-about{margin:36px 0 28px!important;padding:20px 24px!important;border:1px solid #e5e7eb!important;border-radius:18px!important;background:linear-gradient(135deg,#f8fbff,#ffffff)!important;box-shadow:0 10px 30px rgba(15,23,42,.06)!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:18px!important;width:100%!important;box-sizing:border-box!important;overflow:hidden!important}.tallysync-mini-about .mini-avatar{display:block!important;width:58px!important;height:58px!important;min-width:58px!important;max-width:58px!important;min-height:58px!important;max-height:58px!important;flex:0 0 58px!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;border:2px solid #e2e8f0!important;padding:0!important;margin:0!important;box-sizing:border-box!important}.tallysync-mini-about .mini-content{min-width:0!important;flex:1 1 auto!important}.tallysync-mini-about .mini-kicker{font-size:11px!important;font-weight:800!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#2563eb!important;margin:0 0 4px!important}.tallysync-mini-about h3{margin:0 0 5px!important;font-size:18px!important;line-height:1.35!important;color:#0f172a!important}.tallysync-mini-about p{margin:0!important;color:#64748b!important;font-size:14px!important;line-height:1.6!important;max-width:none!important}.tallysync-mini-about a{color:#2563eb!important;text-decoration:none!important;font-weight:700!important}.tallysync-mini-about a:hover{text-decoration:underline!important}@media(max-width:640px){.tallysync-mini-about{padding:17px!important;gap:13px!important;align-items:flex-start!important}.tallysync-mini-about .mini-avatar{width:48px!important;height:48px!important;min-width:48px!important;max-width:48px!important;min-height:48px!important;max-height:48px!important;flex-basis:48px!important}.tallysync-mini-about h3{font-size:16px!important}.tallysync-mini-about p{font-size:13px!important;line-height:1.55!important}}</style>
+<style>
+/* Tools Coming Soon */
+.tools-coming-soon{
+  margin:42px 0 30px;
+  padding:28px;
+  border:1px solid #e5e7eb;
+  border-radius:22px;
+  background:linear-gradient(135deg,#f8fbff 0%,#ffffff 55%,#f8fafc 100%);
+  box-shadow:0 10px 30px rgba(15,23,42,.05);
+}
+.tools-coming-soon .coming-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:20px;
+  margin-bottom:22px;
+}
+.tools-coming-soon .coming-kicker{
+  margin:0 0 5px;
+  color:#2563eb;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.tools-coming-soon h2{
+  margin:0;
+  color:#0f172a;
+  font-size:28px;
+  line-height:1.2;
+}
+.tools-coming-soon .coming-sub{
+  margin:7px 0 0;
+  color:#64748b;
+  font-size:14px;
+  line-height:1.55;
+}
+.coming-count{
+  flex:0 0 auto;
+  padding:8px 12px;
+  border:1px solid #dbeafe;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#2563eb;
+  font-size:12px;
+  font-weight:800;
+}
+.coming-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+}
+.coming-tool{
+  position:relative;
+  min-width:0;
+  padding:18px;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 5px 18px rgba(15,23,42,.04);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.coming-tool:hover{
+  transform:translateY(-2px);
+  border-color:#bfdbfe;
+  box-shadow:0 10px 25px rgba(15,23,42,.07);
+}
+.coming-tool .coming-icon{
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:12px;
+  border-radius:12px;
+  background:#f1f5f9;
+  font-size:21px;
+}
+.coming-tool h3{
+  margin:0 0 6px;
+  color:#0f172a;
+  font-size:16px;
+  line-height:1.35;
+}
+.coming-tool p{
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.5;
+}
+.coming-badge{
+  position:absolute;
+  top:14px;
+  right:14px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#f8fafc;
+  color:#64748b;
+  border:1px solid #e2e8f0;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+@media(max-width:900px){
+  .coming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .tools-coming-soon{margin:34px 0 24px;padding:20px}
+  .tools-coming-soon .coming-head{align-items:flex-start;flex-direction:column;gap:10px}
+  .tools-coming-soon h2{font-size:23px}
+  .coming-grid{grid-template-columns:1fr}
+  .coming-tool{padding:16px}
+}
+</style>
+</head><body><header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header><main class="wrap"><section class="hero"><div class="kicker">TallySync Toolkit</div><h1>All Tools</h1><p>Accounting, GST, tax, invoice and PDF utilities designed for everyday Indian business workflows.</p></section><div class="tool-grid"><a class="tool" href="gst-calculator.html"><div class="icon">🧾</div><h3>GST Calculator</h3><p>Calculate GST, CGST, SGST and IGST.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="income-tax-calculator.html"><div class="icon">💰</div><h3>Income Tax Calculator</h3><p>AY 2026–27 old vs new regime estimate.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="hsn-sac-finder.html"><div class="icon">🔎</div><h3>HSN/SAC Finder</h3><p>Search common HSN and SAC entries.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="gst-invoice-generator.html"><div class="icon">🧾</div><h3>GST Invoice Generator</h3><p>Create and print a GST invoice.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="pdf-to-jpg.html"><div class="icon">📄</div><h3>PDF → JPG</h3><p>Convert PDF pages to JPG.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="jpg-to-pdf.html"><div class="icon">🖼️</div><h3>JPG → PDF</h3><p>Combine images into a PDF.</p><span class="btn ghost">Open tool →</span></a>
+<a class="tool" href="pdf-compressor.html"><div class="icon">🗜️</div><h3>PDF Compressor</h3><p>Reduce PDF file size for easier sharing and uploads.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="index.html#converter"><div class="icon">🏦</div><h3>Bank Statement Converter</h3><p>Convert bank PDFs to CSV, Excel and Tally XML.</p><span class="btn ghost">Open tool →</span></a></div>
+<section class="tools-coming-soon" aria-label="Tools coming soon">
+  <div class="coming-head">
+    <div>
+      <div class="coming-kicker">More tools on the way</div>
+      <h2>Tools Coming Soon</h2>
+      <p class="coming-sub">New practical tools are being prepared to make everyday accounting, tax and business work faster.</p>
+    </div>
+    <div class="coming-count">12 tools planned</div>
+  </div>
+
+  <div class="coming-grid">
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🧾</div>
+      <h3>E-Way Bill Generator</h3>
+      <p>Prepare E-Way Bill details quickly with an easy workflow.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📊</div>
+      <h3>GST Return Summary</h3>
+      <p>Summarize sales, purchases and GST figures for review.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">💸</div>
+      <h3>TDS Calculator</h3>
+      <p>Estimate TDS deductions for common payment categories.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📑</div>
+      <h3>Quotation Generator</h3>
+      <p>Create clean, professional quotations for your customers.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🧾</div>
+      <h3>Receipt Generator</h3>
+      <p>Create simple printable receipts for received payments.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📦</div>
+      <h3>Inventory Calculator</h3>
+      <p>Calculate stock quantities, values and basic inventory totals.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📈</div>
+      <h3>Business Profit Calculator</h3>
+      <p>Understand revenue, costs, margins and estimated profit.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🏦</div>
+      <h3>EMI Calculator</h3>
+      <p>Calculate loan EMI, total interest and repayment amounts.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🏠</div>
+      <h3>HRA Calculator</h3>
+      <p>Estimate HRA exemption based on applicable inputs.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🔢</div>
+      <h3>Percentage Calculator</h3>
+      <p>Quickly calculate percentages, increases, decreases and differences.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">📅</div>
+      <h3>Due Date Tracker</h3>
+      <p>Keep GST, TDS and tax compliance deadlines in one place.</p>
+    </article>
+
+    <article class="coming-tool">
+      <span class="coming-badge">Coming Soon</span>
+      <div class="coming-icon">🧮</div>
+      <h3>Business Calculator</h3>
+      <p>Useful calculations for pricing, margins and everyday business decisions.</p>
+    </article>
+  </div>
+</section>
+<div class="notice">Tax calculators are estimates. Verify applicable provisions, rates, thresholds, special-rate income and transaction-specific facts before filing or making a compliance decision.</div></main><section class="tallysync-mini-about" aria-label="About Suman Thakur"><img class="mini-avatar" src="suman-thakur.jpg" alt="Suman Thakur"><div class="mini-content"><div class="mini-kicker">About the creator</div><h3>Suman Thakur · Accounts Executive &amp; Data Analyst</h3><p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools. <a href="index.html#about">Learn more →</a></p></div></section>
 <footer class="footer">© 2026 TallySync by Suman · Browser-based accounting tools</footer><script src="tools.js"></script></body></html>

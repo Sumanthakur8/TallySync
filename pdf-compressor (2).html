@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reduce PDF Online | TallySync by Suman</title>
+<meta name="description" content="Reduce PDF file size directly in your browser with TallySync by Suman. Enter a target size such as 100 KB and download a reduced PDF. Files stay on your device.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/3.0.1/jspdf.umd.min.js"></script>
+<style>
+:root{--brand:#2357ff;--brand2:#5b7cff;--ink:#172033;--muted:#66758b;--line:#e1e7ef;--bg:#f7f9fc;--good:#12805c}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
+a{text-decoration:none;color:inherit}.container{width:min(1120px,calc(100% - 36px));margin:auto}
+.nav{height:76px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.navin{height:100%;display:flex;align-items:center;justify-content:space-between}.logo{font-weight:850;font-size:21px;display:flex;align-items:center;gap:9px}.mark{width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));display:grid;place-items:center;color:#fff;font-size:13px;box-shadow:0 8px 18px #2357ff25}.logo b{color:var(--brand)}
+.links{display:flex;gap:24px;align-items:center;color:#53637a;font-size:14px}.links a:hover{color:var(--brand)}
+.hero{padding:70px 0 35px;text-align:center;background:radial-gradient(circle at 50% 0,#e9efff,transparent 45%),linear-gradient(#fff,#f7f9fc)}
+.badge{display:inline-block;color:var(--brand);font-size:12px;font-weight:850;letter-spacing:1px;text-transform:uppercase;background:#edf2ff;border:1px solid #dbe4ff;padding:8px 12px;border-radius:999px}
+h1{font-size:clamp(38px,6vw,64px);line-height:1.03;letter-spacing:-2.8px;margin:18px 0 13px}h1 span{color:var(--brand)}
+.lead{max-width:700px;margin:auto;color:var(--muted);font-size:17px;line-height:1.7}
+.tool{max-width:850px;margin:34px auto 75px;background:#fff;border:1px solid var(--line);border-radius:24px;padding:25px;box-shadow:0 18px 50px #1b2d4b12}
+.drop{border:2px dashed #cbd6e5;border-radius:18px;padding:48px 20px;text-align:center;cursor:pointer;background:#fbfcfe;transition:.2s}.drop.drag{border-color:var(--brand);background:#f2f6ff}
+.icon{width:60px;height:60px;margin:0 auto 14px;border-radius:18px;background:#edf2ff;color:var(--brand);display:grid;place-items:center;font-size:28px}
+.drop h2{margin:0 0 8px;font-size:20px}.drop p{margin:0;color:#7a899d;font-size:13px}.file{display:none}
+.file-info{display:none;margin-top:18px;padding:14px 16px;border:1px solid var(--line);border-radius:13px;background:#fbfcfe}.file-info.show{display:flex;justify-content:space-between;gap:15px;align-items:center}.file-info small{color:var(--muted)}
+.settings{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin-top:15px}.field label{display:block;font-size:12px;font-weight:800;color:#5c6c81;margin-bottom:7px}.select{width:100%;height:45px;border:1px solid #d9e1eb;border-radius:10px;padding:0 11px;background:#fff;color:var(--ink);font:inherit}
+button{border:0;border-radius:11px;padding:13px 18px;font:inherit;font-weight:800;cursor:pointer}.primary{color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand2));box-shadow:0 10px 25px #2357ff2b}.primary:disabled{opacity:.55;cursor:not-allowed}.ghost{background:#edf2ff;color:var(--brand)}
+.actions{display:flex;gap:10px;margin-top:15px}.actions button{flex:1}
+.progress{display:none;margin-top:18px}.progress.show{display:block}.bar{height:8px;border-radius:99px;background:#edf1f6;overflow:hidden}.bar i{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .2s}.status{font-size:12px;color:#6d7d92;margin-top:8px}
+.result{display:none;margin-top:18px;border:1px solid #d5e8df;background:#f7fffb;border-radius:16px;padding:18px}.result.show{display:block}.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#fff;border:1px solid #e2eee8;border-radius:12px;padding:13px}.stat small{display:block;color:#708094;font-size:11px}.stat strong{display:block;margin-top:5px;font-size:16px}.download{display:inline-block;margin-top:14px}
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0 auto 70px}.info-card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:22px}.info-card .ico{font-size:24px}.info-card h3{margin:13px 0 7px;font-size:16px}.info-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.note{max-width:850px;margin:-45px auto 70px;background:#fff9e9;border:1px solid #f2dfab;border-radius:14px;padding:15px 17px;color:#6d5a28;font-size:13px;line-height:1.6}
+.footer{background:#111c2b;color:#b9c5d5;padding:40px 0 25px}.footer p{font-size:13px;line-height:1.7;color:#93a1b4}.copyright{border-top:1px solid #263448;margin-top:25px;padding-top:18px;font-size:12px;color:#8090a5}
+@media(max-width:760px){.links{display:none}.settings,.info,.result-grid{grid-template-columns:1fr}.tool{padding:16px}.hero{padding-top:45px}.actions{flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="container navin">
+  <a class="logo" href="index.html"><span class="mark">TS</span><span>Tally<b>Sync</b> <small style="font-size:11px;color:#728198">by Suman</small></span></a>
+  <nav class="links"><a href="index.html">Home</a><a href="index.html#services">Services</a><a href="index.html#about">About</a><a href="index.html#faq">FAQ</a></nav>
+</div></header>
+
+<main>
+<section class="hero">
+  <div class="container">
+    <span class="badge">PDF Tool</span>
+    <h1>Reduce your <span>PDF</span></h1>
+    <p class="lead">Reduce PDF file size for email, uploads and sharing. Processing happens in your browser, so your PDF is not uploaded to a TallySync server.</p>
+  </div>
+</section>
+
+<section class="container">
+<div class="tool">
+  <div id="drop" class="drop">
+    <div class="icon">📄</div>
+    <h2>Drop your PDF here</h2>
+    <p>or click to choose a PDF from your device</p>
+    <input id="file" class="file" type="file" accept="application/pdf,.pdf">
+  </div>
+
+  <div id="fileInfo" class="file-info">
+    <div><strong id="fileName">—</strong><br><small id="fileSize">—</small></div>
+    <button id="removeBtn" class="ghost" type="button">Remove</button>
+  </div>
+
+  <div class="settings">
+    <div class="field"><label for="targetSize">Target size</label>
+      <input id="targetSize" class="select" type="number" min="1" step="1" value="100" placeholder="e.g. 100">
+    </div>
+    <div class="field"><label for="unit">Unit</label>
+      <select id="unit" class="select">
+        <option value="KB" selected>KB</option>
+        <option value="MB">MB</option>
+      </select>
+    </div>
+    <div class="field"><label for="maxQuality">Maximum quality</label>
+      <select id="maxQuality" class="select">
+        <option value="72">72 DPI · strongest reduction</option>
+        <option value="96" selected>96 DPI · balanced</option>
+        <option value="120">120 DPI · clearer</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="target-hint" style="margin-top:10px;color:#6d7d92;font-size:12px">
+    Enter the maximum file size you want. The reducer will automatically test different quality levels and try to produce the smallest file that stays close to your target.
+  </div>
+
+  <div class="actions">
+    <button id="reduceBtn" class="primary" disabled>Reduce PDF</button>
+    <button id="resetBtn" class="ghost" type="button">Reset</button>
+  </div>
+
+  <div id="progress" class="progress">
+    <div class="bar"><i id="bar"></i></div>
+    <div id="status" class="status">Preparing…</div>
+  </div>
+
+  <div id="result" class="result">
+    <div class="result-grid">
+      <div class="stat"><small>Original size</small><strong id="before">—</strong></div>
+      <div class="stat"><small>Compressed size</small><strong id="after">—</strong></div>
+      <div class="stat"><small>Reduction</small><strong id="reduction">—</strong></div>
+    </div>
+    <a id="download" class="download" download="reduced.pdf"><button class="primary" type="button">Download reduced PDF</button></a>
+    <div id="warning" style="margin-top:10px;font-size:12px;color:#6d7d92"></div>
+  </div>
+</div>
+
+<div class="note"><strong>Important:</strong> This version reducees by rendering pages to optimized JPEG images. That works especially well for scanned and image-heavy PDFs, but the resulting text may no longer be selectable/searchable. If a PDF is already highly optimized, the output can be similar in size or occasionally larger; the tool warns you instead of pretending otherwise.</div>
+
+<div class="info">
+  <div class="info-card"><div class="ico">🔒</div><h3>Private by design</h3><p>Your selected PDF is processed locally in your browser. The page does not send the document to a TallySync processing server.</p></div>
+  <div class="info-card"><div class="ico">⚡</div><h3>Simple presets</h3><p>Choose maximum reduceion, balanced quality, or higher quality depending on whether size or readability matters more.</p></div>
+  <div class="info-card"><div class="ico">📱</div><h3>Useful anywhere</h3><p>Use it for email attachments, government portals, document uploads, invoices, reports and scanned records.</p></div>
+</div>
+</section>
+</main>
+
+<footer class="footer"><div class="container">
+  <strong style="color:#fff;font-size:18px">TallySync by Suman</strong>
+  <p>Accounting, data and practical document tools for everyday work.</p>
+  <div class="copyright">© 2026 TallySync by Suman · Suman Thakur · Darbhanga, Bihar</div>
+</div></footer>
+
+<script type="module">
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+const { jsPDF } = window.jspdf;
+const $ = id => document.getElementById(id);
+let selectedFile = null;
+
+function fmt(bytes){
+  if(bytes < 1024) return bytes + " B";
+  if(bytes < 1024*1024) return (bytes/1024).toFixed(1)+" KB";
+  return (bytes/1024/1024).toFixed(2)+" MB";
+}
+function setFile(file){
+  if(!file) return;
+  if(file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")){
+    alert("Please choose a PDF file.");
+    return;
+  }
+  selectedFile=file;
+  $("fileInfo").classList.add("show");
+  $("fileName").textContent=file.name;
+  $("fileSize").textContent=fmt(file.size);
+  $("reduceBtn").disabled=false;
+  $("result").classList.remove("show");
+}
+function reset(){
+  selectedFile=null; $("file").value="";
+  $("fileInfo").classList.remove("show"); $("reduceBtn").disabled=true;
+  $("progress").classList.remove("show"); $("result").classList.remove("show");
+  $("bar").style.width="0%"; $("status").textContent="";
+}
+$("drop").addEventListener("click",()=> $("file").click());
+$("file").addEventListener("change",e=>setFile(e.target.files[0]));
+["dragenter","dragover"].forEach(ev=>$("drop").addEventListener(ev,e=>{e.preventDefault();$("drop").classList.add("drag")}));
+["dragleave","drop"].forEach(ev=>$("drop").addEventListener(ev,e=>{e.preventDefault();$("drop").classList.remove("drag")}));
+$("drop").addEventListener("drop",e=>setFile(e.dataTransfer.files[0]));
+$("removeBtn").onclick=reset; $("resetBtn").onclick=reset;
+
+
+async function buildPdf(pdf, dpi, quality, onProgress){
+  const scale=dpi/72;
+  let doc=null;
+  for(let i=1;i<=pdf.numPages;i++){
+    onProgress(i,pdf.numPages);
+    const page=await pdf.getPage(i);
+    const viewport=page.getViewport({scale});
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.ceil(viewport.width); canvas.height=Math.ceil(viewport.height);
+    const ctx=canvas.getContext("2d",{alpha:false});
+    await page.render({canvasContext:ctx,viewport,background:"#fff"}).promise;
+    const jpg=canvas.toDataURL("image/jpeg",quality);
+    const base=page.getViewport({scale:1});
+    const w=base.width,h=base.height;
+    const orientation=w>h?"landscape":"portrait";
+    if(!doc) doc=new jsPDF({orientation,unit:"pt",format:[w,h],reduce:true});
+    else doc.addPage([w,h],orientation);
+    doc.addImage(jpg,"JPEG",0,0,w,h,undefined,"FAST");
+    canvas.width=1;canvas.height=1;
+    await new Promise(r=>setTimeout(r,0));
+  }
+  return doc.output("blob");
+}
+
+function targetBytes(){
+  const n=Number($("targetSize").value);
+  if(!Number.isFinite(n) || n<=0) return 0;
+  return n * ($("unit").value==="MB" ? 1024*1024 : 1024);
+}
+
+$("reduceBtn").onclick=async()=>{
+  if(!selectedFile) return;
+  const target=targetBytes();
+  if(!target){ alert("Enter a valid target size."); return; }
+  if(target >= selectedFile.size){
+    alert("The target size must be smaller than the original PDF.");
+    return;
+  }
+
+  $("reduceBtn").disabled=true;
+  $("progress").classList.add("show");
+  $("result").classList.remove("show");
+  const setProgress=(p,msg)=>{$("bar").style.width=p+"%";$("status").textContent=msg};
+
+  try{
+    setProgress(3,"Reading PDF…");
+    const data=await selectedFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data}).promise;
+    const preferredDpi=Number($("maxQuality").value);
+
+    // Search the quality/DPI space. First prioritize staying at/below target,
+    // then choose the largest file possible (best quality) among successful candidates.
+    const attempts=[];
+    const dpiCandidates=[preferredDpi,96,72].filter((v,i,a)=>a.indexOf(v)===i);
+    const qualityCandidates=[0.82,0.72,0.62,0.52,0.44,0.36,0.30,0.25,0.20,0.16,0.12];
+
+    let best=null;
+    let bestUnder=null;
+    let attempt=0;
+    const total=dpiCandidates.length*qualityCandidates.length;
+
+    for(const dpi of dpiCandidates){
+      // Fast initial estimate: for large reductions, lower DPI helps dramatically.
+      for(const q of qualityCandidates){
+        attempt++;
+        setProgress(5+Math.round((attempt-1)/total*88),`Testing reduceion ${attempt} of ${total}…`);
+        const blob=await buildPdf(pdf,dpi,q,(i,p)=>{});
+        const candidate={blob,dpi,q,size:blob.size};
+        attempts.push(candidate);
+
+        if(candidate.size<=target && (!bestUnder || candidate.size>bestUnder.size)){
+          bestUnder=candidate;
+        }
+        if(!best || Math.abs(candidate.size-target)<Math.abs(best.size-target)){
+          best=candidate;
+        }
+
+        // Once we're under target with a reasonably close result, continue a little
+        // to seek better quality but don't waste excessive browser time.
+        if(bestUnder && bestUnder.size >= target*0.92) break;
+      }
+      if(bestUnder && bestUnder.size >= target*0.92) break;
+    }
+
+    setProgress(97,"Preparing your reduced PDF…");
+    const chosen=bestUnder || best;
+    const reduction=(1-chosen.size/selectedFile.size)*100;
+    $("before").textContent=fmt(selectedFile.size);
+    $("after").textContent=fmt(chosen.size);
+    $("reduction").textContent=reduction>0?reduction.toFixed(1)+"% smaller":"No reduction";
+    $("download").href=URL.createObjectURL(chosen.blob);
+    $("download").download=selectedFile.name.replace(/\.pdf$/i,"")+"_reduced.pdf";
+
+    if(chosen.size<=target){
+      $("warning").textContent=`Target: ${fmt(target)}. Result is ${fmt(chosen.size)} — ${((target-chosen.size)/target*100).toFixed(1)}% below the target. Quality setting: ${chosen.dpi} DPI / ${Math.round(chosen.q*100)}% JPEG.`;
+    }else{
+      $("warning").textContent=`Target: ${fmt(target)}. The closest result found was ${fmt(chosen.size)}. Some PDFs cannot reach very small targets without severe quality loss.`;
+    }
+    $("result").classList.add("show");
+    setProgress(100,"Done");
+  }catch(err){
+    console.error(err);
+    $("status").textContent=err?.message || "Could not reduce this PDF.";
+    alert("Reduction failed. Password-protected or unusual PDFs may need to be unlocked or saved again before reduction.");
+  }finally{
+    $("reduceBtn").disabled=false;
+  }
+};
+</script>
+</body>
+</html>

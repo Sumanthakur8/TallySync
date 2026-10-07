@@ -826,10 +826,12 @@ function detectSBI(lines){
 }
 function parseSBI(lines){
   let X={desc:142,ref:221,branch:299,money:357,bal:481,split:443,date2:90};
-  let opening=null,cur=null; const raw=[];
+  let opening=null,cur=null,lastYear=null,expected=0; const raw=[],dropped=[];
   for(const L of lines){
     const m=L.words.map(w=>w.t).join(" ").match(/Balance\s+as\s+on[^:]*:\s*(-?[\d,]+\.\d{1,2})/i);
     if(m&&opening==null) opening=Math.round(parseFloat(m[1].replace(/,/g,""))*100);
+    const py=L.words.map(w=>w.t).join(" ").match(/Statement\s+from\s+\d{1,2}\s+[A-Za-z]{3,9}\s+(\d{4})/i);
+    if(py&&!lastYear) lastYear=py[1];
   }
   const fin=()=>{
     if(!cur) return; const c=cur; cur=null;
@@ -841,8 +843,13 @@ function parseSBI(lines){
     };
     c.money.forEach(fixTok);
     const tok=c.money.map(t=>({...t,m:parseMoney(t.t)})).filter(t=>t.m);
-    const bal=tok.find(t=>t.x0>=X.bal), amts=tok.filter(t=>t.x0<X.bal);
-    if(!amts.length||!bal||!c.year) return;
+    tok.sort((a,b)=>a.x0-b.x0);
+    // balance = right-most amount on the row (no fragile pixel threshold); a lone amount is the balance only if it sits in the balance column
+    let bal=null,amts=[];
+    if(tok.length>=2){bal=tok[tok.length-1];amts=tok.slice(0,-1);}
+    else if(tok.length===1){ if(tok[0].x0>=X.bal-8) bal=tok[0]; else amts=[tok[0]]; }
+    const year=c.year||lastYear; if(c.year) lastYear=c.year;
+    if(!year){dropped.push(c.day+" "+c.mon+" (year not found)");return;}
     const join=(arr,filled)=>{ // arr: [{t,x1,first}] one entry per printed line
       let s="";
       arr.forEach((l,i)=>{
@@ -857,11 +864,11 @@ function parseSBI(lines){
     const ref=join(c.ref,(p,l)=>p.x1>=X.branch-11&&l.t.split(" ")[0].length<=2);
     let narr=desc;
     if(ref) narr+=(/-$/.test(desc)&&!/^(TRANSFER|\/)/.test(ref)?"":" ")+ref;
-    const dm=mkDate(+c.year,MONTHS[c.mon.slice(0,3).toLowerCase()],+c.day);
-    if(!dm) return;
+    const dm=mkDate(+year,MONTHS[c.mon.slice(0,3).toLowerCase()],+c.day);
+    if(!dm){dropped.push(c.day+" "+c.mon+" (bad date)");return;}
     const toP=t=>Math.round(t.m.v*100)*(t.m.neg?-1:1);
     const a=amts[0];
-    raw.push({date:dm.text,desc:narr.replace(/\s+/g," ").replace(/\s*\/$/,"").trim(),amt:Math.abs(toP(a)),side:a.x1>X.split?"credit":"debit",bal:toP(bal)});
+    raw.push({date:dm.text,desc:narr.replace(/\s+/g," ").replace(/\s*\/$/,"").trim(),amt:a?Math.abs(toP(a)):null,side:a?(a.x1>X.split?"credit":"debit"):"debit",bal:bal?toP(bal):null});
   };
   function i0(arr,p){return arr.indexOf(p)}
   for(const L of lines){
@@ -873,16 +880,17 @@ function parseSBI(lines){
       continue;
     }
     if(sbiStartAt(lines,i)){
-      fin();
+      fin(); expected++;
       cur={day:W[0].t,mon:W[1].t,year:null,desc:[],ref:[],money:[],frags:[]};
     }
     if(!cur) continue;
     const line={d:[],r:[]};
     for(const w of W){
       if(w.x0<X.desc-1){ if(!cur.year&&/^\d{4}$/.test(w.t)&&w.x0<X.date2) cur.year=w.t; continue; }
-      if(w.x0>=X.money){
+      if(w.x0>=X.branch-2){
+        // amounts always have decimals, branch codes never do -> a wide debit amount may start left of the old fixed cut-off
         if(parseMoney(w.t)) cur.money.push({t:w.t,x0:w.x0,x1:w.x1,y:L.y});
-        else if(/^\d$/.test(w.t)) cur.frags.push({t:w.t,x0:w.x0,x1:w.x1,y:L.y});
+        else if(w.x0>=X.money-6&&/^\d$/.test(w.t)) cur.frags.push({t:w.t,x0:w.x0,x1:w.x1,y:L.y});
         continue;
       }
       if(w.x0>=X.branch){ continue; }                    // branch code
@@ -894,20 +902,24 @@ function parseSBI(lines){
   }
   fin();
 
-  // debit / credit : running balance first, column position as fallback
-  let prev=opening,verified=0,review=0;
+  // debit / credit : running balance first, column position as fallback. Nothing is dropped silently:
+  // a row whose amount/balance could not be read is rebuilt from the running balance and flagged for review.
+  let prev=opening,verified=0,review=0; const gaps=[];
   const rows=raw.map(r=>{
-    let dir=r.side,flag="ok";
-    if(prev!=null){
-      const d=r.bal-prev;
-      if(Math.abs(d-r.amt)<=1){dir="credit";flag="verified";verified++;}
-      else if(Math.abs(d+r.amt)<=1){dir="debit";flag="verified";verified++;}
-      else{flag="review";review++;}
+    let dir=r.side,flag="ok",amt=r.amt,bal=r.bal,desc=r.desc,note="";
+    if(amt==null&&bal!=null&&prev!=null){const d=bal-prev;amt=Math.abs(d);dir=d>=0?"credit":"debit";flag="review";note="amount cell not read - rebuilt from balance";review++;}
+    else if(bal==null&&amt!=null&&prev!=null){bal=prev+(dir==="credit"?amt:-amt);flag="review";note="balance cell not read - calculated";review++;}
+    else if(amt==null||bal==null){amt=amt||0;bal=bal!=null?bal:(prev||0);desc="[CHECK - amount not read] "+desc;flag="review";note="amount and balance not read";review++;}
+    else if(prev!=null){
+      const d=bal-prev;
+      if(Math.abs(d-amt)<=1){dir="credit";flag="verified";verified++;}
+      else if(Math.abs(d+amt)<=1){dir="debit";flag="verified";verified++;}
+      else{flag="review";note="balance does not match amount";review++;gaps.push({date:r.date,net:(d-(dir==="credit"?amt:-amt))/100});}
     }
-    prev=r.bal;
-    return {date:r.date,description:r.desc,debit:dir==="debit"?r.amt/100:"",credit:dir==="credit"?r.amt/100:"",balance:r.bal/100,flag};
+    prev=bal;
+    return {date:r.date,description:desc,debit:dir==="debit"?amt/100:"",credit:dir==="credit"?amt/100:"",balance:bal/100,flag,note};
   });
-  return {rows,stats:{total:rows.length,verified,review,reordered:false,opening}};
+  return {rows,stats:{total:rows.length,verified,review,reordered:false,opening,expected,gaps,dropped}};
 }
 
 /* ---------- Template: Punjab National Bank (PNB ONE) ----------
@@ -1081,7 +1093,7 @@ function csvEscape(v){return `"${String(v??"").replaceAll('"','""')}"`}
 function downloadBlob(content,name,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function bankLedger(){return $("#bankLedger").value.trim()||"Bank Account"}
 function referenceLedger(){return $("#referenceLedger").value.trim()||"Suspense"}
-function rows(){return transactions.map((r,i)=>({SNo:i+1,Date:r.date,Description:r.description,Debit:r.debit,Credit:r.credit,Balance:r.balance,"Tally Bank Ledger":bankLedger(),"Reference Ledger":referenceLedger(),"Voucher Type":r.debit?"Payment":"Receipt",Check:r.flag==="review"?"REVIEW":(r.flag==="verified"?"Verified":"OK")}))}
+function rows(){return transactions.map((r,i)=>({SNo:i+1,Date:r.date,Description:r.description,Debit:r.debit,Credit:r.credit,Balance:r.balance,"Tally Bank Ledger":bankLedger(),"Reference Ledger":referenceLedger(),"Voucher Type":r.debit?"Payment":"Receipt",Check:r.flag==="review"?("REVIEW"+(r.note?" - "+r.note:"")):(r.flag==="verified"?"Verified":"OK")}))}
 function fmtAmt(n){return n===""||n==null?"":Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function renderCheckNote(){
   const el=$("#checkNote"); if(!el)return;
@@ -1093,8 +1105,13 @@ function renderCheckNote(){
   else html+=`; every other row was placed using the column position / Dr-Cr marker`;
   html+=`.`;
   if(reordered) html+=` Statement was newest-first, so rows were re-ordered oldest-first.`;
+  const st=allStats||{}; let warn="";
+  if(st.expected&&st.expected>st.total) warn+=`<br><b style="color:#b91c1c">⚠ ${st.expected} transactions were found in the PDF but only ${st.total} were converted.</b>`;
+  if(st.gaps&&st.gaps.length) warn+=`<br><b style="color:#b91c1c">⚠ Balance does not reconcile before:</b> `+st.gaps.map(g=>`${g.date} (difference ₹${fmtAmt(Math.abs(g.net))} ${g.net>0?"credit":"debit"} missing)`).join("; ");
+  if(st.dropped&&st.dropped.length) warn+=`<br><b style="color:#b91c1c">⚠ Could not read:</b> ${st.dropped.join(", ")}`;
+  html+=warn;
   el.innerHTML=html; el.style.display="block";
-  el.style.background=review?"#fffbeb":"#f0fdf4"; el.style.borderColor=review?"#fde68a":"#bbf7d0";
+  el.style.background=(review||warn)?"#fffbeb":"#f0fdf4"; el.style.borderColor=review?"#fde68a":"#bbf7d0";
 }
 function renderPreview(){const body=$("#previewBody");body.innerHTML="";$("#previewBankLedger").textContent=bankLedger();transactions.forEach((r,i)=>{const tr=document.createElement("tr");tr.style.borderTop="1px solid #edf1f6";if(r.flag==="review")tr.style.background="#fffbeb";tr.innerHTML=`<td style="padding:8px 9px;white-space:nowrap">${escapeHtml(r.date)}</td><td style="padding:8px 9px;max-width:420px">${escapeHtml(r.description)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.debit)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.credit)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.balance)}</td>`;body.appendChild(tr)})}
 function escapeHtml(v){return String(v??"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}

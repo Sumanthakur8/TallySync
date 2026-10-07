@@ -49,7 +49,7 @@
       <input id="file" class="file" type="file" accept="application/pdf,.pdf">
     </div>
     <div class="settings">
-      <div class="field"><label for="bank">Statement Bank</label><select id="bank" class="select"><option>Auto Detect</option><option>HDFC Bank</option><option>State Bank of India</option><option>ICICI Bank</option><option>Axis Bank</option><option>Kotak Mahindra Bank</option><option>Other / Generic</option></select></div>
+      <div class="field"><label for="bank">Statement Bank</label><select id="bank" class="select"><option>Auto Detect</option><option>HDFC Bank</option><option>State Bank of India</option><option>Punjab National Bank</option><option>ICICI Bank</option><option>Axis Bank</option><option>Kotak Mahindra Bank</option><option>Other / Generic</option></select></div>
       <div class="field"><label for="output">Primary output</label><select id="output" class="select"><option value="all">CSV + Excel + Tally XML</option><option value="csv">CSV</option><option value="xlsx">Excel</option><option value="xml">Tally XML</option></select></div>
       <div class="field"><label for="bankLedger">Tally Bank Ledger (Record In)</label><input id="bankLedger" class="input" type="text" value="PNB Bank A/c" placeholder="e.g. PNB Bank A/c"><div style="font-size:11px;color:#7b8798;margin-top:5px">Existing Tally bank ledger that receives these transactions.</div></div>
       <div class="field"><label for="referenceLedger">Reference Ledger</label><input id="referenceLedger" class="input" type="text" value="Suspense" placeholder="e.g. Suspense"><div style="font-size:11px;color:#7b8798;margin-top:5px">Used as the offset ledger for every payment/receipt. A master XML is also generated to create it if missing.</div></div>
@@ -298,7 +298,8 @@ convert.addEventListener("click",async()=>{
   }
   window._rawText=rawText.trim();
   setProgress(70,"Detecting transactions…");
-  const parsed=parseStatement(allLines);
+  const parsed=parseWithBestTemplate(allLines,$("#bank").value);
+  window._tplName=parsed.template.name;
   allRows=parsed.rows; allStats=parsed.stats; lastPages=pdf.numPages; updateRangeHint(); if(!applyRange(true)){ transactions=[]; }
   renderPreview();
   setProgress(88,"Preparing exports…");
@@ -794,6 +795,233 @@ function parseStatement(lines){
 }
 
 
+/* ===================== TEMPLATE HUB =====================
+   Every bank layout lives in its own template { id, name, banks, detect(lines)->score, parse(lines)->{rows,stats} }.
+   The hub runs detect() on the uploaded PDF, tries the best-matching templates first, checks the result
+   against the running-balance maths and keeps the most trustworthy one.
+   To support a new bank: write detectXxx + parseXxx and add one entry to TEMPLATES.
+   The original column-position parser (used for Axis and unknown banks) is kept untouched as "generic".
+   ======================================================== */
+
+/* ---------- Template: State Bank of India (stacked "1 Sep / 2026" dates, Description + Ref columns) ---------- */
+function sbiStartAt(lines,i){
+  const L=lines[i],N=lines[i+1]; if(!L||!N||L.page!==N.page) return false;
+  const W=L.words,V=N.words; if(W.length<2||!V.length) return false;
+  if(!/^\d{1,2}$/.test(W[0].t)||W[0].x0>90) return false;
+  if(!/^[A-Za-z]{3,9}$/.test(W[1].t)||!MONTHS[W[1].t.slice(0,3).toLowerCase()]) return false;
+  return /^\d{4}$/.test(V[0].t)&&Math.abs(V[0].x0-W[0].x0)<40;
+}
+function sbiHeaderWords(W){
+  const f=n=>W.find(w=>w.t===n);
+  const tx=f("Txn"),va=f("Value"),de=f("Description"),re=f("Ref"),br=f("Branch"),db=f("Debit"),cr=f("Credit"),ba=f("Balance");
+  return (tx&&va&&de&&re&&br&&db&&cr&&ba)?{tx,va,de,re,br,db,cr,ba}:null;
+}
+function detectSBI(lines){
+  let hdr=false,starts=0;
+  for(let i=0;i<lines.length;i++){
+    if(sbiHeaderWords(lines[i].words)) hdr=true;
+    if(sbiStartAt(lines,i)) starts++;
+  }
+  return (hdr&&starts>=2)?100+Math.min(starts,50):0;
+}
+function parseSBI(lines){
+  let X={desc:142,ref:221,branch:299,money:357,bal:481,split:443,date2:90};
+  let opening=null,cur=null; const raw=[];
+  for(const L of lines){
+    const m=L.words.map(w=>w.t).join(" ").match(/Balance\s+as\s+on[^:]*:\s*(-?[\d,]+\.\d{1,2})/i);
+    if(m&&opening==null) opening=Math.round(parseFloat(m[1].replace(/,/g,""))*100);
+  }
+  const fin=()=>{
+    if(!cur) return; const c=cur; cur=null;
+    // amounts wrapped onto the next line ("4,00,000.0" + "0")
+    const fixTok=t=>{
+      if(!t||!/\.\d$/.test(t.t)) return;
+      const fr=c.frags.find(f=>f.x0>=t.x0-2&&f.x1<=t.x1+14&&f.y<t.y);
+      if(fr) t.t+=fr.t;
+    };
+    c.money.forEach(fixTok);
+    const tok=c.money.map(t=>({...t,m:parseMoney(t.t)})).filter(t=>t.m);
+    const bal=tok.find(t=>t.x0>=X.bal), amts=tok.filter(t=>t.x0<X.bal);
+    if(!amts.length||!bal||!c.year) return;
+    const join=(arr,filled)=>{ // arr: [{t,x1,first}] one entry per printed line
+      let s="";
+      arr.forEach((l,i)=>{
+        if(i===0){s=l.t;return;}
+        const p=arr[i-1];
+        const nospace=(/\d$/.test(p.t)&&/^\d/.test(l.t))||filled(p,l);
+        s+=(nospace?"":" ")+l.t;
+      });
+      return s;
+    };
+    const desc=join(c.desc,(p,l)=>i0(c.desc,p)>0&&p.x1>=X.ref-9);
+    const ref=join(c.ref,(p,l)=>p.x1>=X.branch-11&&l.t.split(" ")[0].length<=2);
+    let narr=desc;
+    if(ref) narr+=(/-$/.test(desc)&&!/^(TRANSFER|\/)/.test(ref)?"":" ")+ref;
+    const dm=mkDate(+c.year,MONTHS[c.mon.slice(0,3).toLowerCase()],+c.day);
+    if(!dm) return;
+    const toP=t=>Math.round(t.m.v*100)*(t.m.neg?-1:1);
+    const a=amts[0];
+    raw.push({date:dm.text,desc:narr.replace(/\s+/g," ").replace(/\s*\/$/,"").trim(),amt:Math.abs(toP(a)),side:a.x1>X.split?"credit":"debit",bal:toP(bal)});
+  };
+  function i0(arr,p){return arr.indexOf(p)}
+  for(const L of lines){
+    const W=L.words,i=lines.indexOf(L);
+    const H=sbiHeaderWords(W);
+    if(H){
+      fin();
+      X={desc:H.de.x0-2,ref:H.re.x0-2,branch:H.br.x0-3,money:H.db.x0-27,bal:H.ba.x0-30,split:H.cr.x0,date2:H.va.x0-3};
+      continue;
+    }
+    if(sbiStartAt(lines,i)){
+      fin();
+      cur={day:W[0].t,mon:W[1].t,year:null,desc:[],ref:[],money:[],frags:[]};
+    }
+    if(!cur) continue;
+    const line={d:[],r:[]};
+    for(const w of W){
+      if(w.x0<X.desc-1){ if(!cur.year&&/^\d{4}$/.test(w.t)&&w.x0<X.date2) cur.year=w.t; continue; }
+      if(w.x0>=X.money){
+        if(parseMoney(w.t)) cur.money.push({t:w.t,x0:w.x0,x1:w.x1,y:L.y});
+        else if(/^\d$/.test(w.t)) cur.frags.push({t:w.t,x0:w.x0,x1:w.x1,y:L.y});
+        continue;
+      }
+      if(w.x0>=X.branch){ continue; }                    // branch code
+      if(w.x0>=X.ref-1) line.r.push(w); else line.d.push(w);
+    }
+    const pack=ws=>ws.length?{t:ws.map(w=>w.t).join(" "),x1:Math.max(...ws.map(w=>w.x1))}:null;
+    const pd=pack(line.d),pr=pack(line.r);
+    if(pd) cur.desc.push(pd); if(pr) cur.ref.push(pr);
+  }
+  fin();
+
+  // debit / credit : running balance first, column position as fallback
+  let prev=opening,verified=0,review=0;
+  const rows=raw.map(r=>{
+    let dir=r.side,flag="ok";
+    if(prev!=null){
+      const d=r.bal-prev;
+      if(Math.abs(d-r.amt)<=1){dir="credit";flag="verified";verified++;}
+      else if(Math.abs(d+r.amt)<=1){dir="debit";flag="verified";verified++;}
+      else{flag="review";review++;}
+    }
+    prev=r.bal;
+    return {date:r.date,description:r.desc,debit:dir==="debit"?r.amt/100:"",credit:dir==="credit"?r.amt/100:"",balance:r.bal/100,flag};
+  });
+  return {rows,stats:{total:rows.length,verified,review,reordered:false,opening}};
+}
+
+/* ---------- Template: Punjab National Bank (PNB ONE) ----------
+   Columns: Date | Instrument ID | Amount(INR) | Type CR/DR | Balance | Remarks. Newest entry first.
+   Remarks wrap over several centred lines; rows are not bottom-aligned. ---------- */
+function pnbHeaderWords(W){
+  const f=n=>W.find(w=>w.t===n);
+  const ins=f("Instrument"),am=f("Amount(INR)"),ty=f("Type"),ba=f("Balance"),re=f("Remarks");
+  return (ins&&am&&ty&&ba&&re)?{ins,am,ty,ba,re}:null;
+}
+function pnbIsStart(W){
+  if(W.length<4||W[0].x0>100||!/^\d{2}\/\d{2}\/\d{4}$/.test(W[0].t)) return false;
+  return W.some(w=>/^(CR|DR)$/i.test(w.t));
+}
+function detectPNB(lines){
+  let hdr=false,starts=0;
+  for(const L of lines){ if(pnbHeaderWords(L.words)) hdr=true; if(pnbIsStart(L.words)) starts++; }
+  return (hdr&&starts>=2)?100+Math.min(starts,50):0;
+}
+function parsePNB(lines){
+  let X={ins:99,am:164,ty:228,ba:264,rem:336};
+  const raw=[]; let cur=null;
+  const fin=()=>{
+    if(!cur) return; const c=cur; cur=null;
+    if(c.amt==null||c.bal==null||!c.type) return;
+    raw.push(c);
+  };
+  for(const L of lines){
+    const W=L.words; if(!W.length) continue;
+    const H=pnbHeaderWords(W);
+    if(H){
+      fin();
+      X={ins:H.ins.x0-2,am:H.am.x0-1,ty:H.ty.x0-3,ba:H.ba.x0-20,rem:H.ba.x1+20,right:0};
+      continue;
+    }
+    if(pnbIsStart(W)){
+      fin();
+      const d=parseDateStr(W[0].t); if(!d) continue;
+      cur={date:d.text,ins:"",amt:null,bal:null,type:"",lines:[]};
+      const rem=[];
+      for(const w of W.slice(1)){
+        if(w.x0>=X.rem) rem.push(w);
+        else if(w.x0>=X.ba){const m=parseMoney(w.t); if(m) cur.bal=Math.round(m.v*100)*(m.neg?-1:1);}
+        else if(w.x0>=X.ty){ if(/^(CR|DR)$/i.test(w.t)) cur.type=w.t.toUpperCase(); }
+        else if(w.x0>=X.am){const m=parseMoney(w.t); if(m) cur.amt=Math.round(m.v*100);}
+        else if(w.x0>=X.ins&&/^\d+$/.test(w.t)) cur.ins=w.t;
+      }
+      if(rem.length) cur.lines.push({t:rem.map(w=>w.t).join(" "),x1:Math.max(...rem.map(w=>w.x1))});
+      continue;
+    }
+    if(cur){
+      // continuation of the Remarks cell: every word sits in the Remarks column; anything else ends the row
+      if(W.some(w=>w.x0<X.rem-4)||cur.lines.length>=6){fin();continue;}
+      cur.lines.push({t:W.map(w=>w.t).join(" "),x1:Math.max(...W.map(w=>w.x1))});
+    }
+  }
+  fin();
+  // right edge of the Remarks cell = widest remarks line seen; a line that reaches it was wrapped mid-word
+  const right=Math.max(0,...raw.flatMap(c=>c.lines.map(l=>l.x1)));
+  const rows0=raw.map(c=>{
+    let s="";
+    c.lines.forEach((l,i)=>{
+      if(i===0){s=l.t;return;}
+      const p=c.lines[i-1];
+      s+=((p.x1>=right-5||/[\-\/]$/.test(p.t))?"":" ")+l.t;
+    });
+    if(c.ins) s+=" Ref: "+c.ins;
+    return {date:c.date,desc:s.replace(/\s+/g," ").trim(),amt:c.amt,type:c.type,bal:c.bal};
+  });
+  // PNB lists the NEWEST entry first -> reverse to chronological order, then prove every row by balance maths
+  const list=rows0.slice().reverse();
+  let prev=null,verified=0,review=0;
+  const rows=list.map(r=>{
+    const sign=r.type==="CR"?1:-1; let flag="ok";
+    if(prev!=null){
+      if(Math.abs(prev+sign*r.amt-r.bal)<=1){flag="verified";verified++;}
+      else{flag="review";review++;}
+    }
+    prev=r.bal;
+    return {date:r.date,description:r.desc,debit:sign<0?r.amt/100:"",credit:sign>0?r.amt/100:"",balance:r.bal/100,flag};
+  });
+  // the oldest row has no previous balance to check against: derive the opening balance and mark it verified
+  let opening=null;
+  if(list.length){const f=list[0];opening=f.bal-(f.type==="CR"?1:-1)*f.amt; if(rows[0].flag==="ok"){rows[0].flag="verified";verified++;}}
+  return {rows,stats:{total:rows.length,verified,review,reordered:true,opening}};
+}
+
+/* ---------- registry ---------- */
+const TEMPLATES=[
+  {id:"sbi",name:"State Bank of India",banks:["State Bank of India"],detect:detectSBI,parse:parseSBI},
+  {id:"pnb",name:"Punjab National Bank (PNB ONE)",banks:["Punjab National Bank"],detect:detectPNB,parse:parsePNB},
+  {id:"generic",name:"Axis / Generic column parser",banks:["Axis Bank","HDFC Bank","ICICI Bank","Kotak Mahindra Bank","Other / Generic"],detect:()=>1,parse:parseStatement}
+];
+function parseWithBestTemplate(lines,chosenBank){
+  let cands=TEMPLATES.map(t=>({t,score:t.detect(lines)})).filter(c=>c.score>0);
+  cands.sort((a,b)=>b.score-a.score);
+  // the person picked a bank by hand -> try its template first, but only if it really fits the file
+  const pick=cands.find(c=>c.t.banks.includes(chosenBank)&&c.score>1);
+  if(pick){cands=[pick,...cands.filter(c=>c!==pick)];}
+  let best=null;
+  for(const c of cands){
+    let r; try{r=c.t.parse(lines);}catch(e){console.warn("Template failed",c.t.id,e);continue;}
+    const total=r.stats.total||0,ver=r.stats.verified||0;
+    const quality=total?ver/total:0;
+    const cand={r,t:c.t,quality,total,score:c.score};
+    // a specific template (score>1) that balances out is accepted straight away
+    if(c.score>1&&total>0&&quality>=0.9) return {...r,template:c.t};
+    if(!best||quality*Math.log(1+total)>best.quality*Math.log(1+best.total)) best=cand;
+  }
+  if(!best) return {rows:[],stats:{total:0,verified:0,review:0,reordered:false,opening:null},template:TEMPLATES[TEMPLATES.length-1]};
+  return {...best.r,template:best.t};
+}
+
+
 
 function dKey(t){const m=String(t).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?+(m[3]+m[2]+m[1]):null}
 function isoKey(v){return v?+v.replace(/-/g,""):null}
@@ -838,7 +1066,7 @@ function applyRange(fromConvert){
 function renderResults(pages){
  $("#result").classList.add("show");
  $("#resultTitle").textContent=transactions.length? "Conversion complete":"PDF read successfully";
- $("#resultMeta").textContent=`${selectedFile.name} · ${pages} page${pages===1?"":"s"} · ${rangeActive()?transactions.length+" of "+allRows.length:transactions.length} transaction${(rangeActive()?allRows.length:transactions.length)===1?"":"s"} ${rangeActive()?"in selected range":"detected"}`;
+ $("#resultMeta").textContent=`${selectedFile.name} · ${pages} page${pages===1?"":"s"} · ${rangeActive()?transactions.length+" of "+allRows.length:transactions.length} transaction${(rangeActive()?allRows.length:transactions.length)===1?"":"s"} ${rangeActive()?"in selected range":"detected"}${window._tplName?" · Template: "+window._tplName:""}`;
  renderCheckNote();
  const d=$("#downloads");d.innerHTML="";
  const choice=$("#output").value;

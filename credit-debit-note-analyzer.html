@@ -67,7 +67,11 @@ function normalizeRateValue(v){
   if(!s || s==="-") return "";
   return s.replace(/%/g,"").trim();
 }
-function keyFor(r){return [r.GSTIN,r.Type,r.NoteNumber,r.Date,r.NoteValue,r.TaxableValue,normalizeRateValue(r.Rate),r.IGST,r.CGST,r.SGST,r.Cess,r.IRN].join("|")}
+function keyFor(r){
+ const note=String(r.NoteNumber??"").trim();
+ if(note && note!=="-") return [r.GSTIN,r.Type,note].join("|");
+ return [r.GSTIN,r.Type,note,r.Date,r.NoteValue,r.TaxableValue,normalizeRateValue(r.Rate),r.IGST,r.CGST,r.SGST,r.Cess,r.IRN].join("|");
+}
 async function analyze(){
  if(!sourceRows.length)return;showStatus("Cleaning GST Portal rows…",25);exceptions=[];let headers=Object.keys(sourceRows[0]);let c={};Object.keys(aliases).forEach(k=>c[k]=findCol(headers,aliases[k]));
  const get=(r,k)=>c[k]>=0?r[headers[c[k]]]:"";let seen=new Set();cleanRows=[];

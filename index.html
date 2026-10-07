@@ -53,6 +53,8 @@
       <div class="field"><label for="output">Primary output</label><select id="output" class="select"><option value="all">CSV + Excel + Tally XML</option><option value="csv">CSV</option><option value="xlsx">Excel</option><option value="xml">Tally XML</option></select></div>
       <div class="field"><label for="bankLedger">Tally Bank Ledger (Record In)</label><input id="bankLedger" class="input" type="text" value="PNB Bank A/c" placeholder="e.g. PNB Bank A/c"><div style="font-size:11px;color:#7b8798;margin-top:5px">Existing Tally bank ledger that receives these transactions.</div></div>
       <div class="field"><label for="referenceLedger">Reference Ledger</label><input id="referenceLedger" class="input" type="text" value="Suspense" placeholder="e.g. Suspense"><div style="font-size:11px;color:#7b8798;margin-top:5px">Used as the offset ledger for every payment/receipt. A master XML is also generated to create it if missing.</div></div>
+      <div class="field"><label for="fromDate">From date</label><input id="fromDate" class="input" type="date" disabled></div>
+      <div class="field"><label for="toDate">To date</label><input id="toDate" class="input" type="date" disabled><div id="rangeHint" style="font-size:11px;color:#7b8798;margin-top:5px">Convert a statement first — then you can pick dates from its own period only.</div></div>
     </div>
     <button id="convert" class="btn primary convert" disabled>Convert statement</button>
     <div id="progress" class="progress"><div class="bar"><i id="bar"></i></div><div id="status" class="status">Preparing…</div></div>
@@ -65,6 +67,7 @@
         <tbody id="previewBody"></tbody>
       </table>
     </div>
+    <div id="checkNote" style="display:none;margin-top:12px;padding:11px 13px;border:1px solid #bbf7d0;border-radius:11px;font-size:12.5px;line-height:1.5;color:#34445a"></div>
     <div class="downloads" id="downloads"></div>
   </div>
   </div>
@@ -211,7 +214,7 @@ import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168
 pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
 const $=s=>document.querySelector(s), drop=$("#drop"), fileInput=$("#file"), convert=$("#convert");
-let selectedFile=null, transactions=[];
+let selectedFile=null, transactions=[], lastStats=null, allRows=[], allStats=null, lastPages=0;
 
 drop.addEventListener("click",()=>fileInput.click());
 fileInput.addEventListener("change",e=>pick(e.target.files[0]));
@@ -258,7 +261,7 @@ passwordModal.addEventListener("click",e=>{if(e.target===passwordModal)passwordC
 function pick(file){
   if(!file)return;
   if(file.type!=="application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) return toast("Please select a PDF bank statement.");
-  selectedFile=file; convert.disabled=false;
+  selectedFile=file; convert.disabled=false; allRows=[]; transactions=[]; setRangeLocked();
   drop.querySelector("h3").textContent=file.name;
   drop.querySelector("p").textContent=`${(file.size/1024/1024).toFixed(2)} MB · Ready to convert`;
   $("#result").classList.remove("show");
@@ -284,16 +287,19 @@ convert.addEventListener("click",async()=>{
   };
 
   const pdf=await loadingTask.promise;
-  let text="";
+  const allLines=[]; let rawText="";
   for(let i=1;i<=pdf.numPages;i++){
     setProgress(8+Math.round(i/pdf.numPages*55),`Reading page ${i} of ${pdf.numPages}…`);
     const page=await pdf.getPage(i);
     const content=await page.getTextContent();
     const pageLines=buildPdfLines(content.items);
-    text += "\n"+pageLines.join("\n");
+    pageLines.forEach(l=>{l.page=i;allLines.push(l)});
+    rawText+="\n"+pageLines.map(l=>l.words.map(w=>w.t).join(" ")).join("\n");
   }
+  window._rawText=rawText.trim();
   setProgress(70,"Detecting transactions…");
-  transactions=parseTransactions(text);
+  const parsed=parseStatement(allLines);
+  allRows=parsed.rows; allStats=parsed.stats; lastPages=pdf.numPages; updateRangeHint(); if(!applyRange(true)){ transactions=[]; }
   renderPreview();
   setProgress(88,"Preparing exports…");
   await new Promise(r=>setTimeout(r,250));
@@ -313,101 +319,527 @@ convert.addEventListener("click",async()=>{
  }finally{convert.disabled=false}
 });
 
+/* ===================== BANK STATEMENT PARSER (v2) =====================
+   Strategy
+   1. Read every PDF text fragment WITH its x/y position and split it into words.
+   2. Find the table header (Date / Narration / Debit / Credit / Balance ...) and remember the column positions.
+   3. A row starts with a date. Every following line that is not a new date belongs to the same
+      transaction (multi-line narration), until a footer / total / big vertical gap.
+   4. Debit vs Credit is decided in this order:
+        a) running balance maths  (previous balance -> this balance)   <- mathematically certain
+        b) explicit Dr / Cr marker or minus sign
+        c) column position learned from the rows proven by (a)
+        d) column position of the header
+        e) narration keywords
+      Rows that still cannot be decided are flagged "Review" instead of silently guessed.
+   ===================================================================== */
+const MONTHS={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+
+function mkDate(y,mo,d){
+  if(y<1990||y>2100||mo<1||mo>12||d<1||d>31) return null;
+  return {y,mo,d,text:String(d).padStart(2,"0")+"/"+String(mo).padStart(2,"0")+"/"+y};
+}
+function parseDateStr(s){
+  s=s.trim();
+  let m=s.match(/^(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})$/);
+  if(m) return mkDate(+m[1],+m[2],+m[3]);
+  m=s.match(/^(\d{1,2})[\s\/\-.]+(\d{1,2})[\s\/\-.]+(\d{2,4})$/);
+  if(m){let y=+m[3]; if(y<100)y+=2000; return mkDate(y,+m[2],+m[1]);}
+  m=s.match(/^(\d{1,2})[\s\/\-.]*([A-Za-z]{3,9})[\s\/\-.,']*(\d{2,4})$/);
+  if(m){const mo=MONTHS[m[2].slice(0,3).toLowerCase()]; let y=+m[3]; if(y<100)y+=2000; if(mo) return mkDate(y,mo,+m[1]);}
+  return null;
+}
+/* try to read a date from the first 1-3 words; returns {n,date} or null */
+function matchDate(words){
+  for(let n=Math.min(3,words.length);n>=1;n--){
+    const d=parseDateStr(words.slice(0,n).map(w=>w.t).join(" "));
+    if(d) return {n,date:d};
+  }
+  return null;
+}
+function parseMoney(s){
+  const m=s.match(/^([(\-+]?)(?:₹|rs\.?|inr)?\s*(\d[\d,]*\.\d{1,2})(\)?)(-?)(cr|dr)?\.?$/i);
+  if(!m) return null;
+  return {v:parseFloat(m[2].replace(/,/g,"")),neg:m[1]==="("||m[1]==="-"||m[4]==="-",suf:m[5]?m[5].toLowerCase():""};
+}
+function indOf(t,allowShort){
+  const s=t.toLowerCase().replace(/[.()]/g,"");
+  if(s==="dr"||s==="debit"||(allowShort&&s==="d")) return "dr";
+  if(s==="cr"||s==="credit"||(allowShort&&s==="c")) return "cr";
+  return "";
+}
+
+/* ---------- PDF.js items -> positioned lines of words ---------- */
 function buildPdfLines(items){
- const rows=[];
- for(const item of items){
-   const value=(item.str||"").trim();
-   if(!value)continue;
-   const tr=item.transform||[];
-   const x=Number(tr[4]||0), y=Number(tr[5]||0);
-   let row=rows.find(r=>Math.abs(r.y-y)<=3);
-   if(!row){row={y,items:[]};rows.push(row)}
-   row.items.push({x,value});
- }
- return rows.sort((a,b)=>b.y-a.y).map(r=>r.items.sort((a,b)=>a.x-b.x).map(x=>x.value).join(" ").replace(/\s+/g," ").trim()).filter(Boolean);
+  const words=[]; let itemId=0;
+  for(const item of items){
+    const str=item.str||""; if(!str.trim())continue;
+    const tr=item.transform||[1,0,0,1,0,0];
+    const x0=Number(tr[4])||0, y=Number(tr[5])||0;
+    const fs=Math.hypot(tr[0]||0,tr[1]||0)||9;
+    const w=item.width>0?item.width:str.length*fs*0.5;
+    const len=str.length; itemId++;
+    const re=/\S+/g; let m;
+    while((m=re.exec(str))){
+      words.push({t:m[0],x0:x0+w*m.index/len,x1:x0+w*(m.index+m[0].length)/len,y,item:itemId});
+    }
+  }
+  words.sort((a,b)=>b.y-a.y||a.x0-b.x0);
+  const lines=[];
+  for(const w of words){
+    const last=lines[lines.length-1];
+    if(last&&Math.abs(last.y-w.y)<=3) last.words.push(w); else lines.push({y:w.y,words:[w]});
+  }
+  for(const L of lines){
+    L.words.sort((a,b)=>a.x0-b.x0);
+    const merged=[];
+    for(const w of L.words){
+      const p=merged[merged.length-1];
+      // glue fragments such as "12," + "345.00" that PDF.js split without a space
+      if(p&&p.item!==w.item&&w.x0-p.x1<=0.8&&w.x0-p.x1>=-1.5&&/^[\d,.\-()₹]+$/.test(p.t)&&/^[\d,.\-()]+(?:cr|dr)?$/i.test(w.t)){p.t+=w.t;p.x1=Math.max(p.x1,w.x1);}
+      else merged.push({...w});
+    }
+    L.words=merged;
+  }
+  return lines;
 }
 
-function cleanNum(s){
- if(!s)return "";
- const neg=/[-(]/.test(s);
- const n=s.replace(/[₹,\s()]/g,"").replace(/CR|DR/gi,"");
- const v=parseFloat(n.replace(/[^\d.-]/g,""));
- if(Number.isNaN(v))return "";
- return (neg?-1:1)*v;
+/* ---------- table header detection ---------- */
+function classifyHeaderWord(w){
+  const parts=w.toLowerCase().split(/[()\/\[\]:,*]+/).map(s=>s.replace(/[.\-_]/g,"")).filter(Boolean);
+  if(!parts.length) return null;
+  const has=re=>parts.some(p=>re.test(p));
+  if(has(/^dr$/)&&has(/^cr$/)) return "drcr";
+  if(has(/^(date|dt|dated)$/)) return "date";
+  if(has(/^(narration|description|particulars|details|remarks|narrative)$/)) return "desc";
+  if(has(/^(debit|debits|withdrawal|withdrawals|withdrawl|dr)$/)) return "debit";
+  if(has(/^(credit|credits|deposit|deposits|cr)$/)) return "credit";
+  if(has(/^(balance|bal)$/)) return "balance";
+  if(has(/^(amount|amt)$/)) return "amount";
+  if(has(/^type$/)) return "drcr";
+  if(has(/^(chq|cheque|chequeno|chqno|ref|refno|reference|instrument|instrumentid|utr|utrno)$/)) return "ref";
+  return null;
+}
+function detectHeader(W){
+  const cols=[];
+  for(let i=0;i<W.length;i++){
+    let type=classifyHeaderWord(W[i].t); if(!type) continue;
+    if(type==="date"&&i>0&&/^(value|val)/i.test(W[i-1].t)) type="valuedate";
+    const last=cols[cols.length-1];
+    if(type==="amount"&&last&&["debit","credit","balance"].includes(last.type)&&W[i].x0-last.x1<30){last.x1=W[i].x1;continue;}
+    if(last&&last.type===type&&W[i].x0-last.x1<25){last.x1=Math.max(last.x1,W[i].x1);continue;}
+    cols.push({type,x0:W[i].x0,x1:W[i].x1});
+  }
+  const has=t=>cols.some(c=>c.type===t);
+  const ok=has("date")&&((has("balance")&&(has("debit")||has("credit")||has("amount")))||(has("debit")&&has("credit")));
+  if(!ok) return null;
+  const pick=t=>cols.find(c=>c.type===t);
+  const numCols=cols.filter(c=>["debit","credit","balance","amount"].includes(c.type));
+  const bandCols=cols.filter(c=>["debit","credit","balance","amount","drcr"].includes(c.type));
+  return {
+    cols,numCols,
+    numStart:Math.min(...bandCols.map(c=>c.x0))-8,
+    numEnd:Math.max(...bandCols.map(c=>c.x1))+45,
+    hasBalance:has("balance"),hasDebit:has("debit"),hasCredit:has("credit"),hasAmount:has("amount"),hasDrCr:has("drcr"),
+    valuedate:pick("valuedate")||null,
+    refs:cols.filter(c=>c.type==="ref").filter(c=>{
+      // a Chq/Ref column printed BEFORE the narration column (Axis, ICICI...) has a centred header that
+      // spans the narration text below it, so its x-range cannot be trusted -> do not split refs there
+      const nx=cols.filter(o=>o.x0>c.x1-1).sort((a,b)=>a.x0-b.x0)[0];
+      return !(nx&&nx.type==="desc");
+    }).map(c=>{
+      const nx=cols.filter(o=>o.x0>c.x1-1).sort((a,b)=>a.x0-b.x0)[0];
+      return {x0:c.x0-20,x1:nx?nx.x0-6:Infinity};
+    }),
+    debit:pick("debit")||null,credit:pick("credit")||null,
+    sig:numCols.map(c=>c.type+Math.round(c.x0/12)).join("|")
+  };
+}
+function colDist(tok,c){
+  return Math.min(Math.abs(tok.x0-c.x0),Math.abs((tok.x0+tok.x1)/2-(c.x0+c.x1)/2),Math.abs(tok.x1-c.x1));
+}
+function nearestCol(tok,cols){
+  let best=null,bd=Infinity;
+  for(const c of cols){const d=colDist(tok,c); if(d<bd){bd=d;best=c;}}
+  return best;
 }
 
-function parseTransactions(text){
- const raw=text.replace(/\u00a0/g," ").replace(/\r/g,"");
- const lines=raw.split(/\n+/).map(s=>s.trim()).filter(Boolean);
- const out=[];
- const date=/^(?:(\d{1,2})[\/.-](?:\d{1,2}|[A-Za-z]{3,9})[\/.-](\d{2,4})|(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{2,4}))/;
- const money=/(?<![A-Za-z0-9@])(?:₹\s*)?[\d,]+\.\d{1,2}(?:\s*(?:CR|DR))?\.?(?=\s|$)/ig;
- let previousBalance=null;
-
- for(let i=0;i<lines.length;i++){
-   const line=lines[i];
-   const lower=line.toLowerCase();
-
-   const opening=line.match(/opening\s+balance\s+([\d,]+(?:\.\d{1,2})?)(?:\s*(?:cr|dr))?/i);
-   if(opening){
-     previousBalance=cleanNum(opening[1]);
-     continue;
-   }
-   if(/closing\s+balance/i.test(line)){
-     const m=line.match(/closing\s+balance\s+([\d,]+(?:\.\d{1,2})?)/i);
-     if(m) previousBalance=cleanNum(m[1]);
-     continue;
-   }
-
-   const m=line.match(date);
-   if(!m)continue;
-   const d=m[0];
-   const amounts=[...(line.matchAll(money))].map(x=>x[0]);
-   if(!amounts.length && i+1<lines.length) amounts.push(...(lines[i+1].match(money)||[]));
-   if(!amounts.length)continue;
-   const nums=amounts.map(cleanNum).filter(v=>v!=="");
-   if(!nums.length)continue;
-
-   const desc=line.slice(d.length).replace(money," ").replace(/\s+/g," ").trim() || (lines[i+1]||"");
-   let debit="",credit="",balance="";
-
-   if(nums.length>=3){
-     debit=nums[nums.length-3];
-     credit=nums[nums.length-2];
-     balance=nums[nums.length-1];
-   }else if(nums.length===2){
-     const amount=nums[0];
-     balance=nums[1];
-     // PNB statements commonly print only the populated Withdrawal/Deposit
-     // value followed by Balance. Use the balance movement to identify it.
-     if(previousBalance!==null){
-       const delta=balance-previousBalance;
-       const tolerance=0.02;
-       if(Math.abs(delta+amount)<=tolerance) debit=amount;
-       else if(Math.abs(delta-amount)<=tolerance) credit=amount;
-       else if(/\/dr\//i.test(desc)||/\batm\s+wdr\b/i.test(desc)) debit=amount;
-       else credit=amount;
-     }else if(/\/dr\//i.test(desc)||/\batm\s+wdr\b/i.test(desc)) debit=amount;
-     else credit=amount;
-   }else{
-     balance=nums[0];
-   }
-
-   out.push({date:d,description:desc.slice(0,180),debit,credit,balance});
-   previousBalance=balance;
- }
- const seen=new Set();
- return out.filter(r=>{
-   const k=[r.date,r.description,r.debit,r.credit,r.balance].join("|");
-   if(seen.has(k))return false;
-   seen.add(k);return true;
- }).slice(0,10000);
+/* ---------- narration helpers ---------- */
+const JUNK=/^(?:page\s*\d+(?:\s*(?:of|\/)\s*\d+)?\b|statement\s+(?:of\s+account|period|summary)|total\s+(?:debit|credit|withdrawal|deposit|amount)|grand\s+total|sub\s*total|page\s+total|carried\s+forward|brought\s+forward|c\/f\b|b\/f\b|closing\s+balance|end\s+of\s+statement|\*+\s*end|registered\s+office|toll\s*free|this\s+is\s+a\s+(?:computer|system)|computer[\s-]generated|system[\s-]generated|legends?\b|abbreviations?\b|unless\s+the\s+constituent|please\s+(?:examine|verify)|dear\s+customer|nomination\b|gstin\b|www\.|account\s+(?:no|number|summary|statement)\b|customer\s+(?:id|name|care)|ifsc\b|micr\b)/i;
+/* Some banks (e.g. Axis) bottom-align the date/amount cells, so the FIRST narration lines sit ABOVE the
+   line that carries the date. Detect that by gaps: for  dateLine / textLine / dateLine  the text line is
+   closer to the date line BELOW it when it belongs to the next transaction. */
+function detectLeadingNarration(lines){
+  let lead=0,trail=0;
+  for(let i=0;i+2<lines.length;i++){
+    const a=lines[i],b=lines[i+1],c=lines[i+2];
+    if(a.page!==b.page||b.page!==c.page) continue;
+    if(!a.words.length||!b.words.length||!c.words.length) continue;
+    if(!matchDate(a.words)||matchDate(b.words)||!matchDate(c.words)) continue;
+    if(detectHeader(b.words)) continue;
+    if(JUNK.test(b.words.map(w=>w.t).join(" "))) continue;
+    const gA=a.y-b.y,gB=b.y-c.y;
+    if(gB<gA-1.5) lead++; else if(gA<gB-1.5) trail++;
+  }
+  return lead>=2&&lead>trail*1.5;
+}
+function joinNarration(lines){
+  let s="";
+  for(const ln of lines){
+    if(!ln) continue;
+    if(!s) s=ln;
+    else if(/[\/\-]$/.test(s)||/^\//.test(ln)||(/\d$/.test(s)&&/^\d+$/.test(ln))) s+=ln;
+    else s+=" "+ln;
+  }
+  return s.replace(/\s+/g," ").trim();
+}
+const CREDIT_KW=/(?:^|[^a-z])(by\s|cr(?:[^a-z]|$)|credit|deposit|dep(?:[^a-z]|$)|received|refund|interest|salary|cashback|reversal|inward|upi\/cr|neft\/cr|imps\/cr)/i;
+const DEBIT_KW=/(?:^|[^a-z])(to\s|dr(?:[^a-z]|$)|debit|withdrawal|wdl|wdr|atm|pos(?:[^a-z]|$)|paid|payment|charges|chg|fee|outward|emi|upi\/dr|neft\/dr|imps\/dr)/i;
+function guessDirFromText(desc){
+  const c=CREDIT_KW.test(desc), d=DEBIT_KW.test(desc);
+  if(c&&!d) return "credit";
+  if(d&&!c) return "debit";
+  return null;
 }
 
+/* ---------- main parser ---------- */
+function parseStatement(lines){
+  /* vertical-gap limit per page (anything much further down than normal line spacing is a footer) */
+  const pageGap={};
+  {
+    const byPage={};
+    lines.forEach(l=>{(byPage[l.page]=byPage[l.page]||[]).push(l)});
+    for(const p in byPage){
+      const ls=byPage[p],g=[];
+      for(let i=1;i<ls.length;i++){const d=ls[i-1].y-ls[i].y;if(d>0)g.push(d)}
+      g.sort((a,b)=>a-b);
+      const med=g.length?g[Math.floor(g.length/2)]:12;
+      pageGap[p]=Math.max(med*2.3,med+14);
+    }
+  }
+
+  const leading=detectLeadingNarration(lines); let leadBuf=[];
+  const raws=[]; let cur=null,header=null,openingBalance=null;
+  let dateRight=0,obsNumStart=Infinity,curPage=null,prevY=null,contLines=0;
+
+  const signed=t=>(t.neg||t.suf==="dr"?-1:1)*Math.round(t.v*100);
+
+  function scanWords(rest,H,trailing){
+    const narr=[],toks=[];
+    let region=[];
+    if(trailing){
+      let i=rest.length,money=0;
+      while(i>0){
+        const t=rest[i-1].t;
+        if(parseMoney(t)){if(money>=3)break;money++;i--;}
+        else if(indOf(t,false)) i--;
+        else break;
+      }
+      while(i<rest.length&&!parseMoney(rest[i].t)) i++;
+      rest.slice(0,i).forEach(w=>narr.push(w));
+      region=rest.slice(i);
+    }else{
+      const s=H?H.numStart:(isFinite(obsNumStart)?obsNumStart-8:Infinity);
+      const e=H?H.numEnd:Infinity;
+      for(const w of rest){
+        const inBand=w.x1>=s&&w.x0<=e;
+        if(inBand&&(parseMoney(w.t)||indOf(w.t,H&&H.hasDrCr))) region.push(w); else narr.push(w);
+      }
+    }
+    // anything printed to the right of the last amount on the line (e.g. Axis "Init. Br" branch code) is not narration
+    if(!trailing&&region.length){
+      const lastMoney=[...region].reverse().find(w=>parseMoney(w.t));
+      if(lastMoney){for(let i=narr.length-1;i>=0;i--) if(narr[i].x0>=lastMoney.x1-1) narr.splice(i,1);}
+    }
+    let last=null,pending="";
+    for(const w of region){
+      const mny=parseMoney(w.t);
+      if(mny){
+        last={...mny,x0:w.x0,x1:w.x1,item:w.item};
+        if(pending&&!last.suf){last.suf=pending;pending="";}
+        toks.push(last);
+      }else{
+        const ind=indOf(w.t,H&&H.hasDrCr);
+        if(last&&!last.suf) last.suf=ind; else if(!last) pending=ind;
+      }
+    }
+    return {narr,toks};
+  }
+
+  function splitRefs(words,H){
+    if(!H||!H.refs.length) return {main:words,refs:[]};
+    const main=[],refs=[];
+    for(const w of words){
+      if(H.refs.some(r=>w.x0>=r.x0&&w.x0<r.x1)&&!parseMoney(w.t)) refs.push(w); else main.push(w);
+    }
+    return {main,refs};
+  }
+  function startTxn(W,dm,L){
+    const k=dm.k||0;
+    dateRight=Math.max(dateRight,W[k+dm.n-1].x1);
+    let rest=W.slice(k+dm.n);
+    // drop value date / time that sits right after the date
+    const dm2=matchDate(rest); if(dm2) rest=rest.slice(dm2.n);
+    if(rest[0]&&/^\d{1,2}:\d{2}(:\d{2})?$/.test(rest[0].t)){rest=rest.slice(1);if(rest[0]&&/^(am|pm)$/i.test(rest[0].t))rest=rest.slice(1);}
+    // drop the value-date column further right (HDFC style: Date Narration Ref ValueDt Debit Credit Bal)
+    if(header&&header.valuedate){
+      const vd=header.valuedate,out=[];
+      for(let i=0;i<rest.length;i++){
+        const w=rest[i];
+        if(w.x0>=vd.x0-45&&w.x0<=vd.x1+70){const d=matchDate(rest.slice(i));if(d){i+=d.n-1;continue;}}
+        out.push(w);
+      }
+      rest=out;
+    }
+    const sp=splitRefs(rest,header);
+    const {narr,toks}=scanWords(sp.main,header,!header);
+    toks.forEach(t=>{obsNumStart=Math.min(obsNumStart,t.x0)});
+    cur={date:dm.date,lines:[narr.map(w=>w.t).join(" ")],refs:sp.refs.map(w=>w.t),tokens:toks,header,page:L.page};
+    contLines=0;
+  }
+  function addCont(W){
+    const cand=W.filter(w=>w.x0>=dateRight-1);
+    if(!cand.length) return;
+    const sp=splitRefs(cand,cur.header);
+    const {narr,toks}=scanWords(sp.main,cur.header,false);
+    if(toks.length&&cur.tokens.length){flush();return;}   // totals / carried-forward line -> end of transaction
+    sp.refs.forEach(w=>cur.refs.push(w.t));
+    toks.forEach(t=>{obsNumStart=Math.min(obsNumStart,t.x0)});
+    cur.tokens.push(...toks);
+    const txt=narr.map(w=>w.t).join(" ");
+    if(txt) cur.lines.push(txt);
+    contLines++;
+  }
+  function assignRoles(t){
+    const H=t.header,toks=t.tokens;
+    if(!toks.length) return null;
+    let bal=null,amts=[];
+    if(H&&!H.hasBalance) amts=toks.slice();
+    else if(toks.length===1){
+      if(H){const c=nearestCol(toks[0],H.numCols); if(c&&c.type==="balance")bal=toks[0]; else amts=[toks[0]];}
+      else bal=toks[0];
+    }else{
+      bal=toks[toks.length-1];
+      amts=toks.slice(Math.max(0,toks.length-3),-1);
+    }
+    amts=amts.map(a=>({...a,p:Math.round(a.v*100)})).filter(a=>a.p>0);
+    return {bal:bal?signed(bal):null,amts};
+  }
+  function flush(){
+    if(!cur) return;
+    const t=cur; cur=null;
+    let desc=joinNarration(t.lines);
+    const refTxt=t.refs.filter(x=>!/^[-0]+$/.test(x)).join(" ");
+    if(refTxt) desc=(desc+" Ref: "+refTxt).trim();
+    const r=assignRoles(t);
+    if(!r) return;
+    if(!r.amts.length){
+      if(r.bal!=null&&openingBalance==null&&!raws.length&&/opening|b\/f|brought/i.test(desc)) openingBalance=r.bal;
+      return;
+    }
+    raws.push({date:t.date,desc,bal:r.bal,amts:r.amts,H:t.header});
+  }
+
+  for(const L of lines){
+    const W=L.words; if(!W.length) continue;
+    if(L.page!==curPage){flush();curPage=L.page;prevY=null;leadBuf=[];}
+    const text=W.map(w=>w.t).join(" ");
+
+    const h=detectHeader(W);
+    if(h){flush();leadBuf=[];header=h;prevY=L.y;continue;}
+
+    // opening balance / brought forward lines (with or without a leading date)
+    if(/^(?:\d{1,2}[\s\/\-.][A-Za-z0-9]{1,9}[\s\/\-.]\d{2,4}\s+)?(?:opening\s+balance|b\/f|brought\s+forward)/i.test(text)){
+      flush();leadBuf=[];
+      const ob=text.match(/(?:opening\s+balance|b\/f|brought\s+forward)[^\d\-(]*([(\-]?[\d,]+\.\d{1,2}\)?)\s*(cr|dr)?/i);
+      if(ob&&openingBalance==null&&!raws.length&&/opening/i.test(text)){
+        const m=parseMoney(ob[1]+(ob[2]||""));
+        if(m) openingBalance=signed(m);
+      }
+      prevY=L.y;continue;
+    }
+
+    let dm=matchDate(W),k=0;
+    if(!dm&&W.length>1&&/^\d{1,5}$/.test(W[0].t)){const d2=matchDate(W.slice(1));if(d2){dm={...d2,k:1};k=1;}}
+    // a date only starts a new row if it sits in the date column (a date inside a wrapped narration line does not)
+    if(dm&&(dateRight===0||W[k].x0<=dateRight+12)&&!(header&&W[k].x0>header.numStart)){
+      flush();
+      startTxn(W,dm,L);
+      if(leading&&leadBuf.length){
+        const pre=[];
+        for(const bw of leadBuf){
+          const cand=bw.filter(w=>w.x0>=dateRight-1); if(!cand.length) continue;
+          const sp=splitRefs(cand,header);
+          const sc=scanWords(sp.main,header,false);
+          if(sc.toks.length) continue;
+          sp.refs.forEach(w=>cur.refs.push(w.t));
+          const t=sc.narr.map(w=>w.t).join(" "); if(t) pre.push(t);
+        }
+        cur.lines=[...pre,...cur.lines];
+      }
+      leadBuf=[];
+      prevY=L.y;continue;
+    }
+    if(leading){
+      // narration lines printed above their date line: buffer them for the NEXT transaction
+      if(JUNK.test(text)){flush();leadBuf=[];}
+      else{ if(cur) flush(); leadBuf.push(W); if(leadBuf.length>8) leadBuf.shift(); }
+      prevY=L.y;continue;
+    }
+    if(cur){
+      const gap=prevY!=null?prevY-L.y:0;
+      if(JUNK.test(text)||gap>pageGap[L.page]||contLines>=8){flush();prevY=L.y;continue;}
+      addCont(W);
+    }
+    prevY=L.y;
+  }
+  flush();
+
+  /* ---------- resolve debit / credit ---------- */
+  const chainScore=list=>{
+    let s=0;
+    for(let i=1;i<list.length;i++){
+      const a=list[i],p=list[i-1];
+      if(a.bal==null||p.bal==null||a.amts.length!==1)continue;
+      if(Math.abs(Math.abs(a.bal-p.bal)-a.amts[0].p)<=1) s++;
+    }
+    return s;
+  };
+  let list=raws, descending=false;
+  if(chainScore(list.slice().reverse())>chainScore(list)){list=list.slice().reverse();descending=true;}
+
+  let prev=openingBalance;
+  for(const t of list){
+    t.dir=null;t.how=null;
+    if(t.amts.length>=2&&prev!=null&&t.bal!=null){
+      const d=Math.abs(t.bal-prev),f=t.amts.find(a=>Math.abs(a.p-d)<=1);
+      if(f) t.amts=[f];
+    }
+    if(t.amts.length===1){
+      const a=t.amts[0];
+      if(prev!=null&&t.bal!=null){
+        const d=t.bal-prev;
+        if(Math.abs(d-a.p)<=1){t.dir="credit";t.how="verified";}
+        else if(Math.abs(d+a.p)<=1){t.dir="debit";t.how="verified";}
+      }
+    }else{
+      // both a debit and a credit value printed on the same row
+      if(!(t.H&&t.H.hasDebit&&t.H.hasCredit)) t.amts=[t.amts[t.amts.length-1]];
+    }
+    prev=t.bal;
+  }
+
+  // learn where debit / credit numbers sit on the page from the rows proven by balance maths
+  const learn={};
+  for(const t of list){
+    if(t.how!=="verified"||t.amts.length!==1)continue;
+    const k=t.H?t.H.sig:"none";
+    (learn[k]=learn[k]||{debit:[],credit:[]})[t.dir].push(t.amts[0]);
+  }
+  const meas={x0:t=>t.x0,cx:t=>(t.x0+t.x1)/2,x1:t=>t.x1};
+  const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+  const sd=a=>{const m=mean(a);return Math.sqrt(mean(a.map(v=>(v-m)*(v-m))))};
+  for(const k in learn){
+    const L=learn[k]; if(!L.debit.length||!L.credit.length){L.ok=false;continue;}
+    let best=null;
+    for(const key in meas){
+      const f=meas[key],d=L.debit.map(f),c=L.credit.map(f);
+      const sep=Math.abs(mean(d)-mean(c)),score=sep/(sd(d)+sd(c)+1);
+      if(!best||score>best.score) best={key,md:mean(d),mc:mean(c),sep,score};
+    }
+    L.ok=best.sep>=10; L.best=best;
+  }
+
+  for(const t of list){
+    if(t.dir) continue;
+    if(t.amts.length===2){
+      let [a,b]=t.amts;
+      if(t.H&&t.H.credit&&t.H.debit&&t.H.credit.x0<t.H.debit.x0) [a,b]=[b,a];
+      t.both=[a,b];t.dir="both";t.how="ok";continue;
+    }
+    const a=t.amts[0];
+    if(a.suf){t.dir=a.suf==="dr"?"debit":"credit";t.how="ok";continue;}
+    if(a.neg&&t.H&&t.H.hasAmount&&!(t.H.hasDebit&&t.H.hasCredit)){t.dir="debit";t.how="ok";continue;}
+    const k=t.H?t.H.sig:"none",L=learn[k];
+    if(L&&L.ok){
+      const f=meas[L.best.key],v=f(a);
+      t.dir=Math.abs(v-L.best.md)<=Math.abs(v-L.best.mc)?"debit":"credit";t.how="ok";continue;
+    }
+    if(t.H&&t.H.debit&&t.H.credit){
+      const c=nearestCol(a,[t.H.debit,t.H.credit]);
+      t.dir=c.type==="debit"?"debit":"credit";t.how="ok";continue;
+    }
+    const g=guessDirFromText(t.desc);
+    if(g){t.dir=g;t.how="guess";continue;}
+    t.dir="debit";t.how="review";
+  }
+
+  /* ---------- build output rows ---------- */
+  const seen=new Set(),out=[];
+  let verified=0,review=0;
+  for(const t of list){
+    const row={date:t.date.text,description:t.desc,debit:"",credit:"",balance:t.bal==null?"":t.bal/100,flag:"ok"};
+    if(t.dir==="both"){row.debit=t.both[0].p/100;row.credit=t.both[1].p/100;}
+    else if(t.dir==="debit") row.debit=t.amts[0].p/100;
+    else row.credit=t.amts[0].p/100;
+    if(t.how==="verified"){row.flag="verified";verified++;}
+    else if(t.how==="guess"||t.how==="review"){row.flag="review";review++;}
+    if(row.balance!==""){
+      const key=[row.date,row.description,row.debit,row.credit,row.balance].join("|");
+      if(seen.has(key))continue;seen.add(key);
+    }
+    out.push(row);
+  }
+  return {rows:out.slice(0,10000),stats:{total:out.length,verified,review,reordered:descending,opening:openingBalance}};
+}
+
+
+
+function dKey(t){const m=String(t).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?+(m[3]+m[2]+m[1]):null}
+function isoKey(v){return v?+v.replace(/-/g,""):null}
+function fmtIso(v){return v?v.split("-").reverse().join("/"):""}
+let rangeLo=null,rangeHi=null;
+function rangeActive(){return rangeLo!=null&&(isoKey($("#fromDate").value)!==rangeLo||isoKey($("#toDate").value)!==rangeHi)}
+function setRangeLocked(msg){
+  rangeLo=rangeHi=null;
+  ["#fromDate","#toDate"].forEach(id=>{const e=$(id);e.value="";e.disabled=true;e.removeAttribute("min");e.removeAttribute("max")});
+  $("#rangeHint").textContent=msg||"Convert a statement first — then you can pick dates from its own period only.";
+}
+function updateRangeHint(){
+  const ks=allRows.map(r=>dKey(r.date)).filter(Boolean);
+  if(!ks.length){setRangeLocked("No dated transactions found, so there is no date range to choose.");return}
+  rangeLo=Math.min(...ks);rangeHi=Math.max(...ks);
+  const iso=k=>{const t=String(k);return `${t.slice(0,4)}-${t.slice(4,6)}-${t.slice(6,8)}`};
+  const f=$("#fromDate"),t=$("#toDate");
+  f.min=t.min=iso(rangeLo);f.max=t.max=iso(rangeHi);
+  f.value=iso(rangeLo);t.value=iso(rangeHi);f.disabled=t.disabled=false;
+  $("#rangeHint").textContent=`Statement period: ${fmtIso(iso(rangeLo))} to ${fmtIso(iso(rangeHi))}. You can only choose dates inside this period.`;
+}
+/* filter the already-parsed rows (balance checks were done on the full statement, so accuracy is unaffected) */
+function applyRange(fromConvert){
+  const f=isoKey($("#fromDate").value),t=isoKey($("#toDate").value);
+  if(f&&t&&f>t){toast("'From date' is after 'To date'.");return false}
+  transactions=allRows.filter(r=>{const k=dKey(r.date);return k==null||((!f||k>=f)&&(!t||k<=t))});
+  lastStats={...allStats,total:transactions.length,verified:transactions.filter(r=>r.flag==="verified").length,review:transactions.filter(r=>r.flag==="review").length};
+  return true;
+}
+["fromDate","toDate"].forEach(id=>$("#"+id).addEventListener("change",()=>{
+  if(!allRows.length||rangeLo==null)return;
+  const iso=k=>{const t=String(k);return `${t.slice(0,4)}-${t.slice(4,6)}-${t.slice(6,8)}`};
+  const el=$("#"+id);let k=isoKey(el.value),msg="";
+  if(k==null){k=id==="fromDate"?rangeLo:rangeHi;}
+  else if(k<rangeLo){k=rangeLo;msg=1}else if(k>rangeHi){k=rangeHi;msg=1}
+  el.value=iso(k);
+  if(msg) toast(`Only dates between ${fmtIso(iso(rangeLo))} and ${fmtIso(iso(rangeHi))} are allowed.`);
+  if(!applyRange(false))return;
+  renderPreview();renderResults(lastPages);
+  setProgress(100,`Done — ${transactions.length} of ${allRows.length} transaction${allRows.length===1?"":"s"} in selected range.`);
+}));
 function renderResults(pages){
  $("#result").classList.add("show");
  $("#resultTitle").textContent=transactions.length? "Conversion complete":"PDF read successfully";
- $("#resultMeta").textContent=`${selectedFile.name} · ${pages} page${pages===1?"":"s"} · ${transactions.length} transaction${transactions.length===1?"":"s"} detected`;
+ $("#resultMeta").textContent=`${selectedFile.name} · ${pages} page${pages===1?"":"s"} · ${rangeActive()?transactions.length+" of "+allRows.length:transactions.length} transaction${(rangeActive()?allRows.length:transactions.length)===1?"":"s"} ${rangeActive()?"in selected range":"detected"}`;
+ renderCheckNote();
  const d=$("#downloads");d.innerHTML="";
  const choice=$("#output").value;
  const add=(label,fn)=>{const b=document.createElement("button");b.className="btn ghost";b.textContent="↓ "+label;b.onclick=fn;d.appendChild(b)};
@@ -421,12 +853,26 @@ function csvEscape(v){return `"${String(v??"").replaceAll('"','""')}"`}
 function downloadBlob(content,name,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function bankLedger(){return $("#bankLedger").value.trim()||"Bank Account"}
 function referenceLedger(){return $("#referenceLedger").value.trim()||"Suspense"}
-function rows(){return transactions.map((r,i)=>({SNo:i+1,Date:r.date,Description:r.description,Debit:r.debit,Credit:r.credit,Balance:r.balance,"Tally Bank Ledger":bankLedger(),"Reference Ledger":referenceLedger(),"Voucher Type":r.debit?"Payment":"Receipt"}))}
-function renderPreview(){const body=$("#previewBody");body.innerHTML="";$("#previewBankLedger").textContent=bankLedger();transactions.forEach((r,i)=>{const tr=document.createElement("tr");tr.style.borderTop="1px solid #edf1f6";tr.innerHTML=`<td style="padding:8px 9px">${escapeHtml(r.date)}</td><td style="padding:8px 9px;max-width:420px">${escapeHtml(r.description)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.debit)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.credit)}</td><td style="padding:8px 9px;text-align:right">${escapeHtml(r.balance)}</td>`;body.appendChild(tr)})}
+function rows(){return transactions.map((r,i)=>({SNo:i+1,Date:r.date,Description:r.description,Debit:r.debit,Credit:r.credit,Balance:r.balance,"Tally Bank Ledger":bankLedger(),"Reference Ledger":referenceLedger(),"Voucher Type":r.debit?"Payment":"Receipt",Check:r.flag==="review"?"REVIEW":(r.flag==="verified"?"Verified":"OK")}))}
+function fmtAmt(n){return n===""||n==null?"":Number(n).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2})}
+function renderCheckNote(){
+  const el=$("#checkNote"); if(!el)return;
+  if(!allRows.length||!lastStats){el.style.display="none";return}
+  if(!transactions.length){el.innerHTML=`<b>No transactions fall inside ${fmtIso($("#fromDate").value)||"the start"} – ${fmtIso($("#toDate").value)||"the end"}.</b> Change the date range above.`;el.style.display="block";el.style.background="#fffbeb";el.style.borderColor="#fde68a";return}
+  const {verified,review,total,reordered}=lastStats;
+  let html=`<b>Accuracy check:</b> ${verified} of ${total} rows were proven correct against the running balance`;
+  if(review) html+=`, and <b style="color:#b45309">${review} row${review===1?"":"s"} highlighted in yellow need a quick look</b> (the debit/credit side could not be proven)`;
+  else html+=`; every other row was placed using the column position / Dr-Cr marker`;
+  html+=`.`;
+  if(reordered) html+=` Statement was newest-first, so rows were re-ordered oldest-first.`;
+  el.innerHTML=html; el.style.display="block";
+  el.style.background=review?"#fffbeb":"#f0fdf4"; el.style.borderColor=review?"#fde68a":"#bbf7d0";
+}
+function renderPreview(){const body=$("#previewBody");body.innerHTML="";$("#previewBankLedger").textContent=bankLedger();transactions.forEach((r,i)=>{const tr=document.createElement("tr");tr.style.borderTop="1px solid #edf1f6";if(r.flag==="review")tr.style.background="#fffbeb";tr.innerHTML=`<td style="padding:8px 9px;white-space:nowrap">${escapeHtml(r.date)}</td><td style="padding:8px 9px;max-width:420px">${escapeHtml(r.description)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.debit)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.credit)}</td><td style="padding:8px 9px;text-align:right">${fmtAmt(r.balance)}</td>`;body.appendChild(tr)})}
 function escapeHtml(v){return String(v??"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}
 function escapeAttr(v){return String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function downloadCSV(){const r=rows();const csv=[Object.keys(r[0]||{SNo:"",Date:"",Description:"",Debit:"",Credit:"",Balance:"","Tally Bank Ledger":""}).join(","),...r.map(x=>Object.values(x).map(csvEscape).join(","))].join("\n");downloadBlob(csv,base()+".csv","text/csv;charset=utf-8")}
-function downloadXLSX(){const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(rows());ws["!cols"]=[{wch:7},{wch:15},{wch:55},{wch:15},{wch:15},{wch:15},{wch:28}];XLSX.utils.book_append_sheet(wb,ws,"Transactions");XLSX.writeFile(wb,base()+".xlsx")}
+function downloadXLSX(){const wb=XLSX.utils.book_new();const ws=XLSX.utils.json_to_sheet(rows());ws["!cols"]=[{wch:7},{wch:12},{wch:70},{wch:14},{wch:14},{wch:14},{wch:20},{wch:16},{wch:12},{wch:10}];XLSX.utils.book_append_sheet(wb,ws,"Transactions");XLSX.writeFile(wb,base()+".xlsx")}
 function downloadXML(){
  const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
  const bank=bankLedger(), ref=referenceLedger();

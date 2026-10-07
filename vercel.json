@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/gstin.js": {
+      "maxDuration": 10
+    }
+  }
+}

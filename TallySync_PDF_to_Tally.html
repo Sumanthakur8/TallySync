@@ -3,21 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="tallysync-logo.png">
+<link rel="apple-touch-icon" href="tallysync-logo.png">
+<link rel="stylesheet" href="tool.css">
 <title>TallySync — PDF Purchase Invoice to Tally</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
-:root{--bg:#070b12;--panel:#0d1420;--panel2:#111b2a;--line:#1d2c42;--blue:#238cff;--cyan:#37c8ff;--text:#edf5ff;--muted:#91a4bb;--good:#32d583;--warn:#ffb020;--bad:#ff5c77}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#0c2340 0,#070b12 35%);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
-.wrap{max-width:1200px;margin:auto;padding:28px 18px 60px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#0d6efd,#21c7ff);display:grid;place-items:center;font-weight:900;color:white;box-shadow:0 10px 30px #0077ff30}.brand h1{font-size:23px;margin:0}.brand span{color:var(--cyan)}
-.hero{padding:30px 0 22px}.hero h2{font-size:38px;line-height:1.08;margin:12px 0}.hero p{color:var(--muted);max-width:760px;font-size:16px}
-.card{background:linear-gradient(180deg,#0d1522,#0a111b);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:18px;box-shadow:0 20px 60px #0004}.drop{border:1.5px dashed #31547a;border-radius:16px;padding:38px;text-align:center;background:#0b1420;cursor:pointer}.drop:hover{border-color:var(--blue);background:#0d1826}.drop strong{display:block;font-size:19px}.drop small{display:block;color:var(--muted);margin-top:8px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;background:#162438;color:white}.btn.primary{background:linear-gradient(135deg,#1479ff,#16bfff)}.btn:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:14px;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}.stat{background:#0b1420;border:1px solid var(--line);padding:14px;border-radius:12px}.stat b{font-size:22px}.stat small{display:block;color:var(--muted);margin-top:3px}.table-wrap{overflow:auto;margin-top:16px}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{padding:10px;border-bottom:1px solid #172437;text-align:left;font-size:13px}th{color:#9fc4e9;background:#0b1420;position:sticky;top:0}.ok{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}input[type=text]{width:100%;background:#09111c;border:1px solid var(--line);color:white;border-radius:7px;padding:7px}.mapping{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.mapping label{font-size:12px;color:var(--muted)}.mapping input{margin-top:5px}.note{font-size:13px;color:var(--muted);line-height:1.6}.footer{text-align:center;color:#60738b;font-size:12px;margin-top:28px}@media(max-width:800px){.grid,.mapping{grid-template-columns:1fr 1fr}.hero h2{font-size:30px}}@media(max-width:520px){.grid,.mapping{grid-template-columns:1fr}}
+:root{
+  --ts-blue:#2563eb;
+  --ts-blue-dark:#1d4ed8;
+  --ts-sky:#eff6ff;
+  --ts-text:#0f172a;
+  --ts-muted:#64748b;
+  --ts-border:#e5e7eb;
+  --ts-card:#ffffff;
+  --ts-bg:#f8fafc;
+  --ts-green:#16a34a;
+  --ts-orange:#d97706;
+  --ts-red:#dc2626;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#f8fafc;
+  color:var(--ts-text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+.nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid #e5e7eb;
+}
+.nav .wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.brand{display:flex;align-items:center;text-decoration:none}
+.brand-logo{display:block;width:auto;height:42px;max-width:210px;object-fit:contain}
+.navlinks{display:flex;align-items:center;gap:10px}
+.navlinks a{
+  color:#475569;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:700;
+  padding:9px 11px;
+  border-radius:10px;
+}
+.navlinks a:hover{background:#f1f5f9;color:#2563eb}
+.navlinks .primary{color:#fff;background:#2563eb}
+.navlinks .primary:hover{background:#1d4ed8;color:#fff}
+
+.wrap{max-width:1200px;margin:auto;padding:28px 18px 60px}
+main.wrap{padding-top:34px}
+.hero{padding:18px 0 20px}
+.kicker{
+  color:#2563eb;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.hero h2{
+  font-size:38px;
+  line-height:1.08;
+  margin:8px 0 10px;
+  letter-spacing:-.025em;
+}
+.hero p{color:var(--ts-muted);max-width:760px;font-size:16px;line-height:1.65;margin:0}
+
+.card{
+  background:linear-gradient(135deg,#ffffff,#f8fbff);
+  border:1px solid var(--ts-border);
+  border-radius:18px;
+  padding:20px;
+  margin-top:18px;
+  box-shadow:0 10px 30px rgba(15,23,42,.06);
+}
+.card h3{margin:0 0 12px;color:#0f172a;font-size:18px}
+
+.drop{
+  border:1.5px dashed #bfdbfe;
+  border-radius:16px;
+  padding:42px 24px;
+  text-align:center;
+  background:#f8fbff;
+  cursor:pointer;
+  transition:border-color .2s,background .2s,transform .2s;
+}
+.drop:hover{
+  border-color:#2563eb;
+  background:#eff6ff;
+  transform:translateY(-1px);
+}
+.drop strong{display:block;font-size:19px;color:#0f172a}
+.drop small{display:block;color:var(--ts-muted);margin-top:8px}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.btn{
+  border:1px solid #e2e8f0;
+  border-radius:10px;
+  padding:10px 15px;
+  font-weight:700;
+  cursor:pointer;
+  background:#fff;
+  color:#334155;
+  transition:.2s;
+}
+.btn:hover{border-color:#bfdbfe;background:#f8fbff}
+.btn.primary{
+  border-color:#2563eb;
+  background:#2563eb;
+  color:#fff;
+}
+.btn.primary:hover{background:#1d4ed8}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.status{margin-top:14px;color:var(--ts-muted);font-size:14px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}
+.stat{
+  background:#fff;
+  border:1px solid var(--ts-border);
+  padding:14px;
+  border-radius:12px;
+  box-shadow:0 5px 18px rgba(15,23,42,.04);
+}
+.stat b{font-size:22px;color:#0f172a}
+.stat small{display:block;color:var(--ts-muted);margin-top:3px}
+
+.table-wrap{overflow:auto;margin-top:16px}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+th,td{padding:10px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px}
+th{
+  color:#334155;
+  background:#f8fafc;
+  position:sticky;
+  top:0;
+  z-index:1;
+}
+td{background:#fff}
+.ok{color:var(--ts-green);font-weight:700}
+.warn{color:var(--ts-orange);font-weight:700}
+.bad{color:var(--ts-red);font-weight:700}
+
+input[type=text]{
+  width:100%;
+  background:#fff;
+  border:1px solid #dbe2ea;
+  color:#0f172a;
+  border-radius:8px;
+  padding:8px 9px;
+  outline:none;
+}
+input[type=text]:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px #dbeafe;
+}
+.mapping{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mapping label{font-size:12px;color:var(--ts-muted);font-weight:700}
+.mapping input{margin-top:5px}
+.note{font-size:13px;color:var(--ts-muted);line-height:1.7}
+.note b{color:#334155}
+.footer{text-align:center;color:#94a3b8;font-size:12px;margin-top:8px;padding-bottom:10px}
+
+@media(max-width:800px){
+  .grid,.mapping{grid-template-columns:1fr 1fr}
+  .hero h2{font-size:30px}
+  .navlinks a:not(.primary){display:none}
+}
+@media(max-width:520px){
+  .grid,.mapping{grid-template-columns:1fr}
+  .brand-logo{height:36px;max-width:180px}
+  .hero h2{font-size:28px}
+}
+
 </style>
+
+<style>
+.tallysync-mini-about{
+  margin:36px 0 28px!important;
+  padding:20px 24px!important;
+  border:1px solid #e5e7eb!important;
+  border-radius:18px!important;
+  background:linear-gradient(135deg,#f8fbff,#ffffff)!important;
+  box-shadow:0 10px 30px rgba(15,23,42,.06)!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  gap:18px!important;
+  width:100%!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+.tallysync-mini-about .mini-avatar{
+  display:block!important;
+  width:58px!important;height:58px!important;
+  min-width:58px!important;max-width:58px!important;
+  min-height:58px!important;max-height:58px!important;
+  flex:0 0 58px!important;
+  object-fit:cover!important;object-position:center!important;
+  border-radius:50%!important;
+  border:2px solid #e2e8f0!important;
+  padding:0!important;margin:0!important;
+  box-sizing:border-box!important;
+}
+.tallysync-mini-about .mini-content{min-width:0!important;flex:1 1 auto!important}
+.tallysync-mini-about .mini-kicker{
+  font-size:11px!important;font-weight:800!important;
+  letter-spacing:.12em!important;text-transform:uppercase!important;
+  color:#2563eb!important;margin:0 0 4px!important;
+}
+.tallysync-mini-about h3{
+  margin:0 0 5px!important;font-size:18px!important;
+  line-height:1.35!important;color:#0f172a!important;
+}
+.tallysync-mini-about p{
+  margin:0!important;color:#64748b!important;
+  font-size:14px!important;line-height:1.6!important;max-width:none!important;
+}
+.tallysync-mini-about a{
+  color:#2563eb!important;text-decoration:none!important;font-weight:700!important;
+}
+.tallysync-mini-about a:hover{text-decoration:underline!important}
+@media(max-width:640px){
+  .tallysync-mini-about{padding:17px!important;gap:13px!important;align-items:flex-start!important}
+  .tallysync-mini-about .mini-avatar{
+    width:48px!important;height:48px!important;
+    min-width:48px!important;max-width:48px!important;
+    min-height:48px!important;max-height:48px!important;
+    flex-basis:48px!important;
+  }
+  .tallysync-mini-about h3{font-size:16px!important}
+  .tallysync-mini-about p{font-size:13px!important;line-height:1.55!important}
+}
+</style>
+
 </head>
 <body>
-<div class="wrap">
-  <div class="brand"><div class="logo">TS</div><div><h1>Tally<span>Sync</span></h1><small style="color:#7e94ad">by Suman</small></div></div>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="TallySync by Suman">
+      <img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman">
+    </a>
+    <nav class="navlinks">
+      <a href="all-tools.html">All Tools</a>
+      <a href="index.html#services">Services</a>
+      <a class="btn primary" href="index.html#converter">Bank Converter</a>
+    </nav>
+  </div>
+</header>
+<main class="wrap">
   <section class="hero">
+    <div class="kicker">TallySync Toolkit</div>
     <h2>PDF Purchase Invoice → Tally Excel</h2>
     <p>Upload multiple purchase invoices. TallySync extracts supplier, invoice, item, quantity and GST data and prepares an import-ready purchase workbook.</p>
   </section>
@@ -79,8 +324,17 @@
       <label>UOM<input id="uom" type="text" value="Bags"></label>
     </div>
   </div>
-  <div class="footer">TallySync by Suman • Local browser processing • Review before importing into TallyPrime</div>
-</div>
+  <section class="tallysync-mini-about" aria-label="About Suman Thakur">
+    <img class="mini-avatar" src="suman-thakur.jpg" alt="Suman Thakur">
+    <div class="mini-content">
+      <div class="mini-kicker">About the creator</div>
+      <h3>Suman Thakur · Accounts Executive &amp; Data Analyst</h3>
+      <p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools. <a href="index.html#about">Learn more →</a></p>
+    </div>
+  </section>
+
+  <div class="footer">TallySync by Suman • Browser-based accounting tool • Review before importing into TallyPrime</div>
+</main>
 
 <script type="module">
 const pdfjs = await import("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs");

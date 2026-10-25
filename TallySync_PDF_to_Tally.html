@@ -1032,11 +1032,13 @@ $("export").onclick=()=>{
   // Voucher Number is a unique sequential key per invoice; the supplier invoice number goes in Reference No.
   const headers=[
     "Voucher Date","Voucher Type Name","Voucher Number",
-    "Buyer/Supplier - Address","Buyer/Supplier - Pincode",
+    "Buyer/Supplier - Mailing Name","Buyer/Supplier - Country","Buyer/Supplier - State",
+    "Buyer/Supplier - GST Registration Type","Buyer/Supplier - GSTIN/UIN","Buyer/Supplier - Place of Supply",
     "Ledger Name","Ledger Amount","Ledger Amount Dr/Cr",
     "Item Name","Billed Quantity","Quantity UOM","Item Rate","Item Rate per",
     "Item Amount","Change Mode ",
-    "Reference No.","Reference Date"
+    "Reference No.","Reference Date",
+    "GST Rate Details"
   ];
 
   const purchase=$("purchaseLedger").value.trim()||"Purchase";
@@ -1049,12 +1051,24 @@ $("export").onclick=()=>{
   const defUom=$("uom").value.trim()||"Bags";
   const rows=[];
 
-  function row(r,voucherNo,ledger,amount,dc,item="",qty="",uomValue="",rate="",per="",itemAmount=""){
+  // GST state codes -> Tally state names
+  const STATE_BY_CODE={"01":"Jammu & Kashmir","02":"Himachal Pradesh","03":"Punjab","04":"Chandigarh","05":"Uttarakhand","06":"Haryana","07":"Delhi","08":"Rajasthan","09":"Uttar Pradesh","10":"Bihar","11":"Sikkim","12":"Arunachal Pradesh","13":"Nagaland","14":"Manipur","15":"Mizoram","16":"Tripura","17":"Meghalaya","18":"Assam","19":"West Bengal","20":"Jharkhand","21":"Odisha","22":"Chhattisgarh","23":"Madhya Pradesh","24":"Gujarat","26":"Dadra & Nagar Haveli and Daman & Diu","27":"Maharashtra","29":"Karnataka","30":"Goa","31":"Lakshadweep","32":"Kerala","33":"Tamil Nadu","34":"Puducherry","35":"Andaman & Nicobar Islands","36":"Telangana","37":"Andhra Pradesh","38":"Ladakh"};
+  function stateOf(g){return STATE_BY_CODE[String(g||"").slice(0,2)]||""}
+  // Tally does NOT copy party details from the ledger during import, so they must be sent with the voucher.
+  // Address/Pincode columns are left out on purpose so nothing existing is blanked. GST rates are left to Tally masters.
+  function partyDetails(r){
+    const g=String(r.supplierGSTIN||"").trim().toUpperCase();
+    const st=stateOf(g);
+    return {mailing:r.supplier||"",country:"India",state:st,regType:g?"Regular":"Unregistered/Consumer",gstin:g,pos:stateOf(r.buyerGSTIN)||st};
+  }
+  function row(r,voucherNo,ledger,amount,dc,item="",qty="",uomValue="",rate="",per="",itemAmount="",withGst=false){
+    const pd=partyDetails(r);
     return [
       r.date,"Purchase",voucherNo,
-      "", "",
+      pd.mailing,pd.country,pd.state,pd.regType,pd.gstin,pd.pos,
       ledger,Number(amount||0),dc,item,qty,uomValue,rate,per,itemAmount,"Item Invoice",
-      r.invoiceNo,r.date
+      r.invoiceNo,r.date,
+      withGst?"As per Masters/Company":""
     ];
   }
 
@@ -1066,7 +1080,7 @@ $("export").onclick=()=>{
     items.forEach(it=>{
       const qty=Number(it.qty||0), amt=Number(it.amount||0), u=it.uom||defUom;
       const rate=Number(it.rate)>0?Number(it.rate):(qty?Number((amt/qty).toFixed(6)):0);
-      rows.push(row(r,voucherNo,purchase,amt,"Dr",it.name,qty?qty:"",qty?u:"",rate,qty?u:"",amt));
+      rows.push(row(r,voucherNo,purchase,amt,"Dr",it.name,qty?qty:"",qty?u:"",rate,qty?u:"",amt,true));
     });
     if(Number(r.cgst||0)>0) rows.push(row(r,voucherNo,cg,r.cgst,"Dr"));
     if(Number(r.sgst||0)>0) rows.push(row(r,voucherNo,sg,r.sgst,"Dr"));
@@ -1078,14 +1092,15 @@ $("export").onclick=()=>{
   });
 
   const oldRange=XLSX.utils.decode_range(ws["!ref"] || "A1:N1");
+  oldRange.e.c=Math.max(oldRange.e.c,headers.length);
   for(let r=0;r<=oldRange.e.r;r++){
-    for(let c=0;c<=15;c++){
+    for(let c=0;c<headers.length;c++){
       const addr=XLSX.utils.encode_cell({r,c});
       if(ws[addr]) delete ws[addr];
     }
   }
   XLSX.utils.sheet_add_aoa(ws,[headers,...rows],{origin:"A1"});
-  ws["!ref"]=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length,c:15}});
+  ws["!ref"]=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:rows.length,c:headers.length-1}});
 
   // remember suppliers + item names so the next invoice from the same supplier is recognised instantly
   records.forEach(r=>{

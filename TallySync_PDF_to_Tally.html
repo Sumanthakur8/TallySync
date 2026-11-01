@@ -338,6 +338,12 @@ table{min-width:1300px}
       <label>Default UOM (used when the invoice shows none)<input id="uom" type="text" value="Bags"></label>
       <label>Freight / Other Charges Ledger<input id="freightLedger" type="text" value="Freight Inward"></label>
       <label>TCS Ledger<input id="tcsLedger" type="text" value="TCS Receivable"></label>
+      <label>Party GST details in import file
+        <select id="partyMode">
+          <option value="ledger" selected>Use details saved in Tally party ledger (recommended)</option>
+          <option value="invoice">Send details read from the PDF (overwrites ledger values)</option>
+        </select>
+      </label>
       <label>Your company name or GSTIN (optional - tells buyer from supplier)<input id="myId" type="text" value="" placeholder="e.g. 10AAAAA0000A1Z5"></label>
     </div>
     <div class="note" style="margin-top:12px"><span id="savedInfo"></span> <button class="mini" id="forget" type="button">Forget remembered suppliers</button></div>
@@ -1056,25 +1062,36 @@ $("export").onclick=()=>{
   function stateOf(g){return STATE_BY_CODE[String(g||"").slice(0,2)]||""}
   // Tally does NOT copy party details from the ledger during import, so they must be sent with the voucher.
   // Address/Pincode columns are left out on purpose so nothing existing is blanked. GST rates are left to Tally masters.
-  function partyDetails(r){
+  // Party details are sent ONLY on the party (Cr) row, and ONLY when the user chose "Send details read from the PDF".
+  // Default mode leaves these columns blank so Tally keeps using the GST details saved in your party ledger.
+  const sendParty=($("partyMode")&&$("partyMode").value==="invoice");
+  function partyDetails(r,isParty){
+    if(!sendParty||!isParty)return {mailing:"",country:"",state:"",regType:"",gstin:"",pos:""};
     const g=String(r.supplierGSTIN||"").trim().toUpperCase();
     const st=stateOf(g);
-    return {mailing:r.supplier||"",country:"India",state:st,regType:g?"Regular":"Unregistered/Consumer",gstin:g,pos:stateOf(r.buyerGSTIN)||st};
+    return {mailing:r.supplier||"",country:g?"India":"",state:st,regType:g?"Regular":"",gstin:g,pos:stateOf(r.buyerGSTIN)||""};
   }
-  function row(r,voucherNo,ledger,amount,dc,item="",qty="",uomValue="",rate="",per="",itemAmount="",withGst=false){
-    const pd=partyDetails(r);
+  // Real Excel date (serial number + dd-mm-yyyy format). A text date like "2026-10-15" is NOT read by Tally.
+  function xlDate(iso){
+    const m=String(iso||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!m)return "";
+    const serial=Math.round(Date.UTC(+m[1],+m[2]-1,+m[3])/86400000)+25569;
+    return {t:"n",v:serial,z:"dd-mm-yyyy"};
+  }
+  function row(r,voucherNo,ledger,amount,dc,item="",qty="",uomValue="",rate="",per="",itemAmount="",withGst=false,isParty=false){
+    const pd=partyDetails(r,isParty);
     return [
-      r.date,"Purchase",voucherNo,
+      xlDate(r.date),"Purchase",voucherNo,
       pd.mailing,pd.country,pd.state,pd.regType,pd.gstin,pd.pos,
       ledger,Number(amount||0),dc,item,qty,uomValue,rate,per,itemAmount,"Item Invoice",
-      r.invoiceNo,r.date,
+      r.invoiceNo,xlDate(r.date),
       withGst?"As per Masters/Company":""
     ];
   }
 
   records.forEach((r,index)=>{
     const voucherNo=String(index+1);
-    rows.push(row(r,voucherNo,r.supplier,r.total,"Cr"));
+    rows.push(row(r,voucherNo,r.supplier,r.total,"Cr","","","","","","",false,true));
     // one purchase line per item, so multi-item invoices post every item with its own quantity and rate
     const items=(r.items&&r.items.length)?r.items:[{name:"",qty:null,uom:"",rate:null,amount:r.taxable}];
     items.forEach(it=>{

@@ -357,18 +357,18 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
 </style>
 
 <style id="yt-video-layout-fix">
-/* Stable featured-video layout: preserve DOM order and keep cards evenly sized. */
+/* Featured videos: clean 3-column grid. Anything injected into the grid by browser extensions
+   (e.g. video-downloader icons) is taken out of the flow so it can't push cards out of place. */
 #youtube #ytVids{width:100%;min-width:0;}
-#youtube #ytGrid{display:flex!important;flex-flow:row wrap!important;align-items:stretch!important;justify-content:flex-start!important;gap:24px!important;width:100%;min-width:0;}
-#youtube #ytGrid > .yt-video-card{display:flex!important;flex:0 1 calc((100% - 48px)/3)!important;width:calc((100% - 48px)/3)!important;max-width:calc((100% - 48px)/3)!important;min-width:0!important;margin:0!important;order:0!important;transform:none;}
-#youtube #ytGrid > .yt-video-card:nth-child(1){order:1!important}
-#youtube #ytGrid > .yt-video-card:nth-child(2){order:2!important}
-#youtube #ytGrid > .yt-video-card:nth-child(3){order:3!important}
+#youtube #ytGrid{position:relative;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:24px!important;align-items:stretch!important;justify-items:stretch!important;width:100%;min-width:0;}
+#youtube #ytGrid > :not(.yt-video-card){position:absolute!important;width:0!important;height:0!important;overflow:hidden!important;pointer-events:none!important;opacity:0!important;}
+#youtube #ytGrid > .yt-video-card{display:flex!important;width:auto!important;max-width:none!important;min-width:0!important;margin:0!important;transform:none;}
+#youtube #ytGrid > .yt-video-card:hover{transform:translateY(-7px);}
 #youtube .yt-thumb{width:100%;aspect-ratio:16/9;flex:none;}
 #youtube .yt-thumb img{width:100%;height:100%;object-fit:cover;}
 #youtube .yt-thumb.yt-thumb-fallback{background:radial-gradient(circle at 70% 25%,rgba(52,120,246,.35),transparent 38%),linear-gradient(135deg,#0b1428,#183b5a);}
-@media(max-width:1000px){#youtube #ytGrid{gap:18px!important}#youtube #ytGrid > .yt-video-card{flex-basis:calc((100% - 18px)/2)!important;width:calc((100% - 18px)/2)!important;max-width:calc((100% - 18px)/2)!important}}
-@media(max-width:700px){#youtube #ytGrid{display:flex!important;flex-direction:column!important;gap:18px!important}#youtube #ytGrid > .yt-video-card{flex:0 0 auto!important;width:100%!important;max-width:100%!important}}
+@media(max-width:1000px){#youtube #ytGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}}
+@media(max-width:700px){#youtube #ytGrid{grid-template-columns:1fr!important;gap:18px!important}}
 @media(prefers-reduced-motion:reduce){#youtube #ytGrid > .yt-video-card{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -1570,9 +1570,10 @@ function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,
 <script>
 (function(){
  var VIDEOS=[
-  {id:'DUwelEl7Rb8',label:'VIDEO 01'},
-  {id:'LJY6hp0uP3g',label:'VIDEO 02'},
-  {id:'8GSnitIUbQE',label:'VIDEO 03'},
+  /* Add/replace videos here: just paste the YouTube video ID. Thumbnail + title are pulled from your channel automatically. */
+  {id:'DUwelEl7Rb8',label:'VIDEO 01',title:'Convert PDF Purchase Invoices to Tally Prime in 1 Minute | Excel Automation'},
+  {id:'LJY6hp0uP3g',label:'VIDEO 02',title:'Previous Year ITR Filing on Computax Software'},
+  {id:'8GSnitIUbQE',label:'VIDEO 03',title:'How to Import PDF Bank Statement in Tally Prime | Import Bank Entries in Tally Prime (Hindi)'}
  ];
  var grid=document.getElementById('ytGrid');
  if(!grid)return;
@@ -1588,16 +1589,18 @@ function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,
 
   var thumb=document.createElement('span');thumb.className='yt-thumb';
   var img=document.createElement('img');
-  img.src='https://i.ytimg.com/vi/'+v.id+'/hqdefault.jpg';
-  img.alt='YouTube video thumbnail';
+  var thumbs=['maxresdefault','sddefault','hqdefault'],ti=0;
+  img.alt=v.title||'YouTube video thumbnail';
   img.loading='lazy';
-  img.onerror=function(){this.onerror=null;this.style.display='none';thumb.classList.add('yt-thumb-fallback');};
+  img.onload=function(){if(this.naturalWidth<=120&&ti<thumbs.length-1){ti++;this.src='https://i.ytimg.com/vi/'+v.id+'/'+thumbs[ti]+'.jpg'}};
+  img.onerror=function(){ti++;if(ti<thumbs.length){this.src='https://i.ytimg.com/vi/'+v.id+'/'+thumbs[ti]+'.jpg'}else{this.onerror=null;this.style.display='none';thumb.classList.add('yt-thumb-fallback')}};
+  img.src='https://i.ytimg.com/vi/'+v.id+'/'+thumbs[0]+'.jpg';
   var play=document.createElement('span');play.className='yt-play';play.textContent='▶';
   thumb.appendChild(img);thumb.appendChild(play);
 
   var meta=document.createElement('span');meta.className='yt-video-meta';
   var kicker=document.createElement('span');kicker.className='yt-video-kicker';kicker.textContent=v.label+' · PRIME GST';
-  var title=document.createElement('span');title.className='yt-video-title';title.textContent='Loading video title…';
+  var title=document.createElement('span');title.className='yt-video-title';title.textContent=v.title||'Loading video title…';
   var link=document.createElement('span');link.className='yt-video-link';link.textContent='Watch on YouTube ↗';
   meta.appendChild(kicker);meta.appendChild(title);meta.appendChild(link);
   a.appendChild(thumb);a.appendChild(meta);grid.appendChild(a);
@@ -1607,9 +1610,9 @@ function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,
    .then(function(r){if(!r.ok)throw new Error('Title unavailable');return r.json()})
    .then(function(data){
     if(data&&data.title){title.textContent=data.title;a.setAttribute('aria-label','Watch '+data.title+' on YouTube')}
-    else{title.textContent='Watch this tutorial on YouTube'}
+    else if(!v.title){title.textContent='Watch this tutorial on YouTube'}
    })
-   .catch(function(){title.textContent='Watch this tutorial on YouTube'});
+   .catch(function(){if(!v.title)title.textContent='Watch this tutorial on YouTube'});
  });
 })();
 </script>

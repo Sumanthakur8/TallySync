@@ -4,8 +4,8 @@
   <meta name="google-site-verification" content="9SxHxD4e3TlSgE2xZjoy9Q0JFxPccungZT1ia-7mVEI" />
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="tallysync-logo.png"><link rel="apple-touch-icon" href="tallysync-logo.png">
-<title>TallySync by Suman — Accounting & Tax Tools</title>
-<meta name="description" content="TallySync by Suman — practical accounting, GST, tax, reconciliation and reporting tools for Indian businesses and finance professionals.">
+<title>TallySync</title>
+<meta name="description" content="TallySync — practical accounting, GST, tax, reconciliation and reporting tools for Indian businesses and finance professionals.">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs" type="module"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,10 +16,10 @@ body{margin:0;font-family:"Plus Jakarta Sans",Inter,ui-sans-serif,system-ui,-app
 a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44px));margin:auto}
 ::selection{background:#3b5bff;color:#fff}
 /* NAV */
-.nav{height:72px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,11,22,.55);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.08);transition:.3s}
+.nav{height:84px;position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(7,11,22,.55);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border-bottom:1px solid rgba(255,255,255,.08);transition:.3s}
 .nav.scrolled{background:rgba(255,255,255,.86);border-bottom-color:var(--line);box-shadow:0 8px 30px -14px rgba(14,24,60,.18)}
-.navin{height:100%;display:flex;align-items:center;justify-content:space-between}.brand-lockup{display:flex;align-items:center;gap:11px}.brand-logo{width:38px;height:38px;object-fit:contain;border-radius:11px}.brand-fallback{width:38px;height:38px;border-radius:12px;background:var(--grad);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 9px 24px rgba(59,91,255,.4)}
-.logo-name{font-size:20px;font-weight:800;letter-spacing:-.6px;color:#fff;transition:.3s}.logo-name span{background:linear-gradient(135deg,#7f95ff,#14d8a8);-webkit-background-clip:text;background-clip:text;color:transparent}.logo-sub{font-size:10px;color:#8e9bb8;font-weight:600;display:block;letter-spacing:.4px;margin-top:-2px}
+.navin{height:100%;display:flex;align-items:center;justify-content:space-between}.brand-lockup{display:flex;align-items:center;gap:13px}.brand-logo{width:44px;height:44px;object-fit:contain;border-radius:11px}.brand-fallback{width:44px;height:44px;border-radius:12px;background:var(--grad);display:grid;place-items:center;color:#fff;font-weight:900;box-shadow:0 9px 24px rgba(59,91,255,.4)}
+.brand-copy{display:flex;flex-direction:column;justify-content:center;gap:1px}.logo-name{font-size:25px;line-height:1.12;font-weight:800;letter-spacing:-.8px;color:#fff;transition:.3s}.logo-name span{background:linear-gradient(135deg,#7f95ff,#14d8a8);-webkit-background-clip:text;background-clip:text;color:transparent}.logo-sub{font-size:12px;line-height:1.25;color:#8e9bb8;font-weight:600;display:block;letter-spacing:.15px;margin:0}
 .nav.scrolled .logo-name{color:var(--ink)}
 .links{display:flex;gap:6px;align-items:center;color:#c3cce0;font-size:13px;font-weight:600}.links a:not(.btn){padding:8px 12px;border-radius:9px;transition:.2s}.links a:not(.btn):hover{color:#fff;background:rgba(255,255,255,.08)}
 .nav.scrolled .links{color:#4a5a72}.nav.scrolled .links a:not(.btn):hover{color:var(--brand);background:#eef2ff}
@@ -86,14 +86,6 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
 .features{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:46px}.feature{padding:26px;border:1px solid var(--line);border-radius:22px;background:#fff;transition:.3s}.feature:hover{transform:translateY(-4px);box-shadow:var(--shadow-sm);border-color:#cfd9ff}
 .feature .ico{width:48px;height:48px;border-radius:14px;background:#eef2ff;display:grid;place-items:center;font-size:21px}.feature h3{font-size:16px;margin:16px 0 7px;letter-spacing:-.3px}.feature p{font-size:13px;color:var(--muted);line-height:1.65;margin:0}
 .banks{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:36px;max-width:900px;margin-left:auto;margin-right:auto}.bank{background:#fff;border:1px solid var(--line);padding:11px 18px;border-radius:999px;color:#4a5b73;font-size:12.5px;font-weight:700;transition:.2s}.bank:hover{background:var(--grad);color:#fff;border-color:transparent;transform:translateY(-2px)}
-/* PRICING */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;align-items:stretch}
-.price-card{background:#fff;border:1px solid var(--line);border-radius:26px;padding:32px;position:relative;transition:.3s}.price-card:hover{box-shadow:var(--shadow-sm)}
-.price-card.featured{background:linear-gradient(160deg,#0b1020,#1a2766);color:#fff;border:0;box-shadow:0 40px 90px -25px rgba(59,91,255,.55);transform:translateY(-12px)}
-.price-card.featured p,.price-card.featured .price small,.price-card.featured .price-list li{color:#b9c6e6}
-.price-badge{position:absolute;right:20px;top:20px;background:linear-gradient(135deg,#14d8a8,#5eead4);color:#04261d;font-size:10px;font-weight:800;padding:6px 11px;border-radius:999px;letter-spacing:.3px}
-.price-card h3{margin:0 0 9px;font-size:19px}.price{font-size:46px;font-weight:800;letter-spacing:-2.5px;margin:10px 0}.price small{font-size:14px;font-weight:600;color:var(--muted);letter-spacing:0}.price-card p{color:var(--muted);font-size:13.5px;line-height:1.6}
-.price-list{list-style:none;padding:0;margin:22px 0;border-top:1px solid rgba(128,140,170,.2)}.price-list li{padding:9px 0;color:#53647a;font-size:13.5px;border-bottom:1px solid rgba(128,140,170,.12)}
 /* ABOUT */
 .about-grid{display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:center;margin-top:48px;max-width:960px;margin-left:auto;margin-right:auto}
 .profile-photo{width:250px;height:250px;border-radius:32% 68% 62% 38%/40% 42% 58% 60%;object-fit:cover;object-position:center 28%;border:6px solid #fff;box-shadow:0 30px 60px -18px rgba(14,24,60,.3),0 0 0 1px var(--line);margin:auto;display:block;animation:morph 10s ease-in-out infinite}
@@ -115,7 +107,7 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
 .rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}.rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 @media(max-width:1000px){.links a:not(.btn){display:none}.hero-grid{grid-template-columns:1fr}.features,.tool-grid{grid-template-columns:1fr 1fr}.services-grid{grid-template-columns:1fr 1fr}.service-card,.service-card:nth-child(1),.service-card:nth-child(4){grid-column:span 1}.footer-grid{grid-template-columns:1fr 1fr}.pricing-grid{grid-template-columns:1fr}.price-card.featured{transform:none}.stats .container{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr}}
-@media(max-width:700px){.container{width:min(100% - 26px,1200px)}.nav{height:64px}.hero{padding:110px 0 60px}.hero h1{letter-spacing:-2px}.hero-card{padding:16px}.settings{grid-template-columns:1fr}.features,.tool-grid,.services-grid,.footer-grid{grid-template-columns:1fr}.section,.tools-section{padding:70px 0}.hero-actions .btn{width:100%}.about-grid{grid-template-columns:1fr;text-align:center;gap:28px}.profile-photo{width:200px;height:200px}.about-stats{justify-content:center}.contact-box{flex-direction:column;align-items:flex-start;padding:26px}.contact-box .btn{width:100%}.logo-sub{display:none}}
+@media(max-width:700px){.container{width:min(100% - 26px,1200px)}.nav{height:70px}.brand-logo,.brand-fallback{width:38px;height:38px}.logo-name{font-size:21px}.logo-sub{font-size:9.5px}.hero{padding:110px 0 60px}.hero h1{letter-spacing:-2px}.hero-card{padding:16px}.settings{grid-template-columns:1fr}.features,.tool-grid,.services-grid,.footer-grid{grid-template-columns:1fr}.section,.tools-section{padding:70px 0}.hero-actions .btn{width:100%}.about-grid{grid-template-columns:1fr;text-align:center;gap:28px}.profile-photo{width:200px;height:200px}.about-stats{justify-content:center}.contact-box{flex-direction:column;align-items:flex-start;padding:26px}.contact-box .btn{width:100%}.logo-sub{display:none}}
 /* FEATURED TOOLS */
 .serif{font-family:var(--serif);font-weight:500;background:linear-gradient(120deg,#3b5bff,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:50px;perspective:1400px}
@@ -187,12 +179,187 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
 .svc-panel .btn{margin-top:auto;align-self:flex-start;position:relative}
 @media(max-width:1000px){.svc-console{grid-template-columns:1fr}.svc-tabs{flex-direction:row;overflow-x:auto;scrollbar-width:none}.svc-tab{min-width:210px;flex:0 0 auto}.svc-panel{min-height:0}}
 @media(max-width:700px){.svc-panel{padding:26px 22px}.svc-list{grid-template-columns:1fr}.svc-ghost{font-size:130px}.svc-panel h3{font-size:24px}.svc-panel .btn{width:100%}}
+/* PRIME GST SHOWCASE */
+.pr-card{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:56px;border-radius:34px;color:#fff;overflow:hidden;background:radial-gradient(50% 70% at 100% 0%,rgba(245,185,66,.22),transparent 65%),radial-gradient(45% 60% at 0% 100%,rgba(59,91,255,.4),transparent 70%),linear-gradient(150deg,#070b16,#101a44);box-shadow:0 40px 90px -30px rgba(10,18,60,.6)}
+.pr-card:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:radial-gradient(70% 80% at 80% 20%,#000,transparent 80%);mask-image:radial-gradient(70% 80% at 80% 20%,#000,transparent 80%);pointer-events:none}
+.pr-copy,.pr-visual{position:relative}
+.pr-badge{display:inline-flex;align-items:center;gap:9px;font-size:12px;font-weight:700;color:#ffe2a6;background:rgba(245,185,66,.1);border:1px solid rgba(245,185,66,.3);padding:6px 14px 6px 6px;border-radius:999px}
+.pr-badge b{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#ffd37a,#f5a742);color:#2a1b00;display:grid;place-items:center;font-size:12px;font-family:var(--serif)}
+.pr-card h2{color:#fff;font-size:clamp(28px,3.3vw,42px);text-align:left;margin:20px 0 14px;letter-spacing:-1.6px;line-height:1.1}
+.pr-serif{font-family:var(--serif);font-weight:500;background:linear-gradient(120deg,#ffe2a6,#f5a742);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pr-copy>p{color:#aab8da;font-size:15px;line-height:1.8;max-width:540px;margin:0}
+.pr-chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 28px}.pr-chips span{font-size:12px;font-weight:700;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#d5defc;transition:.25s}.pr-chips span:hover{background:rgba(245,185,66,.18);border-color:rgba(245,185,66,.4);color:#ffe2a6;transform:translateY(-2px)}
+.pr-actions{display:flex;gap:12px;flex-wrap:wrap}.pr-card .btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}.pr-card .btn.ghost:hover{background:rgba(255,255,255,.16)}
+.pr-visual{display:grid;place-items:center;padding:20px 10px}
+.pr-browser{width:100%;max-width:430px;border-radius:20px;background:#0b1230;border:1px solid rgba(255,255,255,.14);box-shadow:0 40px 80px -24px rgba(0,0,0,.7),0 0 70px -10px rgba(245,185,66,.25);overflow:hidden;transform:rotate(-2.5deg);animation:prFloat 6s ease-in-out infinite}
+@keyframes prFloat{50%{transform:rotate(-1deg) translateY(-8px)}}
+.pr-bar{display:flex;align-items:center;gap:6px;padding:12px 14px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08)}.pr-bar i{width:9px;height:9px;border-radius:50%;background:#ff6b6b}.pr-bar i:nth-child(2){background:#ffd166}.pr-bar i:nth-child(3){background:#4be0a8}
+.pr-bar span{margin-left:10px;flex:1;font-size:11px;color:#9fb0d0;background:rgba(255,255,255,.07);padding:5px 12px;border-radius:99px}
+.pr-screen{padding:24px 22px 22px}.pr-screen small{font-size:9.5px;letter-spacing:2px;color:#f5b942;font-weight:800}
+.pr-screen h4{font-family:var(--serif);font-weight:500;font-size:22px;line-height:1.2;letter-spacing:-.5px;margin:10px 0 14px;color:#fff}
+.pr-tags{display:flex;gap:8px;margin-bottom:18px}.pr-tags b{font-size:10.5px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.08);color:#9fb0d0;animation:lit 2.7s infinite}.pr-tags b:nth-child(2){animation-delay:.9s}.pr-tags b:nth-child(3){animation-delay:1.8s}
+.pr-rows{display:grid;gap:9px}.pr-rows div{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#dbe4fb;opacity:0;animation:rowIn 4.8s ease-in-out infinite}.pr-rows div:nth-child(2){animation-delay:.4s}.pr-rows div:nth-child(3){animation-delay:.8s}.pr-rows strong{color:#ffd37a;font-size:14px}
+.pr-float{position:absolute;font-size:11.5px;font-weight:700;padding:9px 14px;border-radius:999px;background:rgba(255,255,255,.95);color:#13204a;box-shadow:0 16px 34px -10px rgba(0,0,0,.5);animation:float 4.5s ease-in-out infinite}.pr-float.f1{left:-4px;top:12%}.pr-float.f2{right:-2px;bottom:10%;animation-delay:-2s}
+@media(max-width:1000px){.pr-card{grid-template-columns:1fr;padding:38px 28px}.pr-card h2{font-size:30px}}
+@media(max-width:700px){.pr-card{padding:30px 20px;border-radius:26px}.pr-actions .btn{width:100%}.pr-float.f1{left:0;top:2%}.pr-float.f2{right:0;bottom:2%}.pr-browser{transform:none;animation:none}}
+/* PRIME EXTRAS */
+.pr-card{margin-top:46px}
+.pr-card .pr-title{color:#fff;font-size:clamp(28px,3.3vw,42px);margin:20px 0 14px;letter-spacing:-1.6px;line-height:1.1;font-weight:800}
+.psv-head{display:flex;justify-content:space-between;align-items:center;margin:44px 0 18px;gap:14px;flex-wrap:wrap}.psv-head h4{margin:0;font-size:20px;letter-spacing:-.6px}.psv-head a{font-size:13px;font-weight:800;color:var(--brand)}.psv-head a:hover{text-decoration:underline}
+.psv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.psv{position:relative;display:flex;flex-direction:column;padding:24px;border-radius:22px;background:#fff;border:1px solid var(--line);overflow:hidden;transition:.3s}
+.psv:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,#ffd37a,#f5a742);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.psv:hover{transform:translateY(-6px);box-shadow:var(--shadow);border-color:#f3d9a4}.psv:hover:before{transform:scaleX(1)}
+.psv-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.psv-ic{width:42px;height:42px;border-radius:13px;background:#fff6e3;color:#b97300;display:grid;place-items:center;font-weight:800;font-size:12px;transition:.35s}.psv:hover .psv-ic{background:linear-gradient(135deg,#ffd37a,#f5a742);color:#2a1b00;transform:rotate(-8deg) scale(1.1)}
+.psv-top em{font-style:normal;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:5px 10px;border-radius:999px;background:#fff1cf;color:#a86400}
+.psv h4{margin:0 0 10px;font-size:16px;letter-spacing:-.3px}.psv-price{font-size:34px;font-weight:800;letter-spacing:-1.5px;line-height:1}.psv-price small{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:6px}
+.psv-go{margin-top:18px;font-size:12.5px;font-weight:800;color:#b97300;opacity:0;transform:translateY(6px);transition:.3s}.psv:hover .psv-go{opacity:1;transform:none}
+.pr-why{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:44px;border-top:1px solid var(--line)}
+.pr-why-i{padding:26px 22px 0 0}.pr-why-i b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:38px;line-height:1;background:linear-gradient(135deg,#ffd37a,#f5a742);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pr-why-i h5{margin:10px 0 6px;font-size:15px;letter-spacing:-.3px}.pr-why-i p{margin:0;font-size:12.5px;line-height:1.65;color:var(--muted)}
+@media(max-width:1000px){.psv-grid{grid-template-columns:1fr 1fr}.pr-why{grid-template-columns:1fr 1fr}.pr-card .pr-title{font-size:30px}}
+@media(max-width:700px){.psv-grid,.pr-why{grid-template-columns:1fr}.psv-go{opacity:1;transform:none}.pr-why-i{padding-right:0}}
+/* YOUTUBE */
+.yt-k{background:#ffecec;color:#d61f1f}
+.yt-card{position:relative;margin-top:46px;display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center;padding:40px 44px;border-radius:30px;color:#fff;overflow:hidden;background:radial-gradient(50% 90% at 100% 50%,rgba(255,45,45,.35),transparent 65%),linear-gradient(135deg,#0a0e1d,#1c1024);box-shadow:0 36px 80px -30px rgba(40,10,30,.6)}
+.yt-id{display:flex;gap:16px;align-items:center}.yt-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ff4b4b,#d61f1f);display:grid;place-items:center;font-size:22px;box-shadow:0 0 0 6px rgba(255,75,75,.18),0 16px 30px -8px rgba(255,45,45,.6);animation:ytPulse 2.4s infinite}
+@keyframes ytPulse{50%{box-shadow:0 0 0 14px rgba(255,75,75,0),0 16px 30px -8px rgba(255,45,45,.6)}}
+.yt-id h3{margin:0;font-size:22px;letter-spacing:-.6px}.yt-handle{margin:3px 0 0;color:#ff9b9b;font-size:13px;font-weight:700}
+.yt-desc{margin:20px 0 24px;color:#b9bfd6;font-size:15px;line-height:1.75;max-width:560px}
+.yt-actions{display:flex;gap:12px;flex-wrap:wrap}.yt-sub{background:linear-gradient(135deg,#ff4b4b,#d61f1f);color:#fff;box-shadow:0 14px 30px -8px rgba(255,45,45,.6)}.yt-sub:hover{transform:translateY(-2px);box-shadow:0 20px 36px -8px rgba(255,45,45,.7)}
+.yt-card .btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.2)}.yt-card .btn.ghost:hover{background:rgba(255,255,255,.16)}
+.yt-eq{display:flex;align-items:flex-end;gap:7px;height:120px;padding-right:20px}.yt-eq i{width:9px;border-radius:6px;background:linear-gradient(180deg,#ff7a7a,#d61f1f);animation:eq 1.2s ease-in-out infinite;height:30%}.yt-eq i:nth-child(2){animation-delay:-.3s}.yt-eq i:nth-child(3){animation-delay:-.6s}.yt-eq i:nth-child(4){animation-delay:-.9s}.yt-eq i:nth-child(5){animation-delay:-.2s}.yt-eq i:nth-child(6){animation-delay:-.5s}.yt-eq i:nth-child(7){animation-delay:-.8s}
+@keyframes eq{50%{height:100%}}
+.yt-vids[hidden]{display:none}
+.yt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.yt-vid{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;padding:0;border-radius:20px;overflow:hidden;cursor:pointer;background:#0b1020;box-shadow:var(--shadow-sm);transition:.35s;animation:liIn .6s both}
+.yt-vid:hover{transform:translateY(-6px);box-shadow:var(--shadow)}.yt-vid img{width:100%;height:100%;object-fit:cover;display:block;transition:.5s}.yt-vid:hover img{transform:scale(1.07)}
+.yt-vid:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(5,8,20,.85))}
+.yt-play{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:58px;height:58px;border-radius:50%;background:#ff3b3b;color:#fff;display:grid;place-items:center;font-size:20px;z-index:2;box-shadow:0 12px 30px rgba(255,45,45,.55);transition:.3s}.yt-vid:hover .yt-play{transform:translate(-50%,-50%) scale(1.15)}
+.yt-vt{position:absolute;left:16px;right:16px;bottom:14px;z-index:2;color:#fff;font-weight:700;font-size:13.5px;line-height:1.35;text-align:left;letter-spacing:-.2px}
+.yt-wrap{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden;background:#000;box-shadow:var(--shadow)}.yt-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt-video-card{display:flex;flex-direction:column;min-width:0;text-decoration:none;color:inherit;background:#fff;border:1px solid #e8ebf2;border-radius:22px;overflow:hidden;box-shadow:0 12px 34px rgba(20,32,65,.07);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease;animation:liIn .55s both}
+.yt-video-card:hover{transform:translateY(-7px);box-shadow:0 24px 55px rgba(20,32,65,.15);border-color:#ffd0d0}
+.yt-thumb{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:linear-gradient(135deg,#10182e,#252d4b)}
+.yt-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .55s ease}
+.yt-video-card:hover .yt-thumb img{transform:scale(1.055)}
+.yt-thumb:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(4,8,20,.35))}
+.yt-play{left:50%;top:50%;width:56px;height:56px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.45);backdrop-filter:blur(8px);background:rgba(235,35,45,.94)}
+.yt-video-meta{padding:17px 18px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.yt-video-kicker{font-size:10px;font-weight:850;letter-spacing:1.1px;text-transform:uppercase;color:#e23b42}
+.yt-video-title{font-size:15px;line-height:1.45;font-weight:800;letter-spacing:-.25px;color:#121a2e;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:43px}
+.yt-video-link{margin-top:auto;padding-top:5px;font-size:12px;font-weight:800;color:#d72e39}
+.yt-video-card:focus-visible{outline:3px solid #ff7777;outline-offset:4px}
+.yt-loading-note{grid-column:1/-1;padding:22px;border:1px dashed #d7ddeb;border-radius:18px;color:#6e7890;text-align:center;font-size:13px}
+.yt-feature-note{display:flex;align-items:center;gap:10px;margin-top:16px;color:#69758e;font-size:12px}
+.yt-feature-note span{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border-radius:8px;background:#fff0f0;color:#d72e39;font-weight:900}
+.yt-vt small{display:block;margin-top:4px;font-size:11.5px;font-weight:600;color:#ff9b9b}
+@media(max-width:1000px){.yt-card{grid-template-columns:1fr;padding:32px 26px}.yt-eq{display:none}.yt-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.yt-grid{grid-template-columns:1fr}.yt-actions .btn{width:100%}}
+
+/* TallySync cohesive section polish — subtle blue/teal surfaces + motion */
+:root{--ts-blue:#3478f6;--ts-cyan:#28c7c2;--ts-ink:#101b31;--ts-line:rgba(112,153,220,.20)}
+.stats{position:relative;isolation:isolate;background:linear-gradient(110deg,#0b1428,#101f3c 55%,#102b43);overflow:hidden}
+.stats:before,.stats:after{content:"";position:absolute;z-index:-1;border-radius:50%;filter:blur(2px);pointer-events:none}
+.stats:before{width:280px;height:280px;right:8%;top:-190px;background:radial-gradient(circle,rgba(52,120,246,.35),transparent 70%);animation:tsDrift 9s ease-in-out infinite alternate}
+.stats:after{width:240px;height:240px;left:4%;bottom:-190px;background:radial-gradient(circle,rgba(40,199,194,.22),transparent 70%);animation:tsDrift 11s ease-in-out infinite alternate-reverse}
+.stats .container{gap:14px}
+.stats .stat{position:relative;padding:22px 18px;border:1px solid rgba(155,190,255,.15);border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.085),rgba(255,255,255,.025));box-shadow:0 12px 35px rgba(0,0,0,.13);backdrop-filter:blur(10px);transition:transform .35s,border-color .35s,background .35s}
+.stats .stat:hover{transform:translateY(-7px);border-color:rgba(75,205,220,.5);background:linear-gradient(145deg,rgba(52,120,246,.19),rgba(40,199,194,.07))}
+.stats .stat b{display:block;background:linear-gradient(100deg,#fff,#82d9ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.stats .stat span{color:#bdcbe0}
+#how .steps{gap:18px;position:relative}
+#how .step{position:relative;overflow:hidden;padding:28px 25px 26px;border:1px solid var(--ts-line);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(239,245,255,.94));box-shadow:0 12px 32px rgba(22,48,91,.07);transition:transform .35s,box-shadow .35s,border-color .35s}
+#how .step:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--ts-blue),var(--ts-cyan));transform:scaleY(.2);transform-origin:top;transition:transform .4s}
+#how .step:after{content:"";position:absolute;width:145px;height:145px;right:-75px;top:-78px;border-radius:50%;background:radial-gradient(circle,rgba(52,120,246,.12),transparent 70%);transition:transform .5s}
+#how .step:hover{transform:translateY(-8px);box-shadow:0 20px 44px rgba(31,77,145,.13);border-color:rgba(52,120,246,.35)}
+#how .step:hover:before{transform:scaleY(1)}#how .step:hover:after{transform:scale(1.45)}
+#how .step .num{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#e8f0ff,#dffafa);color:#2868d9;font-weight:800;box-shadow:inset 0 0 0 1px rgba(52,120,246,.12);transition:transform .35s}
+#how .step:hover .num{transform:rotate(-8deg) scale(1.08)}
+#how .step h3,#features .feature h3{color:var(--ts-ink)}
+#how .step p,#features .feature p{color:#65738a;line-height:1.75}
+#features .features{gap:16px}
+#features .feature{position:relative;overflow:hidden;padding:25px 23px 24px;border-radius:19px;border:1px solid rgba(111,151,213,.2);background:linear-gradient(145deg,#fff 0%,#f3f7ff 100%);box-shadow:0 10px 30px rgba(24,52,96,.055);transition:transform .35s,box-shadow .35s,border-color .35s}
+#features .feature:after{content:"";position:absolute;inset:auto -35px -55px auto;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(40,199,194,.13),transparent 70%);transition:transform .45s}
+#features .feature:hover{transform:translateY(-7px);border-color:rgba(52,120,246,.35);box-shadow:0 19px 42px rgba(24,52,96,.11)}
+#features .feature:hover:after{transform:scale(1.5)}
+#features .feature .ico{display:grid;place-items:center;width:48px;height:48px;margin-bottom:17px;border-radius:15px;background:linear-gradient(135deg,#eaf1ff,#e1fbf8);color:#2868d9;font-size:22px;box-shadow:inset 0 0 0 1px rgba(52,120,246,.1);transition:transform .35s}
+#features .feature:hover .ico{transform:translateY(-3px) rotate(5deg)}
+#about .about-grid{padding:24px;border:1px solid var(--ts-line);border-radius:24px;background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(239,246,255,.92));box-shadow:0 18px 48px rgba(18,48,94,.075)}
+#about .about-tag{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:99px;background:#eaf2ff;color:#2868d9;font-weight:700}
+#about .about-stat{border:1px solid rgba(52,120,246,.15);background:linear-gradient(135deg,#f3f7ff,#effcfb);transition:transform .25s,border-color .25s}
+#about .about-stat:hover{transform:translateY(-3px);border-color:rgba(40,199,194,.5)}
+#services .svc-console{border:1px solid rgba(100,145,215,.2);box-shadow:0 22px 60px rgba(16,42,84,.1)}
+#services .svc-tab{transition:background .3s,transform .3s,border-color .3s}
+#services .svc-tab:hover{transform:translateX(4px)}
+#services .svc-panel{animation:tsPanelIn .45s cubic-bezier(.2,.7,.2,1) both}
+#prime .pr-card{box-shadow:0 22px 60px rgba(16,42,84,.12)}
+#prime .psv{transition:transform .32s,box-shadow .32s,border-color .32s}
+#prime .psv:hover{transform:translateY(-7px);box-shadow:0 18px 42px rgba(22,55,105,.12);border-color:rgba(40,199,194,.45)}
+#youtube .yt-card{box-shadow:0 20px 55px rgba(16,42,84,.12)}
+#youtube .yt-video-card{transition:transform .32s,box-shadow .32s,border-color .32s}
+#youtube .yt-video-card:hover{transform:translateY(-7px);box-shadow:0 18px 40px rgba(16,42,84,.14)}
+@keyframes tsDrift{from{transform:translate3d(-10px,0,0)}to{transform:translate3d(24px,22px,0)}}
+@keyframes tsPanelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){.stats .stat{padding:17px 13px}#how .step,#features .feature{padding:21px 18px}#about .about-grid{padding:15px;border-radius:18px}}
+@media(prefers-reduced-motion:reduce){.stats:before,.stats:after{animation:none!important}#how .step,#features .feature,#prime .psv,#youtube .yt-video-card{transition:none!important}}
+
+</style>
+<style>
+
+/* ADVANCED FAQ EXPERIENCE */
+.faq-premium{position:relative;overflow:hidden;background:#f7f9fd!important;padding:104px 0 96px}
+.faq-premium:before{content:"";position:absolute;width:520px;height:520px;right:-260px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(74,105,255,.10),transparent 68%);pointer-events:none}
+.faq-premium .container{position:relative;z-index:1}
+.faq-intro{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:36px;margin-bottom:62px}
+.faq-kicker{display:inline-flex;align-items:center;gap:9px;font-size:10px;font-weight:900;letter-spacing:2px;color:#5868e8}
+.faq-kicker-dot{width:7px;height:7px;border-radius:50%;background:#17c99a;box-shadow:0 0 0 5px rgba(23,201,154,.12)}
+.faq-intro h2{margin:18px 0 15px;font-size:clamp(34px,5vw,56px);line-height:1.05;letter-spacing:-2.4px;color:#101a32;font-weight:850}
+.faq-intro h2 span{color:#6877f5}
+.faq-intro-copy>p{max-width:490px;margin:0;color:#69758c;font-size:15px;line-height:1.8}
+.faq-contact-link{display:inline-flex;gap:10px;align-items:center;margin-top:25px;color:#3346c9;font-size:13px;font-weight:800;text-decoration:none}
+.faq-contact-link span{display:grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#e9edff;font-size:15px;transition:transform .2s}
+.faq-contact-link:hover span{transform:translate(3px,-3px)}
+.faq-visual{height:220px;position:relative;display:grid;place-items:center}
+.faq-orbit{position:absolute;border:1px solid rgba(102,119,245,.17);border-radius:50%;transform:rotate(-18deg)}
+.faq-orbit-one{width:280px;height:145px}.faq-orbit-two{width:220px;height:190px;transform:rotate(35deg)}
+.faq-visual-card{width:132px;height:132px;border-radius:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;background:linear-gradient(145deg,#263c92,#6978f6);box-shadow:0 22px 55px rgba(60,79,190,.28);transform:rotate(-7deg)}
+.faq-visual-icon{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:35px;font-weight:700}
+.faq-visual-label{font-size:8px;line-height:1.45;letter-spacing:1.8px;text-align:center;color:#dfe4ff;font-weight:900}
+.faq-float{position:absolute;display:grid;place-items:center;border-radius:14px;background:#fff;color:#6877f5;box-shadow:0 10px 30px rgba(33,48,100,.12);font-weight:900}
+.faq-float-one{width:36px;height:36px;top:28px;right:20%;font-size:20px}.faq-float-two{width:29px;height:29px;bottom:23px;left:19%;font-size:20px}
+.faq-content{display:grid;grid-template-columns:190px 1fr;gap:36px;align-items:start}
+.faq-side-label{display:flex;flex-direction:column;gap:9px;padding-top:24px;color:#5363db;font-size:10px;font-weight:900;letter-spacing:1.6px}
+.faq-side-label small{font-size:10px;letter-spacing:.8px;color:#9aa4b8;font-weight:700}
+.faq-list{border-top:1px solid #e2e7f0}
+.faq-item{border-bottom:1px solid #e2e7f0;padding:0 4px;transition:background .25s}
+.faq-item[open]{background:rgba(255,255,255,.72)}
+.faq-item summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:42px 1fr 38px;gap:14px;align-items:center;min-height:83px;padding:13px 15px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-number{font-size:11px;font-weight:900;letter-spacing:1px;color:#9aa5bb}
+.faq-question{font-size:16px;font-weight:800;letter-spacing:-.25px;color:#18233b;line-height:1.45}
+.faq-toggle{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#edf0ff;color:#5868e8;position:relative;transition:transform .25s,background .25s}
+.faq-toggle:before,.faq-toggle:after{content:"";position:absolute;width:11px;height:2px;background:currentColor;border-radius:2px}
+.faq-toggle:after{transform:rotate(90deg);transition:transform .25s}
+.faq-item[open] .faq-toggle{background:#5f70ef;color:#fff;transform:rotate(180deg)}
+.faq-item[open] .faq-toggle:after{transform:rotate(0)}
+.faq-answer{padding:0 65px 23px 71px;animation:faqReveal .28s ease}
+.faq-answer p{margin:0;max-width:690px;color:#69758b;font-size:13px;line-height:1.85}
+@keyframes faqReveal{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.faq-bottom-strip{display:flex;align-items:center;gap:13px;margin:48px 0 0 226px;padding:18px 20px;border:1px solid #e5e9f2;border-radius:18px;background:rgba(255,255,255,.75)}
+.faq-bottom-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:12px;background:#17254b;color:#fff;font-size:11px;font-weight:900;letter-spacing:-.5px}
+.faq-bottom-strip>span:nth-child(2){display:flex;flex-direction:column;gap:3px}
+.faq-bottom-strip strong{font-size:12px;color:#24304a}.faq-bottom-strip small{font-size:10px;color:#8994a9}
+.faq-bottom-strip>a{margin-left:auto;text-decoration:none;color:#5364df;font-size:12px;font-weight:850;white-space:nowrap}.faq-bottom-strip>a b{font-size:17px;margin-left:5px}
+@media(max-width:760px){.faq-premium{padding:76px 0 68px}.faq-intro{grid-template-columns:1fr;gap:10px;margin-bottom:35px}.faq-intro h2{font-size:40px}.faq-visual{height:155px;max-width:360px;width:100%;margin:0 auto}.faq-visual-card{width:105px;height:105px;border-radius:27px}.faq-visual-icon{width:43px;height:43px;font-size:28px}.faq-orbit-one{width:235px;height:120px}.faq-orbit-two{width:190px;height:155px}.faq-content{grid-template-columns:1fr;gap:15px}.faq-side-label{padding-top:0;flex-direction:row;align-items:center;justify-content:space-between}.faq-item summary{grid-template-columns:30px 1fr 34px;gap:9px;min-height:76px;padding:11px 4px}.faq-question{font-size:14px}.faq-answer{padding:0 40px 20px 43px}.faq-answer p{font-size:12.5px}.faq-bottom-strip{margin:30px 0 0;padding:14px;gap:10px}.faq-bottom-strip>a{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.faq-item,.faq-toggle,.faq-contact-link span{transition:none}.faq-answer{animation:none}}
+
 </style>
 </head>
 <body>
 <header class="nav"><div class="container navin">
-  <a class="brand-lockup" href="#top" aria-label="TallySync home"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync logo" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/><span class="brand-fallback" style="display:none">TS</span><span><span class="logo-name">Tally<span>Sync</span></span><span class="logo-sub">Accounting technology by Suman</span></span></a>
-  <nav class="links"><a href="#tools">Tools</a><a href="#services">Services</a><a href="#how">How it works</a><a href="#pricing">Pricing</a><a href="#about">About</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Start converting →</a></nav>
+  <a class="brand-lockup" href="#top" aria-label="TallySync home"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync logo" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"/><span class="brand-fallback" style="display:none">TS</span><span class="brand-copy"><span class="logo-name">Tally<span>Sync</span></span><span class="logo-sub">Accounting technology by Suman</span></span></a>
+  <nav class="links"><a href="#tools">Tools</a><a href="#services">Services</a><a href="#how">How it works</a><a href="#about">About</a><a href="#faq">FAQ</a><a class="btn primary" href="#converter">Start converting →</a></nav>
 </div></header>
 
 <main id="top">
@@ -298,60 +465,12 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
 </div></section>
 
 
-<section id="pricing" class="section white">
-  <div class="container">
-    <div class="center">
-      <div class="kicker">Pricing</div>
-      <h2>Simple pricing. Built for daily use.</h2>
-      <p class="lead">Use TallySync by Suman to convert bank statements and prepare accounting-ready files without repetitive manual entry.</p>
-    </div>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <h3>Free Trial</h3>
-        <div class="price">₹0 <small>/ trial</small></div>
-        <p>Try the workflow before subscribing.</p>
-        <ul class="price-list">
-          <li>✓ Bank PDF conversion</li>
-          <li>✓ CSV & Excel export</li>
-          <li>✓ Tally XML workflow</li>
-        </ul>
-        <a class="btn ghost" href="#converter" style="width:100%;text-align:center;display:block">Try the converter</a>
-      </div>
-      <div class="price-card featured">
-        <span class="price-badge">Recommended</span>
-        <h3>TallySync Pro</h3>
-        <div class="price">₹99 <small>/ month</small></div>
-        <p>Affordable access for regular bank-statement work.</p>
-        <ul class="price-list">
-          <li>✓ Bank statement conversion</li>
-          <li>✓ CSV, Excel & Tally XML</li>
-          <li>✓ Payment & Receipt voucher handling</li>
-          <li>✓ Tally bank ledger selection</li>
-          <li>✓ Suspense reference workflow</li>
-        </ul>
-        <a class="btn primary" href="#converter" style="width:100%;text-align:center;display:block">Get started · ₹99/month</a>
-      </div>
-      <div class="price-card">
-        <h3>Business</h3>
-        <div class="price">Custom</div>
-        <p>For teams that need a tailored accounting workflow.</p>
-        <ul class="price-list">
-          <li>✓ Custom bank formats</li>
-          <li>✓ Workflow customization</li>
-          <li>✓ Business support</li>
-        </ul>
-        <a class="btn ghost" href="#about" style="width:100%;text-align:center;display:block">Talk to Suman</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section id="about" class="section"><div class="container">
   <div class="center"><div class="kicker">About Suman</div><h2>Accounts Executive & Data Analyst</h2><p class="lead">Practical accounting, data handling and reporting support for everyday business needs.</p></div>
   <div class="about-grid">
     <div><img class="profile-photo" src="suman-thakur.jpg" alt="Suman Thakur, Accounts Executive and Data Analyst"></div>
     <div class="about-copy">
-      <div class="about-tag">TallySync by Suman Thakur</div>
+      <div class="about-tag">Creator of TallySync</div>
       <h3>Accounts Executive & Data Analyst</h3>
       <div class="about-role">Accounting · GST · TDS/TCS · Reconciliation · Tally ERP · Excel · MIS</div>
       <p>I work with accounting and business data to keep records organized, accurate and easy to understand. <strong>TallySync</strong> brings that practical experience into simple browser-based tools for accounting, tax, reporting and document workflows.</p>
@@ -361,15 +480,92 @@ a{text-decoration:none;color:inherit}.container{width:min(1200px,calc(100% - 44p
   <div class="contact-box"><div><strong>Need accounting or data support?</strong><p>Share your requirement and let's discuss the right workflow for your business.</p></div><a class="btn primary" href="mailto:sumanthakur9661@gmail.com">Contact Suman →</a></div>
 </div></section>
 
-<section id="faq" class="section white"><div class="container"><div class="center"><div class="kicker">FAQ</div><h2>Questions, answered.</h2></div><div class="faq">
-<details open><summary>What kind of PDF should I upload?</summary><p>Use a bank-generated digital PDF downloaded from internet banking, a banking app, or email. Scanned image-only statements need OCR and are not handled by this browser-only demo.</p></details>
-<details><summary>Can it handle password-protected PDFs?</summary><p>Yes. If the PDF requires a password, the converter asks for it and passes it to the PDF reader. The password is not stored.</p></details>
-<details><summary>What if my bank's columns look different?</summary><p>The converter uses generic transaction detection. For production use, add a bank-specific parser for each statement format you need to support.</p></details>
-<details><summary>Does this upload my financial data?</summary><p>This implementation performs PDF extraction in the browser and does not send the selected PDF to a server. The external libraries are loaded from public CDNs.</p></details>
-</div></div></section>
+<section id="prime" class="section"><div class="container">
+  <div class="center"><div class="kicker">Tax &amp; compliance services</div><h2>From smart tools to <em class="serif">real tax support</em></h2><p class="lead">When a tool isn’t enough, work with me directly — transparent, fixed-price help for individuals, businesses and startups.</p></div>
+  <div class="pr-card">
+  <div class="pr-copy">
+    <span class="pr-badge"><b>P</b> Also by Suman</span>
+    <h3 class="pr-title">Meet <em class="pr-serif">Prime GST &amp; Tax Solutions</em></h3>
+    <p>My professional tax consultancy in Darbhanga, Bihar — practical, personal support for GST, income tax returns, TDS &amp; TCS, MSME / Udyam and accounting, for individuals, businesses and startups.</p>
+    <div class="pr-chips"><span>GST</span><span>ITR</span><span>TDS / TCS</span><span>MSME / Udyam</span><span>FSSAI</span><span>Bookkeeping</span></div>
+    <div class="pr-actions"><a class="btn primary" href="https://primegst.vercel.app/" target="_blank" rel="noopener">Visit Prime GST ↗</a><a class="btn ghost" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%20%26%20Tax%20Solutions%2C%20I%20would%20like%20a%20consultation." target="_blank" rel="noopener">WhatsApp consultation</a></div>
+  </div>
+  <div class="pr-visual">
+    <div class="pr-browser">
+      <div class="pr-bar"><i></i><i></i><i></i><span>primegst.vercel.app</span></div>
+      <div class="pr-screen">
+        <small>COMPLY • GROW • STAY SECURE</small>
+        <h4>Professional Tax Consultant in Darbhanga, Bihar</h4>
+        <div class="pr-tags"><b>GST</b><b>ITR</b><b>TDS/TCS</b></div>
+        <div class="pr-rows"><div><span>GST Registration</span><strong>₹999</strong></div><div><span>GST Return (NIL)</span><strong>₹249</strong></div><div><span>ITR – Salary</span><strong>₹999</strong></div></div>
+      </div>
+    </div>
+    <span class="pr-float f1">✓ Compliance focused</span><span class="pr-float f2">💬 1:1 personal support</span>
+  </div>
+</div>
+  <div class="psv-head"><h4>Popular services &amp; fixed prices</h4><a href="https://primegst.vercel.app/" target="_blank" rel="noopener">See all services ↗</a></div>
+  <div class="psv-grid"><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20GST%20Registration%20%28%E2%82%B9999%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">GST</span><em>Most popular</em></div><h4>GST Registration</h4><div class="psv-price">₹999<small>one-time</small></div><span class="psv-go">Get this on WhatsApp →</span></a><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20GST%20Return%20%28NIL%29%20%28%E2%82%B9249%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">%</span><em>Most popular</em></div><h4>GST Return (NIL)</h4><div class="psv-price">₹249<small>per return</small></div><span class="psv-go">Get this on WhatsApp →</span></a><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20ITR%20%E2%80%93%20Salary%20%28%E2%82%B9999%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">ITR</span><em>Most popular</em></div><h4>ITR – Salary</h4><div class="psv-price">₹999<small>per filing</small></div><span class="psv-go">Get this on WhatsApp →</span></a><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20ITR%20%E2%80%93%20Business%20%28%E2%82%B91%2C499%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">ITR</span></div><h4>ITR – Business</h4><div class="psv-price">₹1,499<small>per filing</small></div><span class="psv-go">Get this on WhatsApp →</span></a><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20MSME%20%2F%20Udyam%20Registration%20%28%E2%82%B9499%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">MS</span></div><h4>MSME / Udyam Registration</h4><div class="psv-price">₹499<small>one-time</small></div><span class="psv-go">Get this on WhatsApp →</span></a><a class="psv" href="https://wa.me/918581018617?text=Hello%20Prime%20GST%2C%20I%20am%20interested%20in%20Bookkeeping%20%26%20Accounting%20%28%E2%82%B91%2C999%29." target="_blank" rel="noopener"><div class="psv-top"><span class="psv-ic">A</span></div><h4>Bookkeeping &amp; Accounting</h4><div class="psv-price">₹1,999<small>per month</small></div><span class="psv-go">Get this on WhatsApp →</span></a></div>
+  <div class="pr-why"><div class="pr-why-i"><b>01</b><h5>Professional</h5><p>Structured, detail-oriented support for your tax and accounting needs.</p></div><div class="pr-why-i"><b>02</b><h5>Transparent</h5><p>Clear communication so you know what is required and why.</p></div><div class="pr-why-i"><b>03</b><h5>Responsive</h5><p>Easy access to support when you need help with compliance.</p></div><div class="pr-why-i"><b>04</b><h5>Business-focused</h5><p>Solutions that keep you compliant while you focus on growth.</p></div></div>
+</div></section>
+
+<section id="youtube" class="section white"><div class="container">
+  <div class="center"><div class="kicker yt-k">YouTube</div><h2>Learn tax &amp; GST <em class="serif">on video</em></h2><p class="lead">Practical, easy-to-follow videos from the Prime GST &amp; Tax Solutions channel.</p></div>
+  <div class="yt-card">
+    <div class="yt-main">
+      <div class="yt-id"><div class="yt-avatar"><span>▶</span></div><div><h3>Prime GST &amp; Tax Solutions</h3><p class="yt-handle">@PrimeGstTaxsolutions</p></div></div>
+      <p class="yt-desc">Watch practical videos on GST, income tax and compliance — and subscribe so you never miss a new one.</p>
+      <div class="yt-actions"><a class="btn yt-sub" href="https://www.youtube.com/@PrimeGstTaxsolutions?sub_confirmation=1" target="_blank" rel="noopener">▶ Subscribe</a><a class="btn ghost" href="https://www.youtube.com/@PrimeGstTaxsolutions" target="_blank" rel="noopener">Visit channel ↗</a></div>
+    </div>
+    <div class="yt-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="yt-vids" id="ytVids">
+    <div class="psv-head"><h4>Featured tutorials</h4><a href="https://www.youtube.com/@PrimeGstTaxsolutions/videos" target="_blank" rel="noopener">View all videos ↗</a></div>
+    <div class="yt-grid" id="ytGrid" aria-live="polite"></div><div class="yt-feature-note"><span>▶</span> Select any tutorial to open the original video on YouTube.</div>
+  </div>
+</div></section>
+
+<section id="faq" class="section white faq-premium">
+  <div class="container">
+    <div class="faq-intro">
+      <div class="faq-intro-copy">
+        <span class="faq-kicker"><span class="faq-kicker-dot"></span> HELP CENTRE</span>
+        <h2>Questions?<br><span>We've got answers.</span></h2>
+        <p>Everything you need to know about using TallySync tools. Clear answers, no confusion.</p>
+        <a class="faq-contact-link" href="https://wa.me/919661905883" target="_blank" rel="noopener">Still need help? Chat with us <span>↗</span></a>
+      </div>
+      <div class="faq-visual" aria-hidden="true">
+        <div class="faq-orbit faq-orbit-one"></div><div class="faq-orbit faq-orbit-two"></div>
+        <div class="faq-visual-card"><span class="faq-visual-icon">?</span><span class="faq-visual-label">TALLYSYNC<br>SUPPORT</span></div>
+        <span class="faq-float faq-float-one">✦</span><span class="faq-float faq-float-two">+</span>
+      </div>
+    </div>
+    <div class="faq-content">
+      <div class="faq-side-label"><span>QUICK ANSWERS</span><small>04 QUESTIONS</small></div>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary><span class="faq-number">01</span><span class="faq-question">What kind of PDF should I upload?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Use a bank-generated digital PDF downloaded from internet banking, a banking app, or email. Scanned image-only statements need OCR and are not handled by this browser-only demo.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span class="faq-number">02</span><span class="faq-question">Can it handle password-protected PDFs?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Yes. If the PDF requires a password, the converter asks for it and passes it to the PDF reader. The password is not stored.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span class="faq-number">03</span><span class="faq-question">What if my bank's columns look different?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>The converter uses generic transaction detection. Different bank statement layouts may need adjustments, so always review the extracted entries before using the output.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary><span class="faq-number">04</span><span class="faq-question">Does this upload my financial data?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>This implementation performs PDF extraction in your browser and does not send the selected PDF to a server. External libraries are loaded from public CDNs.</p></div>
+        </details>
+      </div>
+    </div>
+    <div class="faq-bottom-strip"><span class="faq-bottom-mark">TS</span><span><strong>Built for simpler accounting.</strong><small>TallySync by Suman</small></span><a href="#converter">Explore free tools <b>→</b></a></div>
+  </div>
+</section>
 </main>
 
-<footer class="footer"><div class="container"><div class="footer-grid"><div><h3>TallySync by Suman</h3><p>Accounting, data cleaning, reporting and bank statement conversion services by Suman Thakur.</p><p><strong>Address:</strong><br>Nehra, Darbhanga, 847233 (Bihar)</p></div><div><h3>Services</h3><a href="#services">Accounting & Tally Support</a><a href="#services">Data Cleaning</a><a href="#services">Reporting & MIS</a><a href="#services">Dashboard Understanding</a><a href="#services">GST, TDS & TCS Support</a><a href="#services">Reconciliation & Audit Support</a></div><div class="footer-contact"><h3>Quick Contact</h3><a href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 WhatsApp: 9661905883</a><a href="tel:+919661905883">☎ Call: 9661905883</a><a href="mailto:sumanthakur9661@gmail.com">✉ Email: sumanthakur9661@gmail.com</a><a href="#converter">Start a conversion</a></div></div><div class="copyright">© 2026 TallySync by Suman. Accounting, data & reporting services.</div></div></footer><a class="quick-whatsapp" href="https://wa.me/919661905883" target="_blank" rel="noopener" aria-label="Quick contact on WhatsApp" title="Chat on WhatsApp">💬</a>
+<footer class="footer"><div class="container"><div class="footer-grid"><div><h3>TallySync</h3><p>Accounting, data cleaning, reporting and bank statement conversion services by Suman Thakur.</p><p><strong>Address:</strong><br>Nehra, Darbhanga, 847233 (Bihar)</p></div><div><h3>Services</h3><a href="#services">Accounting & Tally Support</a><a href="#services">Data Cleaning</a><a href="#services">Reporting & MIS</a><a href="#services">Dashboard Understanding</a><a href="#services">GST, TDS & TCS Support</a><a href="#services">Reconciliation & Audit Support</a></div><div class="footer-contact"><h3>Quick Contact</h3><a href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 WhatsApp: 9661905883</a><a href="tel:+919661905883">☎ Call: 9661905883</a><a href="mailto:sumanthakur9661@gmail.com">✉ Email: sumanthakur9661@gmail.com</a><a href="https://www.youtube.com/@PrimeGstTaxsolutions" target="_blank" rel="noopener">▶ YouTube channel</a><a href="https://primegst.vercel.app/" target="_blank" rel="noopener">🌐 Prime GST &amp; Tax Solutions</a><a href="#converter">Start a conversion</a></div></div><div class="copyright">© 2026 TallySync. Accounting, data & reporting services.</div></div></footer><a class="quick-whatsapp" href="https://wa.me/919661905883" target="_blank" rel="noopener" aria-label="Quick contact on WhatsApp" title="Chat on WhatsApp">💬</a>
 <div id="toast" class="toast"></div>
 <div id="passwordModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
   <div class="modal-card">
@@ -1326,7 +1522,7 @@ function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,
 (function(){
  var nav=document.querySelector('.nav');
  function sc(){nav.classList.toggle('scrolled',window.scrollY>40)}sc();window.addEventListener('scroll',sc,{passive:true});
- var sel='.section .center,.tools-section .center,.ft-wrap,.mini-card,.marquee,.svc-console,.service-card,.step,.feature,.bank,.price-card,.about-grid,.contact-box,.faq details,.service-note,.stat';
+ var sel='.section .center,.tools-section .center,.ft-wrap,.mini-card,.marquee,.svc-console,.pr-card,.yt-card,.psv,.pr-why-i,.service-card,.step,.feature,.bank,.price-card,.about-grid,.contact-box,.faq details,.service-note,.stat';
  var els=[].slice.call(document.querySelectorAll(sel));
  els.forEach(function(el,i){el.classList.add('rv');el.style.setProperty('--d',((i%4)*0.07)+'s')});
  if('IntersectionObserver' in window){
@@ -1353,6 +1549,52 @@ function base(){return (selectedFile?.name||"bank-statement").replace(/\.pdf$/i,
  function go(i,m){tabs.forEach(function(t,k){t.classList.toggle('active',k===i);t.setAttribute('aria-selected',k===i)});panels.forEach(function(p,k){p.classList.toggle('on',k===i)});if(m)c.classList.add('manual')}
  tabs.forEach(function(t,i){t.addEventListener('click',function(){go(i,true)})});
  c.addEventListener('animationend',function(e){if(e.animationName==='pgrow'&&!c.classList.contains('manual')){var i=tabs.findIndex(function(t){return t.classList.contains('active')});go((i+1)%tabs.length)}});
+})();
+</script>
+<script>
+(function(){
+ var VIDEOS=[
+  {id:'DUwelEl7Rb8',label:'VIDEO 01'},
+  {id:'LJY6hp0uP3g',label:'VIDEO 02'},
+  {id:'8GSnitIUbQE',label:'VIDEO 03'},
+ ];
+ var grid=document.getElementById('ytGrid');
+ if(!grid)return;
+ grid.innerHTML='';
+ VIDEOS.forEach(function(v,i){
+  var a=document.createElement('a');
+  a.className='yt-video-card';
+  a.href='https://youtu.be/'+v.id;
+  a.target='_blank';
+  a.rel='noopener noreferrer';
+  a.style.animationDelay=(i*.08)+'s';
+  a.setAttribute('aria-label','Watch '+v.label+' on YouTube');
+
+  var thumb=document.createElement('span');thumb.className='yt-thumb';
+  var img=document.createElement('img');
+  img.src='https://i.ytimg.com/vi/'+v.id+'/hqdefault.jpg';
+  img.alt='YouTube video thumbnail';
+  img.loading='lazy';
+  img.onerror=function(){this.src='https://i.ytimg.com/vi/'+v.id+'/mqdefault.jpg'};
+  var play=document.createElement('span');play.className='yt-play';play.textContent='▶';
+  thumb.appendChild(img);thumb.appendChild(play);
+
+  var meta=document.createElement('span');meta.className='yt-video-meta';
+  var kicker=document.createElement('span');kicker.className='yt-video-kicker';kicker.textContent=v.label+' · PRIME GST';
+  var title=document.createElement('span');title.className='yt-video-title';title.textContent='Loading video title…';
+  var link=document.createElement('span');link.className='yt-video-link';link.textContent='Watch on YouTube ↗';
+  meta.appendChild(kicker);meta.appendChild(title);meta.appendChild(link);
+  a.appendChild(thumb);a.appendChild(meta);grid.appendChild(a);
+
+  // Fetch the official YouTube title where the public oEmbed endpoint permits it.
+  fetch('https://www.youtube.com/oembed?url='+encodeURIComponent('https://www.youtube.com/watch?v='+v.id)+'&format=json')
+   .then(function(r){if(!r.ok)throw new Error('Title unavailable');return r.json()})
+   .then(function(data){
+    if(data&&data.title){title.textContent=data.title;a.setAttribute('aria-label','Watch '+data.title+' on YouTube')}
+    else{title.textContent='Watch this tutorial on YouTube'}
+   })
+   .catch(function(){title.textContent='Watch this tutorial on YouTube'});
+ });
 })();
 </script>
 </body>

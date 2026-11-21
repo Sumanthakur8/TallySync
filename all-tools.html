@@ -1,248 +1,293 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="tallysync-logo.png"><link rel="apple-touch-icon" href="tallysync-logo.png"><title>All Tools — TallySync</title><meta name="description" content="Directory of TallySync accounting, GST, tax, invoice and PDF tools."><link rel="stylesheet" href="tool.css"><style>
-.tallysync-mini-about{margin:36px 0 28px!important;padding:20px 24px!important;border:1px solid #e5e7eb!important;border-radius:18px!important;background:linear-gradient(135deg,#f8fbff,#ffffff)!important;box-shadow:0 10px 30px rgba(15,23,42,.06)!important;display:flex!important;flex-direction:row!important;align-items:center!important;gap:18px!important;width:100%!important;box-sizing:border-box!important;overflow:hidden!important}.tallysync-mini-about .mini-avatar{display:block!important;width:58px!important;height:58px!important;min-width:58px!important;max-width:58px!important;min-height:58px!important;max-height:58px!important;flex:0 0 58px!important;object-fit:cover!important;object-position:center!important;border-radius:50%!important;border:2px solid #e2e8f0!important;padding:0!important;margin:0!important;box-sizing:border-box!important}.tallysync-mini-about .mini-content{min-width:0!important;flex:1 1 auto!important}.tallysync-mini-about .mini-kicker{font-size:11px!important;font-weight:800!important;letter-spacing:.12em!important;text-transform:uppercase!important;color:#2563eb!important;margin:0 0 4px!important}.tallysync-mini-about h3{margin:0 0 5px!important;font-size:18px!important;line-height:1.35!important;color:#0f172a!important}.tallysync-mini-about p{margin:0!important;color:#64748b!important;font-size:14px!important;line-height:1.6!important;max-width:none!important}.tallysync-mini-about a{color:#2563eb!important;text-decoration:none!important;font-weight:700!important}.tallysync-mini-about a:hover{text-decoration:underline!important}@media(max-width:640px){.tallysync-mini-about{padding:17px!important;gap:13px!important;align-items:flex-start!important}.tallysync-mini-about .mini-avatar{width:48px!important;height:48px!important;min-width:48px!important;max-width:48px!important;min-height:48px!important;max-height:48px!important;flex-basis:48px!important}.tallysync-mini-about h3{font-size:16px!important}.tallysync-mini-about p{font-size:13px!important;line-height:1.55!important}}</style>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="tallysync-logo.png"><link rel="apple-touch-icon" href="tallysync-logo.png">
+<title>All Tools — TallySync</title>
+<meta name="description" content="Directory of TallySync accounting, GST, tax, invoice and PDF tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* Tools Coming Soon */
-.tools-coming-soon{
-  margin:42px 0 30px;
-  padding:28px;
-  border:1px solid #e5e7eb;
-  border-radius:22px;
-  background:linear-gradient(135deg,#f8fbff 0%,#ffffff 55%,#f8fafc 100%);
-  box-shadow:0 10px 30px rgba(15,23,42,.05);
-}
-.tools-coming-soon .coming-head{
-  display:flex;
-  align-items:flex-end;
-  justify-content:space-between;
-  gap:20px;
-  margin-bottom:22px;
-}
-.tools-coming-soon .coming-kicker{
-  margin:0 0 5px;
-  color:#2563eb;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.tools-coming-soon h2{
-  margin:0;
-  color:#0f172a;
-  font-size:28px;
-  line-height:1.2;
-}
-.tools-coming-soon .coming-sub{
-  margin:7px 0 0;
-  color:#64748b;
-  font-size:14px;
-  line-height:1.55;
-}
-.coming-count{
-  flex:0 0 auto;
-  padding:8px 12px;
-  border:1px solid #dbeafe;
-  border-radius:999px;
-  background:#eff6ff;
-  color:#2563eb;
-  font-size:12px;
-  font-weight:800;
-}
-.coming-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:14px;
-}
-.coming-tool{
-  position:relative;
-  min-width:0;
-  padding:18px;
-  border:1px solid #e5e7eb;
-  border-radius:16px;
-  background:#fff;
-  box-shadow:0 5px 18px rgba(15,23,42,.04);
-  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-}
-.coming-tool:hover{
-  transform:translateY(-2px);
-  border-color:#bfdbfe;
-  box-shadow:0 10px 25px rgba(15,23,42,.07);
-}
-.coming-tool .coming-icon{
-  width:42px;
-  height:42px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-bottom:12px;
-  border-radius:12px;
-  background:#f1f5f9;
-  font-size:21px;
-}
-.coming-tool h3{
-  margin:0 0 6px;
-  color:#0f172a;
-  font-size:16px;
-  line-height:1.35;
-}
-.coming-tool p{
-  margin:0;
-  color:#64748b;
-  font-size:13px;
-  line-height:1.5;
-}
-.coming-badge{
-  position:absolute;
-  top:14px;
-  right:14px;
-  padding:5px 8px;
-  border-radius:999px;
-  background:#f8fafc;
-  color:#64748b;
-  border:1px solid #e2e8f0;
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-@media(max-width:900px){
-  .coming-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:640px){
-  .tools-coming-soon{margin:34px 0 24px;padding:20px}
-  .tools-coming-soon .coming-head{align-items:flex-start;flex-direction:column;gap:10px}
-  .tools-coming-soon h2{font-size:23px}
-  .coming-grid{grid-template-columns:1fr}
-  .coming-tool{padding:16px}
-}
-</style>
+:root{--ink:#122033;--muted:#607087;--line:#e1e8f0;--bg:#f7f9fc;--navy:#070d22;--blue:#2357ff;--violet:#5b7cff;--teal:#12d6a6;--amber:#ffb454;--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:10px}
+.wrap{width:min(1240px,100% - 36px);margin:auto}
 
-<style>
-/* Centered Mini About */
-.tallysync-mini-about{
-  justify-content:center!important;
-  text-align:center!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  gap:12px!important;
-}
-.tallysync-mini-about .mini-avatar{
-  flex:0 0 58px!important;
-}
-.tallysync-mini-about .mini-content{
-  flex:0 1 760px!important;
-  width:100%!important;
-  min-width:0!important;
-}
-.tallysync-mini-about .mini-kicker,
-.tallysync-mini-about h3,
-.tallysync-mini-about p{
-  text-align:center!important;
-}
-.tallysync-mini-about p{
-  margin-left:auto!important;
-  margin-right:auto!important;
-  max-width:760px!important;
-}
-@media(max-width:640px){
-  .tallysync-mini-about{
-    padding:20px 17px!important;
-    gap:10px!important;
-  }
-  .tallysync-mini-about .mini-avatar{
-    flex:0 0 48px!important;
-  }
-}
+/* nav */
+.nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav .wrap{height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand-logo{height:50px;width:auto;display:block}
+.navlinks{display:flex;align-items:center;gap:6px}
+.navlinks a{font-size:14px;font-weight:600;color:#42516a;padding:9px 14px;border-radius:999px;transition:.2s}
+.navlinks a:hover{background:#edf2ff;color:var(--blue)}
+.navlinks a.btn{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;box-shadow:0 10px 24px -10px rgba(35,87,255,.8)}
+.navlinks a.btn:hover{transform:translateY(-2px);color:#fff}
+
+/* hero */
+.hero{position:relative;margin:22px auto 0;border-radius:34px;background:linear-gradient(135deg,#fff 0%,#f1f5ff 100%);border:1px solid var(--line);box-shadow:0 30px 70px -40px rgba(35,87,255,.35);color:var(--ink);overflow:hidden;padding:64px clamp(22px,5vw,64px);display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;isolation:isolate}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.28;z-index:-1;transition:transform .6s var(--ease);will-change:transform}
+.b1{width:420px;height:420px;background:var(--blue);left:-90px;top:-120px}
+.b2{width:340px;height:340px;background:var(--violet);right:12%;bottom:-140px}
+.b3{width:240px;height:240px;background:var(--teal);right:-60px;top:-50px;opacity:.22}
+.hero:before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(35,87,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(35,87,255,.08) 1px,transparent 1px);background-size:44px 44px;-webkit-mask:radial-gradient(520px 340px at var(--hx,30%) var(--hy,30%),#000,transparent 75%);mask:radial-gradient(520px 340px at var(--hx,30%) var(--hy,30%),#000,transparent 75%)}
+.hero h1{font-family:Inter,system-ui,sans-serif;font-weight:900;font-size:clamp(38px,5.6vw,68px);line-height:1;letter-spacing:-2px;margin:0 0 18px}
+.hero h1 span{display:inline-block;background:linear-gradient(100deg,#2357ff,#7c5cff 50%,#0fb88f);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;animation:shine 6s ease-in-out infinite alternate}
+@keyframes shine{to{background-position:100% 0}}
+.hero p.lead{margin:0 0 26px;color:var(--muted);font-size:16px;line-height:1.7;max-width:520px}
+.search{position:relative;max-width:520px}
+.search input{width:100%;height:58px;border-radius:18px;border:1px solid #d5deec;background:#fff;box-shadow:0 10px 28px -18px rgba(24,44,78,.35);padding:0 70px 0 52px;font-size:15.5px;font-weight:500;color:var(--ink);outline:none;transition:.25s}
+.search input::placeholder{color:#8a99b0}
+.search input:focus{border-color:#9bb0ff;box-shadow:0 0 0 4px #e3eaff}
+.search .si{position:absolute;left:19px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.8}
+.search kbd{position:absolute;right:14px;top:50%;transform:translateY(-50%);font:700 12px Inter;padding:5px 10px;border-radius:8px;background:#f1f4fa;border:1px solid #dce4ee;color:#596b82}
+.stats{display:flex;gap:30px;margin-top:30px;flex-wrap:wrap}
+.stats b{display:block;font:800 30px Inter;letter-spacing:-1px}
+.stats small{color:var(--muted);font-size:12.5px;font-weight:600}
+
+/* hero visual: live sync ledger */
+.ledger{position:relative;border-radius:24px;background:#fff;border:1px solid var(--line);padding:18px;box-shadow:0 40px 80px -36px rgba(24,44,78,.35);transition:transform .5s var(--ease)}
+.ledger-h{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:700;color:#596b82;margin-bottom:14px}
+.dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:#ff6b6b}.dots i:nth-child(2){background:var(--amber)}.dots i:nth-child(3){background:var(--teal)}
+.lrows{position:relative;display:flex;flex-direction:column;gap:9px;height:262px;overflow:hidden}
+.lr{display:grid;grid-template-columns:34px 1fr auto;gap:11px;align-items:center;padding:10px 12px;border-radius:13px;background:#f4f7fc;font-size:12.5px;opacity:0;transform:translateX(-26px);animation:rowin 8s infinite}
+.lr i{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-style:normal;font-size:15px;background:#fff;box-shadow:0 4px 10px -6px rgba(24,44,78,.3)}
+.lr b{display:block;font-weight:700}.lr small{color:var(--muted);font-size:11px}
+.lr em{font-style:normal;font-weight:800;font-size:12.5px}.cr em{color:#0a9a73}.dr em{color:#e5484d}
+.lr:nth-child(2){animation-delay:0s}.lr:nth-child(3){animation-delay:.5s}.lr:nth-child(4){animation-delay:1s}.lr:nth-child(5){animation-delay:1.5s}.lr:nth-child(6){animation-delay:2s}
+@keyframes rowin{0%{opacity:0;transform:translateX(-26px)}8%,78%{opacity:1;transform:none}92%,100%{opacity:0;transform:translateX(26px)}}
+.beam{position:absolute;left:0;right:0;height:2px;background:var(--teal);box-shadow:0 0 18px 4px rgba(18,214,166,.7);top:0;animation:scan 4s ease-in-out infinite alternate;pointer-events:none;z-index:2}
+@keyframes scan{to{top:100%}}
+.synced{margin-top:14px;display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:700;color:#0a8f6a}
+.synced span{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:12px;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(18,214,166,.6)}100%{box-shadow:0 0 0 12px rgba(18,214,166,0)}}
+
+/* filters */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:40px 0 22px;flex-wrap:wrap}
+.chips{position:relative;display:flex;gap:4px;padding:5px;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px -14px rgba(14,24,60,.25);overflow-x:auto;max-width:100%}
+.chip{position:relative;z-index:1;border:0;background:none;cursor:pointer;padding:10px 17px;border-radius:999px;font-size:13.5px;font-weight:700;color:#4a5972;white-space:nowrap;transition:color .25s}
+.chip.on{color:#fff}.chip em{font-style:normal;opacity:.6;margin-left:6px;font-size:12px}
+.pill{position:absolute;z-index:0;top:5px;bottom:5px;left:0;border-radius:999px;background:linear-gradient(135deg,var(--blue),var(--violet));box-shadow:0 8px 20px -8px rgba(35,87,255,.8);transition:transform .45s var(--ease),width .45s var(--ease)}
+.count{font-size:13.5px;font-weight:600;color:var(--muted)}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:dense;gap:18px}
+.tool{--c1:#2357ff;--c2:#5b7cff;--mx:50%;--my:50%;--rx:0deg;--ry:0deg;position:relative;display:flex;flex-direction:column;min-height:230px;padding:22px;border-radius:24px;background:#fff;border:1px solid var(--line);overflow:hidden;transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .25s var(--ease),box-shadow .3s,border-color .3s;box-shadow:0 14px 34px -22px rgba(14,24,60,.3)}
+.tool[data-cat="invoice"]{--c1:#ff7a59;--c2:#ffb454}.tool[data-cat="pdf"]{--c1:#7c5cff;--c2:#c86bff}.tool[data-cat="tally"]{--c1:#12d6a6;--c2:#2f9bff}
+.tool:before{content:"";position:absolute;inset:0;background:radial-gradient(260px 200px at var(--mx) var(--my),color-mix(in srgb,var(--c1) 22%,transparent),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+.tool:after{content:"";position:absolute;inset:0;border-radius:24px;padding:1.5px;background:radial-gradient(180px 140px at var(--mx) var(--my),var(--c1),transparent 70%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .3s;pointer-events:none}
+.tool:hover{box-shadow:0 34px 60px -26px color-mix(in srgb,var(--c1) 55%,#0a1124);border-color:transparent}
+.tool:hover:before,.tool:hover:after{opacity:1}
+.ic{position:relative;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 12px 24px -10px var(--c1);transition:transform .45s var(--ease)}
+.tool:hover .ic{transform:rotate(-8deg) scale(1.1)}
+.tool h3{font:800 18.5px Inter;letter-spacing:-.4px;margin:20px 0 7px}
+.tool p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.6}
+.go{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:800;color:var(--ink)}
+.go span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#f0f3fa;transition:.35s var(--ease)}
+.tool:hover .go span{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;transform:translateX(5px)}
+.tag{position:absolute;top:20px;right:20px;font-size:11px;font-weight:700;color:var(--muted);background:#f3f6fb;padding:5px 10px;border-radius:999px}
+.tool.wide{grid-column:span 2}
+.flow{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:12px;font-weight:800}
+.flow b{padding:7px 11px;border-radius:10px;background:#f1f4fb}
+.flow i{position:relative;flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--c1) 0 6px,transparent 6px 12px);background-size:24px 2px;animation:dash 1s linear infinite}
+@keyframes dash{to{background-position:24px 0}}
+.flow b:last-child{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff}
+.tool.hide{display:none}
+.empty{display:none;text-align:center;padding:60px 20px;color:var(--muted);font-weight:600}
+.empty.show{display:block}.empty b{display:block;font:800 22px Inter;color:var(--ink);margin-bottom:6px}
+
+/* roadmap */
+.road{margin:70px 0 30px;padding:34px 0 22px;border-radius:30px;background:#fff;border:1px solid var(--line);overflow:hidden}
+.road-h{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;padding:0 clamp(20px,3vw,36px);margin-bottom:24px;flex-wrap:wrap}
+.road h2{font:800 clamp(26px,3vw,36px) Inter;letter-spacing:-1.2px;margin:0 0 6px}
+.road-h p{margin:0;color:var(--muted);font-size:14px;max-width:520px;line-height:1.6}
+.badge{padding:8px 14px;border-radius:999px;background:#eef2ff;color:var(--blue);font-weight:800;font-size:12.5px}
+.rail{display:flex;gap:12px;width:max-content;animation:slide 48s linear infinite;margin-bottom:12px}
+.rail.rev{animation-direction:reverse;animation-duration:56s}
+.road:hover .rail{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.soon{display:flex;align-items:center;gap:12px;padding:12px 18px 12px 12px;border-radius:18px;background:var(--bg);border:1px dashed #c9d3e8;white-space:nowrap}
+.soon i{width:38px;height:38px;border-radius:12px;background:#fff;display:grid;place-items:center;font-style:normal;font-size:19px;box-shadow:0 6px 14px -8px rgba(14,24,60,.3)}
+.soon b{display:block;font-size:14px}.soon small{color:var(--muted);font-size:12px}
+.notice{margin:26px 0 0;padding:16px 20px;border-radius:16px;background:#fff8ea;border:1px solid #fde4b0;color:#7a5a12;font-size:13px;line-height:1.6}
+
+/* about + footer */
+.about{margin:36px auto 28px;padding:28px 24px;border-radius:26px;background:linear-gradient(135deg,#f8fbff,#fff);border:1px solid var(--line);box-shadow:0 14px 40px -24px rgba(14,24,60,.3);display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.about img{width:62px;height:62px;border-radius:50%;object-fit:cover;border:2px solid #dbe4f5}
+.about small{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:.1em}
+.about h3{margin:0;font:800 19px Inter}
+.about p{margin:0;max-width:720px;color:var(--muted);font-size:14px;line-height:1.7}
+.about a{color:var(--blue);font-weight:700}
+.footer{text-align:center;color:var(--muted);font-size:13px;padding:22px 0 40px}
+
+/* one orchestrated entrance, then scroll reveals below the fold */
+.enter{opacity:0;transform:translateY(26px) scale(.97);animation:enter .8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes enter{to{opacity:1;transform:none}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}.reveal.in{opacity:1;transform:none}
+
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding:46px 24px}.ledger{display:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.navlinks a:not(.btn){display:none}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.tool.wide{grid-column:auto}.tool{min-height:0}.hero{border-radius:26px}.brand-logo{height:44px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.enter,.reveal{opacity:1;transform:none}.lr{opacity:1;transform:none}}
 </style>
-</head><body><header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn primary" href="index.html#converter">Bank Converter</a></nav></div></header><main class="wrap"><section class="hero"><div class="kicker">TallySync Toolkit</div><h1>All Tools</h1><p>Accounting, GST, tax, invoice and PDF utilities designed for everyday Indian business workflows.</p></section><div class="tool-grid"><a class="tool" href="gst-calculator.html"><div class="icon">🧾</div><h3>GST Calculator</h3><p>Calculate GST, CGST, SGST and IGST.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="income-tax-calculator.html"><div class="icon">💰</div><h3>Income Tax Calculator</h3><p>AY 2026–27 old vs new regime estimate.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="hsn-sac-finder.html"><div class="icon">🔎</div><h3>HSN/SAC Finder</h3><p>Instantly search the complete GST HSN and SAC master — 22,600+ codes.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="gst-invoice-generator.html"><div class="icon">🧾</div><h3>GST Invoice Generator</h3><p>Create and print a GST invoice.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="pdf-to-jpg.html"><div class="icon">📄</div><h3>PDF → JPG</h3><p>Convert PDF pages to JPG.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="jpg-to-pdf.html"><div class="icon">🖼️</div><h3>JPG → PDF</h3><p>Combine images into a PDF.</p><span class="btn ghost">Open tool →</span></a>
-<a class="tool" href="pdf-compressor.html"><div class="icon">🗜️</div><h3>PDF Compressor</h3><p>Reduce PDF file size for easier sharing and uploads.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="TallySync_PDF_to_Tally.html"><div class="icon">🧾</div><h3>PDF → Tally Purchase</h3><p>Convert purchase invoice PDFs into Tally-ready Excel data with supplier invoice details, items, quantity and rate.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="credit-debit-note-analyzer.html"><div class="icon">📊</div><h3>Credit & Debit Note Analyzer</h3><p>Clean GST Portal notes, analyze supplier-wise impact and export Excel.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="quotation-generator.html"><div class="icon">📑</div><h3>Quotation Generator</h3><p>Create GST-ready quotations with live preview and download as PDF.</p><span class="btn ghost">Open tool →</span></a><a class="tool" href="index.html#converter"><div class="icon">🏦</div><h3>Bank Statement Converter</h3><p>Convert bank PDFs to CSV, Excel and Tally XML.</p><span class="btn ghost">Open tool →</span></a></div>
-<section class="tools-coming-soon" aria-label="Tools coming soon">
-  <div class="coming-head">
+</head>
+<body>
+<header class="nav"><div class="wrap"><a class="brand" href="index.html" aria-label="TallySync by Suman"><img class="brand-logo" src="tallysync-logo.png" alt="TallySync by Suman"></a><nav class="navlinks"><a href="all-tools.html">All Tools</a><a href="index.html#services">Services</a><a class="btn" href="index.html#converter">Bank Converter</a></nav></div></header>
+
+<main class="wrap">
+  <section class="hero" id="hero">
+    <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
     <div>
-      <div class="coming-kicker">More tools on the way</div>
-      <h2>Tools Coming Soon</h2>
-      <p class="coming-sub">New practical tools are being prepared to make everyday accounting, tax and business work faster.</p>
+      <h1 class="enter">Every accounting tool, <span>one workbench.</span></h1>
+      <p class="lead enter" style="--d:.12s">GST, tax, invoices, PDFs and Tally conversions — built for everyday Indian business work. Pick a tool and get it done in your browser.</p>
+      <div class="search enter" style="--d:.24s"><span class="si">🔎</span><input id="q" type="search" placeholder="Search tools — try “GST”, “PDF” or “Tally”" aria-label="Search tools" autocomplete="off"><kbd>/</kbd></div>
+      <div class="stats enter" style="--d:.36s"><div><b data-n="11">0</b><small>tools live</small></div><div><b data-n="4">0</b><small>categories</small></div><div><b>100%</b><small>runs in your browser</small></div></div>
     </div>
-    <div class="coming-count">11 tools planned</div>
+    <div class="ledger enter" style="--d:.3s" id="ledger" aria-hidden="true">
+      <div class="ledger-h"><div class="dots"><i></i><i></i><i></i></div><span>bank-statement.pdf → Tally</span></div>
+      <div class="lrows"><div class="beam"></div>
+        <div class="lr cr"><i>🏦</i><div><b>NEFT · Sharma Traders</b><small>12 Nov · Receipt</small></div><em>+ ₹45,200</em></div>
+        <div class="lr dr"><i>🧾</i><div><b>GST Payment · CBIC</b><small>13 Nov · Payment</small></div><em>− ₹18,540</em></div>
+        <div class="lr cr"><i>💳</i><div><b>UPI · Verma &amp; Sons</b><small>14 Nov · Receipt</small></div><em>+ ₹9,800</em></div>
+        <div class="lr dr"><i>🏢</i><div><b>Office Rent</b><small>15 Nov · Payment</small></div><em>− ₹22,000</em></div>
+        <div class="lr cr"><i>📦</i><div><b>RTGS · Gupta Exports</b><small>17 Nov · Receipt</small></div><em>+ ₹1,20,000</em></div>
+      </div>
+      <div class="synced"><span>✓</span>Vouchers ready for Tally import</div>
+    </div>
+  </section>
+
+  <div class="bar">
+    <div class="chips" id="chips" role="tablist" aria-label="Tool categories"><i class="pill" id="pill"></i></div>
+    <div class="count" id="count" aria-live="polite"></div>
   </div>
 
-  <div class="coming-grid">
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🧾</div>
-      <h3>E-Way Bill Generator</h3>
-      <p>Prepare E-Way Bill details quickly with an easy workflow.</p>
-    </article>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty"><b>No tools match that search</b>Try a shorter word, or clear the search to see all tools.</div>
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">📊</div>
-      <h3>GST Return Summary</h3>
-      <p>Summarize sales, purchases and GST figures for review.</p>
-    </article>
+  <section class="road reveal" aria-label="Tools coming soon">
+    <div class="road-h"><div><h2>Coming soon</h2><p>New practical tools are being prepared to make everyday accounting, tax and business work faster.</p></div><span class="badge">11 tools planned</span></div>
+    <div class="rail" id="r1"></div><div class="rail rev" id="r2"></div>
+  </section>
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">💸</div>
-      <h3>TDS Calculator</h3>
-      <p>Estimate TDS deductions for common payment categories.</p>
-    </article>
+  <div class="notice reveal">Tax calculators are estimates. Verify applicable provisions, rates, thresholds, special-rate income and transaction-specific facts before filing or making a compliance decision.</div>
+</main>
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🧾</div>
-      <h3>Receipt Generator</h3>
-      <p>Create simple printable receipts for received payments.</p>
-    </article>
+<section class="about wrap reveal" aria-label="About Suman Thakur"><img src="suman-thakur.jpg" alt="Suman Thakur"><small>About the creator</small><h3>Suman Thakur · Accounts Executive &amp; Data Analyst</h3><p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools. <a href="index.html#about">Learn more →</a></p></section>
+<footer class="footer">© 2026 TallySync by Suman · Browser-based accounting tools</footer>
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">📦</div>
-      <h3>Inventory Calculator</h3>
-      <p>Calculate stock quantities, values and basic inventory totals.</p>
-    </article>
+<script>
+(function(){
+"use strict";
+var CATS=[["all","All tools"],["tax","GST & Tax"],["invoice","Invoices & Quotes"],["pdf","PDF Tools"],["tally","Tally & Banking"]];
+var TOOLS=[
+ {c:"tax",i:"🧾",n:"GST Calculator",d:"Calculate GST, CGST, SGST and IGST.",h:"gst-calculator.html",t:"Calculator"},
+ {c:"tax",i:"💰",n:"Income Tax Calculator",d:"AY 2026–27 old vs new regime estimate.",h:"income-tax-calculator.html",t:"Calculator"},
+ {c:"tax",i:"🔎",n:"HSN/SAC Finder",d:"Instantly search the complete GST HSN and SAC master — 22,600+ codes.",h:"hsn-sac-finder.html",t:"Lookup"},
+ {c:"tax",i:"📊",n:"Credit & Debit Note Analyzer",d:"Clean GST Portal notes, analyze supplier-wise impact and export Excel.",h:"credit-debit-note-analyzer.html",t:"Analyzer"},
+ {c:"invoice",i:"🧾",n:"GST Invoice Generator",d:"Create and print a GST invoice.",h:"gst-invoice-generator.html",t:"Generator"},
+ {c:"invoice",i:"📑",n:"Quotation Generator",d:"Create GST-ready quotations with live preview and download as PDF.",h:"quotation-generator.html",t:"New"},
+ {c:"pdf",i:"📄",n:"PDF → JPG",d:"Convert PDF pages to JPG.",h:"pdf-to-jpg.html",t:"Converter"},
+ {c:"pdf",i:"🖼️",n:"JPG → PDF",d:"Combine images into a PDF.",h:"jpg-to-pdf.html",t:"Converter"},
+ {c:"pdf",i:"🗜️",n:"PDF Compressor",d:"Reduce PDF file size for easier sharing and uploads.",h:"pdf-compressor.html",t:"Utility"},
+ {c:"tally",i:"🧾",n:"PDF → Tally Purchase",d:"Convert purchase invoice PDFs into Tally-ready Excel data with supplier invoice details, items, quantity and rate.",h:"TallySync_PDF_to_Tally.html",t:"Popular",w:["PDF","Excel","Tally"]},
+ {c:"tally",i:"🏦",n:"Bank Statement Converter",d:"Convert bank PDFs to CSV, Excel and Tally XML.",h:"index.html#converter",t:"Popular",w:["PDF","XML","Tally"]}
+];
+var SOON=[["🧾","E-Way Bill Generator","Prepare E-Way Bill details quickly"],["📊","GST Return Summary","Summarize sales, purchases and GST"],["💸","TDS Calculator","Estimate TDS on common payments"],["🧾","Receipt Generator","Printable receipts for payments"],["📦","Inventory Calculator","Stock quantities and values"],["📈","Business Profit Calculator","Revenue, costs and margins"],["🏦","EMI Calculator","EMI, interest and repayment"],["🏠","HRA Calculator","Estimate HRA exemption"],["🔢","Percentage Calculator","Increase, decrease and difference"],["📅","Due Date Tracker","GST, TDS and tax deadlines"],["🧮","Business Calculator","Pricing, margins and decisions"]];
+var $=function(s){return document.querySelector(s)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+var catName={};CATS.forEach(function(c){catName[c[0]]=c[1]});
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">📈</div>
-      <h3>Business Profit Calculator</h3>
-      <p>Understand revenue, costs, margins and estimated profit.</p>
-    </article>
+/* build grid */
+var grid=$("#grid");
+grid.innerHTML=TOOLS.map(function(t,i){
+  return '<a class="tool'+(t.w?' wide':'')+' enter" style="--d:'+(.45+i*.06)+'s" href="'+t.h+'" data-cat="'+t.c+'" data-s="'+esc((t.n+" "+t.d+" "+t.t+" "+catName[t.c]).toLowerCase())+'">'+
+   '<span class="tag">'+t.t+'</span><div class="ic">'+t.i+'</div><h3>'+esc(t.n)+'</h3><p>'+esc(t.d)+'</p>'+
+   (t.w?'<div class="flow"><b>'+t.w[0]+'</b><i></i><b>'+t.w[1]+'</b><i></i><b>'+t.w[2]+'</b></div>':'')+
+   '<div class="go">Open tool<span>→</span></div></a>';
+}).join("");
+var cards=[].slice.call(grid.children);
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🏦</div>
-      <h3>EMI Calculator</h3>
-      <p>Calculate loan EMI, total interest and repayment amounts.</p>
-    </article>
+/* chips */
+var chips=$("#chips"),pill=$("#pill"),cur="all";
+CATS.forEach(function(c){
+  var n=c[0]==="all"?TOOLS.length:TOOLS.filter(function(t){return t.c===c[0]}).length;
+  var b=document.createElement("button");b.className="chip"+(c[0]==="all"?" on":"");b.dataset.c=c[0];b.setAttribute("role","tab");b.innerHTML=esc(c[1])+"<em>"+n+"</em>";
+  b.addEventListener("click",function(){cur=c[0];apply()});chips.appendChild(b);
+});
+function movePill(){var on=chips.querySelector(".chip.on");if(!on)return;pill.style.width=on.offsetWidth+"px";pill.style.transform="translateX("+on.offsetLeft+"px)"}
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🏠</div>
-      <h3>HRA Calculator</h3>
-      <p>Estimate HRA exemption based on applicable inputs.</p>
-    </article>
+/* filter + search, with FLIP animation */
+var q=$("#q");
+function apply(init){
+  var term=q.value.trim().toLowerCase(),first=new Map(),shown=0;
+  if(!init)cards.forEach(function(c){if(!c.classList.contains("hide"))first.set(c,c.getBoundingClientRect())});
+  cards.forEach(function(c){
+    var ok=(cur==="all"||c.dataset.cat===cur)&&(!term||c.dataset.s.indexOf(term)>-1);
+    c.classList.toggle("hide",!ok);if(ok)shown++;
+    if(!init){c.classList.remove("enter");c.style.opacity=1}
+  });
+  [].forEach.call(chips.querySelectorAll(".chip"),function(b){var on=b.dataset.c===cur;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});
+  movePill();
+  $("#count").textContent=shown+(shown===1?" tool":" tools")+(term?' matching “'+q.value.trim()+'”':"");
+  $("#empty").classList.toggle("show",!shown);
+  if(init||reduce)return;
+  var k=0;
+  cards.forEach(function(c){
+    if(c.classList.contains("hide"))return;
+    var f=first.get(c),l=c.getBoundingClientRect();
+    if(f){var dx=f.left-l.left,dy=f.top-l.top;if(dx||dy)c.animate([{transform:"translate("+dx+"px,"+dy+"px)"},{transform:"none"}],{duration:520,easing:"cubic-bezier(.22,1,.36,1)"})}
+    else c.animate([{opacity:0,transform:"scale(.9) translateY(14px)"},{opacity:1,transform:"none"}],{duration:480,delay:(k++)*30,easing:"cubic-bezier(.22,1,.36,1)",fill:"backwards"});
+  });
+}
+q.addEventListener("input",function(){apply()});
+document.addEventListener("keydown",function(e){
+  if(e.key==="/"&&document.activeElement!==q&&!/input|textarea/i.test(document.activeElement.tagName)){e.preventDefault();q.focus()}
+  else if(e.key==="Escape"&&document.activeElement===q){q.value="";apply();q.blur()}
+});
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🔢</div>
-      <h3>Percentage Calculator</h3>
-      <p>Quickly calculate percentages, increases, decreases and differences.</p>
-    </article>
+/* spotlight + 3D tilt on cards, pointer-reactive hero */
+if(window.matchMedia("(pointer:fine)").matches&&!reduce){
+  cards.forEach(function(c){
+    c.addEventListener("pointermove",function(e){
+      var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+      c.style.setProperty("--mx",x*100+"%");c.style.setProperty("--my",y*100+"%");
+      c.style.setProperty("--ry",((x-.5)*8)+"deg");c.style.setProperty("--rx",((.5-y)*8)+"deg");
+    });
+    c.addEventListener("pointerleave",function(){c.style.setProperty("--rx","0deg");c.style.setProperty("--ry","0deg")});
+  });
+  var hero=$("#hero"),blobs=[].slice.call(hero.querySelectorAll(".blob")),L=$("#ledger");
+  hero.addEventListener("pointermove",function(e){
+    var r=hero.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,nx=x/r.width-.5,ny=y/r.height-.5;
+    hero.style.setProperty("--hx",x+"px");hero.style.setProperty("--hy",y+"px");
+    blobs.forEach(function(b,i){var k=(i+1)*28;b.style.transform="translate("+(nx*k)+"px,"+(ny*k)+"px)"});
+    L.style.transform="perspective(900px) rotateY("+(nx*-8)+"deg) rotateX("+(ny*6)+"deg)";
+  });
+  hero.addEventListener("pointerleave",function(){L.style.transform=""});
+}
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">📅</div>
-      <h3>Due Date Tracker</h3>
-      <p>Keep GST, TDS and tax compliance deadlines in one place.</p>
-    </article>
+/* count-up stats */
+[].forEach.call(document.querySelectorAll("[data-n]"),function(el){
+  var to=+el.dataset.n;if(reduce){el.textContent=to;return}
+  var t0=performance.now()+500;
+  (function tick(now){var p=Math.min(1,Math.max(0,(now-t0)/1200)),e=1-Math.pow(1-p,3);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(tick)})(performance.now());
+});
 
-    <article class="coming-tool">
-      <span class="coming-badge">Coming Soon</span>
-      <div class="coming-icon">🧮</div>
-      <h3>Business Calculator</h3>
-      <p>Useful calculations for pricing, margins and everyday business decisions.</p>
-    </article>
-  </div>
-</section>
-<div class="notice">Tax calculators are estimates. Verify applicable provisions, rates, thresholds, special-rate income and transaction-specific facts before filing or making a compliance decision.</div></main><section class="tallysync-mini-about" aria-label="About Suman Thakur"><img class="mini-avatar" src="suman-thakur.jpg" alt="Suman Thakur"><div class="mini-content"><div class="mini-kicker">About the creator</div><h3>Suman Thakur · Accounts Executive &amp; Data Analyst</h3><p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that practical experience into easy-to-use tools. <a href="index.html#about">Learn more →</a></p></div></section>
-<footer class="footer">© 2026 TallySync by Suman · Browser-based accounting tools</footer><script src="tools.js"></script></body></html>
+/* roadmap rails */
+function rail(el,items){var h=items.map(function(s){return '<div class="soon"><i>'+s[0]+'</i><div><b>'+esc(s[1])+'</b><small>'+esc(s[2])+'</small></div></div>'}).join("");el.innerHTML=h+h}
+rail($("#r1"),SOON.slice(0,6));rail($("#r2"),SOON.slice(6));
+
+/* scroll reveal for lower sections */
+var rv=[].slice.call(document.querySelectorAll(".reveal"));
+if("IntersectionObserver" in window&&!reduce){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15});rv.forEach(function(el){io.observe(el)})}
+else rv.forEach(function(el){el.classList.add("in")});
+
+window.addEventListener("resize",movePill);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(movePill);
+apply(true);
+})();
+</script>
+</body>
+</html>

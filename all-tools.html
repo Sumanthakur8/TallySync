@@ -143,7 +143,7 @@ a{color:inherit;text-decoration:none}button,input{font:inherit;color:inherit}
       <h1 class="enter">Every accounting tool, <span>one workbench.</span></h1>
       <p class="lead enter" style="--d:.12s">GST, tax, invoices, PDFs and Tally conversions — built for everyday Indian business work. Pick a tool and get it done in your browser.</p>
       <div class="search enter" style="--d:.24s"><span class="si">🔎</span><input id="q" type="search" placeholder="Search tools — try “GST”, “PDF” or “Tally”" aria-label="Search tools" autocomplete="off"><kbd>/</kbd></div>
-      <div class="stats enter" style="--d:.36s"><div><b data-n="12">0</b><small>tools live</small></div><div><b data-n="4">0</b><small>categories</small></div><div><b>100%</b><small>runs in your browser</small></div></div>
+      <div class="stats enter" style="--d:.36s"><div><b data-n="13">0</b><small>tools live</small></div><div><b data-n="4">0</b><small>categories</small></div><div><b>100%</b><small>runs in your browser</small></div></div>
     </div>
     <div class="ledger enter" style="--d:.3s" id="ledger" aria-hidden="true">
       <div class="ledger-h"><div class="dots"><i></i><i></i><i></i></div><span>bank-statement.pdf → Tally</span></div>
@@ -167,7 +167,7 @@ a{color:inherit;text-decoration:none}button,input{font:inherit;color:inherit}
   <div class="empty" id="empty"><b>No tools match that search</b>Try a shorter word, or clear the search to see all tools.</div>
 
   <section class="road reveal" aria-label="Tools coming soon">
-    <div class="road-h"><div><h2>Coming soon</h2><p>New practical tools are being prepared to make everyday accounting, tax and business work faster.</p></div><span class="badge">11 tools planned</span></div>
+    <div class="road-h"><div><h2>Coming soon</h2><p>New practical tools are being prepared to make everyday accounting, tax and business work faster.</p></div><span class="badge">10 tools planned</span></div>
     <div class="rail" id="r1"></div><div class="rail rev" id="r2"></div>
   </section>
 
@@ -186,6 +186,7 @@ var TOOLS=[
  {c:"tax",i:"💰",n:"Income Tax Calculator",d:"AY 2026–27 old vs new regime estimate.",h:"income-tax-calculator.html",t:"Calculator"},
  {c:"tax",i:"🔎",n:"HSN/SAC Finder",d:"Instantly search the complete GST HSN and SAC master — 22,600+ codes.",h:"hsn-sac-finder.html",t:"Lookup"},
  {c:"tax",i:"📊",n:"Credit & Debit Note Analyzer",d:"Clean GST Portal notes, analyze supplier-wise impact and export Excel.",h:"credit-debit-note-analyzer.html",t:"Analyzer"},
+ {c:"tax",i:"📅",n:"Due Date Tracker",d:"Track GST, TDS, Income Tax, ROC and PF/ESI deadlines with countdowns, a late fee calculator and calendar export.",h:"due-date-tracker.html",t:"New"},
  {c:"invoice",i:"🧾",n:"GST Invoice Generator",d:"Create and print a GST invoice.",h:"gst-invoice-generator.html",t:"Generator"},
  {c:"invoice",i:"📑",n:"Quotation Generator",d:"Create GST-ready quotations with live preview and download as PDF.",h:"quotation-generator.html",t:"New"},
  {c:"pdf",i:"📎",n:"PDF Merger",d:"Combine multiple PDFs into one file. Drag to reorder, merge and download in your browser.",h:"pdf-merger.html",t:"New"},
@@ -195,7 +196,7 @@ var TOOLS=[
  {c:"tally",i:"🧾",n:"PDF → Tally Purchase",d:"Convert purchase invoice PDFs into Tally-ready Excel data with supplier invoice details, items, quantity and rate.",h:"TallySync_PDF_to_Tally.html",t:"Popular",w:["PDF","Excel","Tally"]},
  {c:"tally",i:"🏦",n:"Bank Statement Converter",d:"Convert bank PDFs to CSV, Excel and Tally XML.",h:"index.html#converter",t:"Popular",w:["PDF","XML","Tally"]}
 ];
-var SOON=[["🧾","E-Way Bill Generator","Prepare E-Way Bill details quickly"],["📊","GST Return Summary","Summarize sales, purchases and GST"],["💸","TDS Calculator","Estimate TDS on common payments"],["🧾","Receipt Generator","Printable receipts for payments"],["📦","Inventory Calculator","Stock quantities and values"],["📈","Business Profit Calculator","Revenue, costs and margins"],["🏦","EMI Calculator","EMI, interest and repayment"],["🏠","HRA Calculator","Estimate HRA exemption"],["🔢","Percentage Calculator","Increase, decrease and difference"],["📅","Due Date Tracker","GST, TDS and tax deadlines"],["🧮","Business Calculator","Pricing, margins and decisions"]];
+var SOON=[["🧾","E-Way Bill Generator","Prepare E-Way Bill details quickly"],["📊","GST Return Summary","Summarize sales, purchases and GST"],["💸","TDS Calculator","Estimate TDS on common payments"],["🧾","Receipt Generator","Printable receipts for payments"],["📦","Inventory Calculator","Stock quantities and values"],["📈","Business Profit Calculator","Revenue, costs and margins"],["🏦","EMI Calculator","EMI, interest and repayment"],["🏠","HRA Calculator","Estimate HRA exemption"],["🔢","Percentage Calculator","Increase, decrease and difference"],["🧮","Business Calculator","Pricing, margins and decisions"]];
 var $=function(s){return document.querySelector(s)};
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 var reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;

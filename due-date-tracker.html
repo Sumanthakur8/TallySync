@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" type="image/png" href="tallysync-logo.png"><link rel="apple-touch-icon" href="tallysync-logo.png">
+<title>Compliance Due Date Tracker – GST, TDS, ITR, ROC | TallySync</title>
+<meta name="description" content="Track GST, TDS/TCS, Income Tax, ROC and PF/ESI due dates in one place. Filter by your profile, get countdowns, mark filings done and export reminders to your calendar. Free tool by TallySync.">
+<meta name="theme-color" content="#070b16">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0b1220;--muted:#5d6b82;--line:#e3e8f0;--bg:#f5f7fb;--card:#fff;--brand:#2357ff;--brand2:#5b7cff;--violet:#7c5cff;--accent:#14d8a8;--navy:#070b16;--red:#e5484d;--green:#0f9f74;--ease:cubic-bezier(.22,1,.36,1);--grad:linear-gradient(135deg,#2357ff,#5b7cff);--shadow:0 30px 80px -20px rgba(14,24,60,.18);--shadow-sm:0 12px 34px -16px rgba(14,24,60,.12);--serif:"Fraunces",Georgia,serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+--c-gst:#2357ff;--c-tds:#0fb5a0;--c-it:#7c5cff;--c-roc:#f0a030;--c-pay:#ec5b8c;--c-my:#64748b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;color:inherit}
+.container{width:min(1280px,calc(100% - 40px));margin:auto}
+::selection{background:var(--brand);color:#fff}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* scroll progress */
+.progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--brand),var(--violet),var(--accent));z-index:300;pointer-events:none}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);transition:box-shadow .3s}
+.top.scrolled{box-shadow:0 14px 30px -20px rgba(14,24,60,.35)}
+.top .in{height:72px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:22px;letter-spacing:-.8px}
+.brand-logo{height:46px;width:auto;border-radius:11px;object-fit:contain;display:block}
+.brand-fallback{width:44px;height:44px;border-radius:12px;background:var(--grad);display:none;place-items:center;color:#fff;font-weight:900;font-size:16px}
+.brand b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{display:block;font-size:10.5px;font-weight:700;letter-spacing:.2px;color:var(--muted);margin-top:-2px}
+.links{display:flex;gap:2px;align-items:center;font-size:13px;font-weight:700;color:#33445c}
+.links a.lk{padding:9px 13px;border-radius:999px;transition:.2s}
+.links a.lk:hover,.links a.lk.on{color:var(--brand);background:#eef1ff}
+.back{font-size:13.5px;font-weight:700;color:#33445c;padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:#fff;transition:.2s;margin-left:8px;white-space:nowrap}
+.back:hover{border-color:var(--brand);color:var(--brand)}
+
+/* buttons */
+.btn{border:0;cursor:pointer;font-weight:800;font-size:13.5px;border-radius:12px;padding:12px 18px;transition:transform .25s var(--ease),box-shadow .25s,background .2s,border-color .2s,color .2s;display:inline-flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;white-space:nowrap}
+.btn.primary{background:var(--grad);color:#fff;box-shadow:0 12px 26px -10px rgba(35,87,255,.7)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -10px rgba(35,87,255,.75)}
+.btn.ghost,.btn.line{background:#fff;border:1px solid var(--line);color:#33445c}
+.btn.ghost:hover,.btn.line:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-2px)}
+.btn.done{background:#e8faf3;color:var(--green);border:1px solid #cdf1e2}
+.btn:active{transform:scale(.97)}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+.btn.ghost .ripple,.btn.line .ripple,.chip .ripple,.seg .ripple,.lf-tabs .ripple{background:rgba(35,87,255,.18)}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+
+/* hero */
+.hero{padding:22px 0 0}
+.hero-in{position:relative;overflow:hidden;isolation:isolate;border-radius:30px;padding:48px clamp(22px,4vw,56px);background:linear-gradient(135deg,#fff,#eef3ff);border:1px solid var(--line);box-shadow:0 30px 70px -44px rgba(35,87,255,.4);display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center}
+.hero-in:before{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(35,87,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(35,87,255,.08) 1px,transparent 1px);background-size:40px 40px;-webkit-mask:radial-gradient(420px 280px at var(--hx,25%) var(--hy,30%),#000,transparent 75%);mask:radial-gradient(420px 280px at var(--hx,25%) var(--hy,30%),#000,transparent 75%)}
+.blob{position:absolute;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.3;animation:drift 12s ease-in-out infinite alternate}
+.b1{width:330px;height:330px;background:var(--brand);left:-90px;top:-120px}
+.b2{width:270px;height:270px;background:var(--accent);right:6%;bottom:-130px;animation-delay:-4s}
+.b3{width:200px;height:200px;background:var(--violet);right:36%;top:-110px;animation-delay:-8s;opacity:.22}
+@keyframes drift{to{transform:translate(40px,26px) scale(1.12)}}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--brand);background:#eef1ff;padding:6px 12px;border-radius:999px}
+.kicker.live:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(20,216,168,.55)}100%{box-shadow:0 0 0 12px rgba(20,216,168,0)}}
+.hero h1{margin:16px 0 12px;font-size:clamp(34px,5vw,60px);font-weight:900;letter-spacing:-2.4px;line-height:1.02}
+.hero h1 .w{display:inline-block;opacity:0;transform:translateY(.5em) rotate(2deg);filter:blur(6px);animation:wordin .9s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes wordin{to{opacity:1;transform:none;filter:none}}
+.hero h1 .g{background:linear-gradient(100deg,#2357ff,#7c5cff 50%,#0fb88f);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wordin .9s var(--ease) forwards,shine 6s ease-in-out infinite alternate;animation-delay:var(--d,0s),0s;padding-right:.04em}
+@keyframes shine{to{background-position:100% 0}}
+.hero p.lead{margin:0;color:var(--muted);font-size:15.5px;max-width:600px;line-height:1.75}
+.enter{opacity:0;transform:translateY(24px);animation:rise .8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+.hero-actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.perks{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.perks span{font-size:12.5px;font-weight:700;color:#33445c;background:#fff;border:1px solid var(--line);padding:7px 13px;border-radius:999px;box-shadow:0 6px 16px -10px rgba(24,44,78,.3)}
+
+/* live next-deadline card */
+.float{position:relative;justify-self:center;width:min(100%,400px);animation:bob 6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.float.enter{animation:rise .8s var(--ease) forwards,bob 6s ease-in-out infinite;animation-delay:var(--d,0s),1.3s}
+.next-card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 36px 70px -30px rgba(24,44,78,.45);transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .35s var(--ease);will-change:transform;position:relative}
+.stamp{position:absolute;right:-12px;bottom:-12px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:900;box-shadow:0 10px 24px -8px rgba(18,214,166,.8);animation:pulse 2s infinite;z-index:2}
+.nc-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.nc-head strong{font-size:14px;letter-spacing:-.2px}
+.pill{font-size:10.5px;font-weight:800;padding:6px 11px;border-radius:999px;background:#e8faf3;color:var(--green);border:1px solid #cdf1e2}
+.nc-main{display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center}
+.ring{position:relative;width:120px;height:120px}.ring svg{transform:rotate(-90deg);width:120px;height:120px}.ring circle{fill:none;stroke-width:9;stroke-linecap:round}.ring .bg{stroke:#eaeffa}.ring .fg{stroke:url(#rg);transition:stroke-dashoffset 1.2s var(--ease)}
+.ring-c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}.ring-c b{font-size:32px;letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums}.ring-c small{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-top:4px}
+.nc-title{font-size:18px;font-weight:800;letter-spacing:-.5px;line-height:1.25;margin:0 0 8px;transition:color .2s}.nc-title:hover{color:var(--brand)}
+.nc-meta{font-size:12.5px;color:var(--muted);line-height:1.7}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:999px;background:color-mix(in srgb,var(--cc) 12%,#fff);color:var(--cc)}
+.tag:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--cc)}
+.nc-list{margin-top:18px;border-top:1.5px dashed #d8e0ee;padding-top:8px}
+.nc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 6px;border-radius:10px;font-size:13px;cursor:pointer;transition:.2s var(--ease)}.nc-row:hover{background:#f3f6ff;transform:translateX(4px)}
+.nc-row span:first-child{font-weight:700;display:flex;gap:9px;align-items:center;min-width:0}.nc-row i{width:8px;height:8px;border-radius:50%;background:var(--cc);flex:none}.nc-row em{font-style:normal;font-family:var(--mono);font-weight:600;color:var(--muted);font-size:11.5px;white-space:nowrap}
+
+/* stats (quotation summary style) */
+.stats{padding:20px 0 0}
+.stats .container{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{position:relative;overflow:hidden;padding:20px 20px 18px;border-radius:18px;background:linear-gradient(135deg,#0e1a45,#1c3a9e);color:#fff;box-shadow:0 24px 50px -28px rgba(14,26,69,.8);transition:transform .4s var(--ease)}
+.stat:hover{transform:translateY(-6px)}
+.stat:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.14) 50%,transparent 70%);transform:translateX(-120%);animation:sweep 5s ease-in-out infinite;animation-delay:var(--sd,0s)}
+@keyframes sweep{60%,100%{transform:translateX(120%)}}
+.stat b{display:block;font-size:36px;letter-spacing:-1.5px;line-height:1.1;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:4px;font-size:12px;color:#aab9e6;font-weight:600}
+.stat.t2{background:linear-gradient(135deg,#0b3a45,#0f8f86)}.stat.red{background:linear-gradient(135deg,#40101c,#c02a3b)}.stat.t4{background:linear-gradient(135deg,#0e3a2c,#12966b)}
+.stat.t2 span,.stat.red span,.stat.t4 span{color:rgba(255,255,255,.75)}
+
+/* sections */
+.section{padding:84px 0}.section.white{background:#fff}.center{text-align:center}
+.sec-head h2{font-size:clamp(28px,4vw,44px);letter-spacing:-1.8px;margin:14px 0 12px;line-height:1.08;font-weight:900}
+.serif{font-family:var(--serif);font-style:italic;font-weight:700;background:linear-gradient(120deg,#2357ff,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.05em;letter-spacing:-.5px}
+.lead2{max-width:660px;margin:auto;color:var(--muted);line-height:1.75;font-size:15px}
+.notice{display:flex;gap:12px;align-items:flex-start;margin:32px 0 18px;padding:15px 18px;border-radius:16px;background:#fff8e8;border:1px solid #f6e2b0;color:#7a5a12;font-size:12.5px;line-height:1.65}.notice b{color:#5c4208}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow .3s,border-color .3s}
+.panel:focus-within{border-color:#b9c8ff;box-shadow:0 22px 50px -26px rgba(35,87,255,.5)}
+.toolbar{display:grid;grid-template-columns:1.4fr auto auto;gap:12px;align-items:center}
+.search{position:relative}
+.search input,.sel{width:100%;height:46px;border:1px solid #d9e0ec;border-radius:11px;background:#fbfcfe;padding:0 14px;font-size:13.5px;font-weight:500;outline:none;transition:.15s}
+.search input{padding-left:40px}
+.search:before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-52%);font-size:19px;color:#8896ad}
+.search input:focus,.sel:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(35,87,255,.14)}
+.seg{display:inline-flex;padding:4px;background:#eef1fb;border-radius:13px;gap:2px}
+.seg button{border:0;background:transparent;padding:10px 16px;border-radius:10px;font-weight:800;font-size:12.5px;color:#5a6a85;cursor:pointer;transition:.25s var(--ease);position:relative;overflow:hidden}
+.seg button.on{background:#fff;color:var(--brand);box-shadow:0 4px 14px -4px rgba(30,50,120,.25)}
+.chips-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.chips-row .lbl{font-size:12px;font-weight:700;color:#44546b;margin-right:6px;min-width:64px}
+.chip{border:1px solid var(--line);background:#fff;color:#44556e;padding:8px 13px;border-radius:999px;font-weight:700;font-size:12px;cursor:pointer;transition:all .3s var(--ease);display:inline-flex;gap:7px;align-items:center;position:relative;overflow:hidden}
+.chip:hover{transform:translateY(-2px);border-color:var(--brand)}
+.chip.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 8px 20px -8px rgba(35,87,255,.55)}
+.chip.cat i{width:8px;height:8px;border-radius:50%;background:var(--cc);transition:transform .3s var(--ease)}
+.chip.cat.on{background:color-mix(in srgb,var(--cc) 14%,#fff);color:var(--cc);border-color:var(--cc);box-shadow:none}
+.chip.cat.on i{transform:scale(1.4)}
+.chip.cat:not(.on){opacity:.55}.chip.cat:not(.on) i{background:#b6c1d4}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+
+/* list */
+.view{margin-top:26px}
+.group{margin-bottom:32px}
+.group-h{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.group-h h3{margin:0;font:italic 700 22px var(--serif);letter-spacing:-.3px}
+.group-h span{font-size:12px;font-weight:800;color:var(--muted);background:#fff;border:1px solid var(--line);padding:4px 11px;border-radius:999px}
+.group-h:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--brand),transparent);opacity:.35}
+.group.over .group-h h3{color:#d92d3a}
+.rows{display:grid;gap:12px}
+.erow{--cc:var(--c-gst);position:relative;display:grid;grid-template-columns:72px 1fr auto auto;gap:18px;align-items:center;padding:16px 20px 16px 18px;background:#fff;border:1px solid var(--line);border-radius:18px;cursor:pointer;transition:transform .35s var(--ease),box-shadow .35s,border-color .3s;overflow:hidden;animation:rin .6s var(--ease) both;animation-delay:calc(var(--i,0)*.04s)}
+@keyframes rin{from{opacity:0;transform:translateY(16px) scale(.98)}}
+.erow:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cc);transition:width .3s var(--ease)}
+.erow:after{content:"";position:absolute;inset:0;background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--cc) 11%,transparent),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}
+.erow:hover{transform:translateY(-3px) translateX(2px);box-shadow:0 20px 40px -22px rgba(35,87,255,.4);border-color:color-mix(in srgb,var(--cc) 45%,#fff)}
+.erow:hover:before{width:7px}.erow:hover:after{opacity:1}
+.edate{text-align:center;border-radius:14px;padding:9px 0;background:color-mix(in srgb,var(--cc) 9%,#fff);border:1px solid color-mix(in srgb,var(--cc) 20%,#fff);transition:transform .4s var(--ease)}
+.erow:hover .edate{transform:rotate(-4deg) scale(1.06)}
+.edate b{display:block;font:600 24px/1 var(--mono);letter-spacing:-1px;color:var(--cc)}
+.edate small{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#6c7b95;margin-top:5px}
+.einfo{min-width:0;position:relative;z-index:1}
+.einfo h4{margin:0 0 5px;font-size:15.5px;letter-spacing:-.3px;line-height:1.3}
+.einfo p{margin:0 0 8px;font-size:12.5px;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.einfo .meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.form-pill{font-size:10.5px;font-weight:800;padding:4px 9px;border-radius:8px;background:#f0f3fa;color:#4d5d78}
+.form-pill.ext{background:#fff0d9;color:#a05a00}.form-pill.wk{background:#ffeef0;color:#c92a3a}
+.cd{font-size:11.5px;font-weight:800;padding:7px 12px;border-radius:999px;white-space:nowrap;background:#eef1ff;color:var(--brand);position:relative;z-index:1}
+.u-over .cd{background:#ffe9eb;color:#d92d3a}.u-hot .cd{background:#fff0e0;color:#d9650a;animation:blink 1.8s infinite}.u-warm .cd{background:#fff6dc;color:#a87000}.u-cool .cd{background:#e8f0ff;color:var(--brand)}.u-calm .cd{background:#eef7f5;color:#2c8a7a}.u-done .cd{background:#e8faf3;color:var(--green)}
+@keyframes blink{50%{box-shadow:0 0 0 7px rgba(217,101,10,.12)}}
+.u-over .edate{animation:shake 4s ease-in-out infinite}
+@keyframes shake{0%,92%,100%{transform:none}94%{transform:rotate(-5deg)}96%{transform:rotate(5deg)}98%{transform:rotate(-3deg)}}
+.tick{width:34px;height:34px;border-radius:11px;border:1.5px solid #cdd7e8;background:#fff;color:transparent;display:grid;place-items:center;font-size:16px;font-weight:800;cursor:pointer;transition:all .3s var(--ease);position:relative;z-index:2}
+.tick:hover{border-color:var(--green);color:#9bdcc6;transform:scale(1.12) rotate(-6deg)}
+.tick:active{transform:scale(.85)}
+.u-done .tick{background:var(--green);border-color:var(--green);color:#fff}
+.u-done .einfo h4{text-decoration:line-through;color:#8794aa}.u-done{opacity:.72}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);background:#fff;border:1.5px dashed #c3cff0;border-radius:20px;animation:rise .6s var(--ease)}.empty b{display:block;font-size:18px;color:var(--ink);margin-bottom:6px}
+
+/* calendar */
+.cal-wrap{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
+.cal{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm)}
+.cal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.cal-h h3{margin:0;font:italic 700 24px var(--serif);letter-spacing:-.4px}
+.cal-nav{display:flex;gap:8px}.cal-nav button{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:16px;font-weight:800;color:#44556e;transition:.25s var(--ease)}.cal-nav button:hover{background:#eef1ff;color:var(--brand);border-color:var(--brand);transform:translateY(-2px)}.cal-nav button.t{width:auto;padding:0 14px;font-size:12px}
+.dow,.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dow span{text-align:center;font-size:10.5px;font-weight:800;letter-spacing:1px;color:#8795ac;padding:6px 0;text-transform:uppercase}
+.day{aspect-ratio:1/.92;border-radius:14px;border:1px solid transparent;background:#f6f8fd;padding:7px 8px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;transition:transform .25s var(--ease),background .2s,border-color .2s,box-shadow .2s;font-size:13px;font-weight:700;position:relative;min-width:0}
+.day:hover{background:#eef1ff;border-color:#c5d0ff;transform:translateY(-3px) scale(1.04)}
+.day.out{opacity:.35}
+.day.today{background:var(--grad);color:#fff;box-shadow:0 10px 22px -8px rgba(35,87,255,.6);animation:todayring 2.4s infinite}
+@keyframes todayring{0%{box-shadow:0 10px 22px -8px rgba(35,87,255,.6),0 0 0 0 rgba(35,87,255,.4)}70%,100%{box-shadow:0 10px 22px -8px rgba(35,87,255,.6),0 0 0 10px rgba(35,87,255,0)}}
+.day.sel{border-color:var(--brand);box-shadow:0 0 0 3px rgba(35,87,255,.16)}
+.dots{display:flex;gap:3px;flex-wrap:wrap;align-items:center}.dots i{width:7px;height:7px;border-radius:50%;background:var(--cc);animation:dotpop .5s var(--ease) both}
+@keyframes dotpop{from{transform:scale(0)}}
+.day.today .dots i{box-shadow:0 0 0 1.5px rgba(255,255,255,.7)}.dots em{font-style:normal;font-size:9.5px;font-weight:800;opacity:.7}
+.day.hasover:after{content:"";position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:#ff4b55}
+.side{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm);position:sticky;top:100px}
+.side h3{margin:0 0 4px;font:italic 700 20px var(--serif);letter-spacing:-.3px}.side>small{display:block;color:var(--muted);font-size:12px;margin-bottom:14px}
+.side .erow{grid-template-columns:1fr auto;padding:13px 14px;margin-bottom:10px;border-radius:16px}.side .erow .edate,.side .erow .tick,.side .erow .einfo p{display:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;font-weight:700;color:#5a6a85}.legend span{display:flex;align-items:center;gap:6px}.legend i{width:8px;height:8px;border-radius:50%;background:var(--cc)}
+
+/* health */
+.health{display:grid;grid-template-columns:1fr 1.2fr 1.2fr;gap:16px;margin-top:22px}
+.hcard{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow-sm);animation:rise .7s var(--ease) both;transition:transform .35s var(--ease),box-shadow .35s}
+.hcard:nth-child(2){animation-delay:.08s}.hcard:nth-child(3){animation-delay:.16s}
+.hcard:hover{transform:translateY(-4px);box-shadow:0 24px 44px -24px rgba(35,87,255,.35)}
+.hcard:after{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(35,87,255,.07),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}.hcard:hover:after{opacity:1}
+.hcard h4{margin:0 0 14px;font:italic 700 16px var(--serif);color:#111827}
+.hscore{display:flex;gap:18px;align-items:center}
+.hr{position:relative;width:104px;height:104px;flex:none}.hr svg{transform:rotate(-90deg)}.hr circle{fill:none;stroke-width:10;stroke-linecap:round}.hr .bg{stroke:#eaeffa}.hr .fg{stroke:var(--accent);animation:ringin 1.4s var(--ease) both}
+@keyframes ringin{from{stroke-dashoffset:277}}
+.hr .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}.hr .c b{font-size:26px;letter-spacing:-1px}
+.hscore p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.6}.hscore p b{display:block;font-size:15px;color:var(--ink);margin-bottom:3px}
+.hnote{margin:0;font-size:12.5px;color:var(--muted)}
+.cbar{margin-bottom:11px}.cbar>div:first-child{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:5px}.cbar .tr{height:7px;border-radius:9px;background:#eef1fb;overflow:hidden}.cbar .tr i{display:block;height:100%;border-radius:9px;background:var(--cc);transform-origin:left;animation:growx 1s var(--ease) both}
+@keyframes growx{from{transform:scaleX(0)}}
+.wl{display:flex;align-items:flex-end;gap:10px;height:112px}.wl>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}.wl i{display:block;width:100%;border-radius:8px 8px 4px 4px;background:var(--grad);min-height:4px;transform-origin:bottom;animation:growy .9s var(--ease) both}.wl>div:nth-child(2) i{animation-delay:.06s}.wl>div:nth-child(3) i{animation-delay:.12s}.wl>div:nth-child(4) i{animation-delay:.18s}.wl>div:nth-child(5) i{animation-delay:.24s}.wl>div:nth-child(6) i{animation-delay:.3s}
+@keyframes growy{from{transform:scaleY(0)}}
+.wl b{font-size:12px;font-family:var(--mono);font-weight:600}.wl small{font-size:10px;font-weight:800;color:#8392ab}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr));gap:14px;overflow-x:auto;padding-bottom:12px}
+.bcol{background:#eef1fb;border:1px solid var(--line);border-radius:20px;padding:14px;min-height:320px;transition:background .2s,border-color .2s,transform .2s}
+.bcol.drag{background:#e3eaff;border-color:var(--brand);transform:scale(1.015)}
+.bh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.bh b{font-size:13.5px;letter-spacing:-.2px}.bh span{font-size:11px;font-weight:800;background:#fff;border-radius:999px;padding:3px 9px;color:#5a6a85}
+.bcol[data-col=over] .bh b{color:#d92d3a}.bcol[data-col=done] .bh b{color:var(--green)}
+.bcard{--cc:var(--c-gst);position:relative;background:#fff;border:1px solid var(--line);border-left:4px solid var(--cc);border-radius:14px;padding:12px 40px 12px 13px;margin-bottom:10px;cursor:grab;transition:transform .3s var(--ease),box-shadow .3s;animation:pop .5s var(--ease) both}
+@keyframes pop{from{opacity:0;transform:translateY(-12px) scale(.96)}to{opacity:1;transform:none}}
+.bcard:hover{transform:translateY(-3px) rotate(-.6deg);box-shadow:var(--shadow-sm)}.bcard:active{cursor:grabbing}
+.bcard h5{margin:0 0 8px;font-size:13px;line-height:1.35;letter-spacing:-.2px}.bcard .bm{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:11px;font-weight:700;color:var(--muted)}
+.bcard .tick{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:8px;font-size:13px}
+.bcard .cd{padding:4px 9px;font-size:10.5px}.bcard.u-done h5{text-decoration:line-through;color:#8794aa}
+.bhint{margin:0 0 12px;font-size:12px;color:#7a8aa3}.bempty{font-size:12px;color:#8a98ae;text-align:center;padding:26px 8px}
+
+/* late fee calculator */
+.lf-sec{background:linear-gradient(180deg,#eef3ff,var(--bg));position:relative;overflow:hidden;isolation:isolate}
+.lf-sec:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:var(--violet);filter:blur(90px);opacity:.14;right:-120px;top:-120px;z-index:-1;animation:drift 14s ease-in-out infinite alternate}
+.lf-wrap{display:grid;grid-template-columns:1.08fr .92fr;gap:22px;margin-top:40px;align-items:start}
+.lf-wrap>*,.lf-grid>*{min-width:0}
+.lf-form{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow-sm)}
+.lf-tabs{display:flex;gap:4px;padding:5px;background:#eef1fb;border-radius:15px;margin-bottom:18px;overflow-x:auto;scrollbar-width:none}
+.lf-tabs button{flex:1;min-width:88px;border:0;background:transparent;padding:11px 10px;border-radius:11px;font-weight:800;font-size:12.5px;color:#5a6a85;cursor:pointer;transition:.25s var(--ease);white-space:nowrap;position:relative;overflow:hidden}
+.lf-tabs button.on{background:#fff;color:var(--brand);box-shadow:0 5px 16px -5px rgba(30,50,120,.3)}
+.lf-fill{display:flex;gap:10px;align-items:center;padding:12px 14px;margin-bottom:16px;border-radius:14px;background:linear-gradient(135deg,#eef2ff,#f6f4ff);border:1.5px dashed #c3cff0}
+.lf-fill span{font-size:12px;font-weight:800;color:var(--brand);white-space:nowrap}.lf-fill select{flex:1;min-width:0;height:38px}
+.lf-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.lf-grid .full{grid-column:1/-1}
+.lf-grid .f>label{display:block;font-size:12px;font-weight:700;color:#44546b;margin-bottom:6px}
+.lf-inp{width:100%;min-width:0;max-width:100%;height:44px;border:1px solid #d9e0ec;border-radius:11px;background:#fbfcfe;padding:0 12px;font-size:13.5px;font-weight:500;outline:none;transition:.15s}
+.lf-inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(35,87,255,.14)}
+input[type=date].lf-inp{-webkit-appearance:none;appearance:none;display:block}
+.lf-grid .ck{display:flex;gap:9px;align-items:center;font-size:13px;font-weight:600;color:#3f506b;cursor:pointer;grid-column:1/-1;padding:2px 0}.lf-grid .ck input{width:17px;height:17px;accent-color:var(--brand);flex:none}
+.lf-hint{font-size:11px;color:#8392ab;margin-top:5px;line-height:1.45}
+.lf-out{position:sticky;top:96px;border-radius:20px;padding:24px;background:linear-gradient(135deg,#0e1a45,#1c3a9e);color:#fff;box-shadow:0 24px 50px -28px rgba(14,26,69,.8);overflow:hidden}
+.lf-out:after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.1) 50%,transparent 70%);transform:translateX(-120%);animation:sweep 6s ease-in-out infinite;pointer-events:none}
+.lf-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.lf-top>span{font-size:12px;font-weight:700;color:#aab9e6}
+.lf-chip{font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#dbe4fb;margin-left:6px}
+.lf-chip.bad{background:rgba(255,90,100,.18);border-color:rgba(255,120,130,.45);color:#ffb3b8}.lf-chip.ok{background:rgba(20,216,168,.16);border-color:rgba(20,216,168,.45);color:#8fe9d2}
+.lf-total{font-size:clamp(40px,6vw,56px);font-weight:900;letter-spacing:-2.4px;line-height:1.05;margin:12px 0 18px;font-variant-numeric:tabular-nums;background:linear-gradient(110deg,#fff,#bfe9ff 70%,#14d8a8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lf-rows{border-top:1px solid rgba(255,255,255,.12)}
+.lf-row{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.1);animation:rise .5s var(--ease) both}
+.lf-row b{display:block;font-size:13.5px;letter-spacing:-.2px}.lf-row small{display:block;margin-top:3px;font-size:11.5px;line-height:1.5;color:#aab9e6}
+.lf-row>span{font-family:var(--mono);font-size:14.5px;font-weight:600;white-space:nowrap}.lf-row.zero b,.lf-row.zero>span{opacity:.45}
+.lf-clock{margin-top:20px;padding:16px;border-radius:16px;background:rgba(7,11,22,.35);border:1px solid rgba(255,255,255,.1)}
+.lf-clock h4{margin:0 0 4px;font:italic 700 16px var(--serif)}.lf-clock p{margin:0 0 14px;font-size:12px;color:#aab9e6}
+.lf-bars{display:flex;align-items:flex-end;gap:9px;height:118px}.lf-bars>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px;min-width:0}
+.lf-bars i{display:block;width:100%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#7be9ff,#5b7cff);min-height:4px;transform-origin:bottom;animation:growy .8s var(--ease) both}
+.lf-bars>div:first-child i{background:linear-gradient(180deg,#14d8a8,#0f9f74)}
+.lf-bars b{font-size:10.5px;font-family:var(--mono);white-space:nowrap}.lf-bars small{font-size:10px;font-weight:800;color:#aab9e6}
+.lf-notes{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:9px}.lf-notes li{display:flex;gap:10px;font-size:12px;line-height:1.6;color:#c3cff0}
+.lf-notes li:before{content:"i";flex:0 0 18px;height:18px;border-radius:50%;background:rgba(127,149,255,.3);color:#e0e7ff;font-size:10px;font-weight:800;display:grid;place-items:center;margin-top:2px}
+.lf-act{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.lf-act .btn.ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25)}.lf-act .btn.ghost:hover{background:rgba(255,255,255,.2);color:#fff}
+.lf-empty{padding:40px 10px;text-align:center;color:#c3cff0;font-size:14px}.lf-disc{margin-top:16px;font-size:11px;line-height:1.6;color:#9fb0d8}
+
+/* how + features */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.step{position:relative;overflow:hidden;padding:26px 24px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:var(--shadow-sm);transition:transform .4s var(--ease),box-shadow .4s,border-color .3s}
+.step:hover{transform:translateY(-8px);box-shadow:0 26px 50px -26px rgba(35,87,255,.4);border-color:#c5d2ff}
+.step:after{content:"";position:absolute;inset:0;background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(35,87,255,.08),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}.step:hover:after{opacity:1}
+.num{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#eef1ff;color:var(--brand);font-weight:900;font-size:17px;margin-bottom:16px;transition:transform .5s var(--ease)}
+.step:hover .num{transform:rotate(-10deg) scale(1.15)}
+.step h3{margin:0 0 8px;font-size:18px;letter-spacing:-.4px}.step p{margin:0;color:var(--muted);line-height:1.75;font-size:13.5px}
+
+/* about creator */
+.about-sec{background:#fff;position:relative;overflow:hidden}
+.about-grid{display:grid;grid-template-columns:300px 1fr;gap:56px;align-items:center;margin:44px auto 0;max-width:960px}
+.photo-wrap{position:relative;width:250px;height:250px;margin:auto}
+.photo-wrap:before{content:"";position:absolute;inset:-9px;border-radius:50%;background:conic-gradient(from 0deg,var(--brand),var(--violet),var(--accent),var(--brand));animation:spin 8s linear infinite;-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px))}
+@keyframes spin{to{transform:rotate(360deg)}}
+.profile-photo{position:relative;width:250px;height:250px;border-radius:50%;object-fit:cover;object-position:center 28%;border:8px solid #fff;box-shadow:0 18px 45px rgba(25,48,83,.16);display:block;background:#eef1ff}
+.photo-fallback{position:absolute;inset:0;border-radius:50%;border:8px solid #fff;background:var(--grad);color:#fff;display:none;place-items:center;font-size:64px;font-weight:900;letter-spacing:-3px;box-shadow:0 18px 45px rgba(25,48,83,.16)}
+.fchip{position:absolute;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:11.5px;font-weight:800;color:#33445c;box-shadow:0 12px 26px -12px rgba(24,44,78,.4);white-space:nowrap;animation:bob 5s ease-in-out infinite}
+.fchip.a{left:-34px;top:26px}.fchip.b{right:-40px;top:112px;animation-delay:-1.6s}.fchip.c{left:-14px;bottom:20px;animation-delay:-3.2s}
+.about-copy .tagline{display:inline-flex;background:#eef1ff;color:var(--brand);border:1px solid #dbe4ff;border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;margin-bottom:14px}
+.about-copy h3{font-size:clamp(26px,3vw,34px);letter-spacing:-1.2px;margin:0 0 6px;font-weight:900}
+.about-role{font:italic 700 18px var(--serif);color:var(--brand);margin-bottom:14px}
+.about-copy p{color:var(--muted);line-height:1.8;font-size:14.5px;margin:10px 0}
+.about-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.about-stat{background:#f7f9fc;border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:12px;font-weight:800;color:#53647a;transition:all .3s var(--ease)}
+.about-stat:hover{background:#eef1ff;color:var(--brand);border-color:#c5d2ff;transform:translateY(-3px)}
+.contact-box{margin:40px auto 0;max-width:960px;background:linear-gradient(135deg,#f8fbff,#fff);border:1px solid var(--line);border-radius:20px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:var(--shadow-sm)}
+.contact-box strong{font-size:16px;letter-spacing:-.3px}.contact-box p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.contact-acts{display:flex;gap:10px;flex-wrap:wrap}
+
+/* privacy */
+.privacy-sec{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(180deg,var(--bg),#eef3ff)}
+.privacy-sec:before{content:"";position:absolute;width:380px;height:380px;border-radius:50%;background:var(--accent);filter:blur(100px);opacity:.14;left:-120px;bottom:-140px;z-index:-1;animation:drift 13s ease-in-out infinite alternate}
+.pv-top{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;margin-top:40px}
+.pv-top .sec-head{text-align:left}.pv-top .lead2{margin:0}
+.privacy{margin-top:22px;padding:15px 17px;background:#fff;border:1px solid #dfe7ff;border-left:4px solid var(--brand);border-radius:0 14px 14px 0;color:#586a80;font-size:13px;line-height:1.7}.privacy b{color:var(--ink)}
+.vault{position:relative;background:#fff;border:1px solid var(--line);border-radius:24px;padding:26px 22px;box-shadow:var(--shadow)}
+.vault-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+.node{width:88px;text-align:center;font-size:11.5px;font-weight:800;color:#33445c}
+.node i{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 8px;border-radius:18px;background:#eef1ff;font-style:normal;font-size:28px;transition:transform .4s var(--ease)}
+.node.srv i{background:#f3f4f8;filter:grayscale(1);opacity:.55}
+.node.dev i{position:relative;animation:pulse2 2.6s infinite}
+@keyframes pulse2{0%{box-shadow:0 0 0 0 rgba(35,87,255,.35)}70%,100%{box-shadow:0 0 0 16px rgba(35,87,255,0)}}
+.wire{position:relative;height:64px;margin-bottom:22px}
+.wire:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:2px dashed #c9d2e3}
+.wire .pkt{position:absolute;top:50%;left:0;width:11px;height:11px;margin-top:-5.5px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px rgba(35,87,255,.18);animation:pkt 3.2s var(--ease) infinite}
+.wire .pkt:nth-child(2){animation-delay:1.1s}.wire .pkt:nth-child(3){animation-delay:2.2s}
+@keyframes pkt{0%{left:0;opacity:0;transform:scale(.6)}12%{opacity:1;transform:scale(1)}50%{left:46%;opacity:1;transform:scale(1)}58%{left:46%;opacity:0;transform:scale(2.2)}100%{left:46%;opacity:0}}
+.wire .shield{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:#fff;border:2px solid var(--red);display:grid;place-items:center;font-size:17px;color:var(--red);font-weight:900;box-shadow:0 8px 20px -8px rgba(229,72,77,.6)}
+.vault-cap{margin:6px 0 0;text-align:center;font-size:12.5px;color:var(--muted);line-height:1.6}
+.vault-cap b{color:var(--ink)}
+.pv-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px}
+.pv{position:relative;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm);transition:transform .4s var(--ease),box-shadow .4s,border-color .3s}
+.pv:hover{transform:translateY(-6px);box-shadow:0 24px 46px -26px rgba(35,87,255,.4);border-color:#c5d2ff}
+.pv span.ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:#eef1ff;font-size:19px;margin-bottom:12px;transition:transform .5s var(--ease)}
+.pv:hover span.ic{transform:rotate(-10deg) scale(1.15)}
+.pv h3{margin:0 0 6px;font-size:15.5px;letter-spacing:-.3px}.pv p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.7}
+.pv-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;justify-content:center}
+.btn.danger{background:#fff0f0;color:var(--red);border:1px solid #ffd5d7}.btn.danger:hover{background:var(--red);color:#fff;border-color:var(--red);transform:translateY(-2px)}
+
+/* footer */
+.footer{background:#0d1726;color:#c6d0de;padding:48px 0 26px;position:relative;overflow:hidden}
+.footer:before{content:"";position:absolute;left:50%;top:-190px;width:720px;height:300px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(35,87,255,.35),transparent);filter:blur(20px)}
+.fg{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;position:relative}
+.footer h3{color:#fff;margin:0 0 10px;font-size:18px}.footer p{font-size:12.5px;line-height:1.75;color:#96a4b8;margin:0;max-width:420px}
+.footer a{display:block;font-size:12.5px;margin:9px 0;color:#aab7cc;transition:.2s}.footer a:hover{color:#fff;transform:translateX(4px)}
+.copyright{border-top:1px solid #263448;margin-top:28px;padding-top:18px;font-size:11.5px;color:#8090a5;position:relative}
+.quick-whatsapp{position:fixed;left:20px;bottom:20px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c7e);display:grid;place-items:center;font-size:24px;z-index:150;box-shadow:0 14px 30px -6px rgba(37,211,102,.6);transition:.3s var(--ease);animation:pulseg 2.8s infinite}
+@keyframes pulseg{0%{box-shadow:0 14px 30px -6px rgba(37,211,102,.6),0 0 0 0 rgba(37,211,102,.45)}70%,100%{box-shadow:0 14px 30px -6px rgba(37,211,102,.6),0 0 0 16px rgba(37,211,102,0)}}
+.quick-whatsapp:hover{transform:scale(1.1) rotate(-6deg)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);background:#0e1530;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.4s var(--ease);z-index:400;max-width:calc(100% - 40px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.conf{position:fixed;width:9px;height:14px;border-radius:2px;pointer-events:none;z-index:500}
+
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(7,11,22,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px;z-index:250}
+.modal.show{display:flex;animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.mcard{--cc:var(--c-gst);width:min(640px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:24px;box-shadow:0 40px 100px rgba(0,0,0,.4);position:relative;animation:spring .55s var(--ease) both}
+@keyframes spring{from{opacity:0;transform:translateY(30px) scale(.94)}}
+.mtop{padding:28px 28px 22px;color:#fff;border-radius:24px 24px 0 0;background:radial-gradient(70% 120% at 100% 0%,color-mix(in srgb,var(--cc) 70%,transparent),transparent 65%),linear-gradient(150deg,#0e1a45,#1c3a9e)}
+.mtop .tag{background:rgba(255,255,255,.14);color:#fff}.mtop .tag:before{background:var(--cc);box-shadow:0 0 0 3px rgba(255,255,255,.25)}
+.mtop h3{margin:14px 0 8px;font-size:23px;letter-spacing:-.8px;line-height:1.2}.mtop p{margin:0;color:#c3cff0;font-size:13.5px}
+.mx{position:absolute;right:16px;top:16px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:18px;cursor:pointer;transition:.3s var(--ease)}.mx:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+.mbody{padding:24px 28px 28px}.kv{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}.kv div{padding:13px 15px;border-radius:14px;background:#f5f8fe;border:1px solid var(--line)}.kv small{display:block;font-size:11px;font-weight:700;color:#8392ab;margin-bottom:5px}.kv b{font-size:14px;letter-spacing:-.2px}
+.mbody h5{margin:18px 0 6px;font:italic 700 16px var(--serif);color:var(--brand)}.mbody p{margin:0;font-size:13.5px;line-height:1.75;color:#4a5b73}
+.mact{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.form-g{display:grid;gap:14px;margin-top:6px}.form-g label{font-size:12px;font-weight:700;color:#44546b;display:block;margin-bottom:6px}
+.inp{width:100%;height:46px;border:1px solid #d9e0ec;border-radius:11px;background:#fbfcfe;padding:0 13px;font-size:13.5px;font-weight:500;outline:none;transition:.15s}
+.form-g textarea.inp{height:84px;padding:12px;resize:vertical}
+.inp:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(35,87,255,.14)}
+.addbox{padding:28px}.addbox h3{margin:0 0 4px;font-size:22px;letter-spacing:-.7px}.addbox>p{margin:0 0 14px;font-size:13px;color:var(--muted)}
+.mbody details{border:1px solid var(--line);border-radius:14px;margin-top:12px;background:#fbfcff;transition:border-color .2s,box-shadow .2s}
+.mbody details[open]{border-color:#c5d2ff;box-shadow:0 10px 24px -16px rgba(35,87,255,.5)}
+.mbody summary{cursor:pointer;list-style:none;padding:13px 15px;font-weight:800;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.mbody summary::-webkit-details-marker{display:none}.mbody summary:after{content:"+";color:var(--brand);font-size:19px;transition:transform .3s var(--ease)}.mbody details[open] summary:after{transform:rotate(45deg)}
+.mbody summary em{font-style:normal;font-size:11px;color:var(--muted);font-weight:700;margin-left:8px;flex:1}
+.dbody{padding:0 15px 15px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:13px;color:#3f506b;cursor:pointer;border-bottom:1px dashed #e3e9f4}.chk:last-child{border:0}.chk input{margin-top:2px;accent-color:var(--brand);width:16px;height:16px;flex:none}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.cgrid label{font-size:12px;font-weight:700;color:#44546b;display:block;margin-bottom:5px}
+.cgrid .inp{height:40px;border-radius:10px;padding:0 11px;background:#fff}.cgrid textarea.inp{height:70px;padding:10px;resize:vertical}
+.cgrid .full{grid-column:1/-1}.cgrid .ck{display:flex;gap:8px;align-items:center;font-size:12.5px;font-weight:600;margin:0}
+.cout{margin-top:12px;padding:14px;border-radius:14px;background:linear-gradient(135deg,#eef2ff,#f6f4ff);border:1px solid #dbe3ff}.cout>div{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:3px 0}
+.cout .tot{border-top:1.5px dashed #b9c6ee;margin-top:6px;padding-top:9px;font-weight:800;font-size:15px;color:var(--brand)}
+.cout small{display:block;color:var(--muted);font-size:11px;margin-top:8px;line-height:1.5}
+.dbody .mini{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.dbody .btn{padding:10px 14px}
+.wkn{margin-top:10px;padding:10px 13px;border-radius:12px;background:#fff4e5;border:1px solid #f6dcae;color:#7a5410;font-size:12.5px;line-height:1.55}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(28px);filter:blur(4px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);transition-delay:var(--d,0s)}
+.reveal.in{opacity:1;transform:none;filter:none}
+
+@media(max-width:1100px){.pv-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:1000px){.links a.lk{display:none}.hero-in{grid-template-columns:1fr}.float{display:none}.stats .container{grid-template-columns:1fr 1fr}.toolbar{grid-template-columns:1fr 1fr}.search{grid-column:1/-1}.cal-wrap{grid-template-columns:1fr}.side{position:static}.steps{grid-template-columns:1fr 1fr}.health{grid-template-columns:1fr}.lf-wrap{grid-template-columns:minmax(0,1fr)}.lf-out{position:static}.pv-top{grid-template-columns:1fr}.pv-top .sec-head{text-align:center}.pv-top .lead2{margin:auto}}
+@media(max-width:760px){.about-grid{grid-template-columns:1fr;text-align:center;gap:34px}.about-stats{justify-content:center}.contact-box{flex-direction:column;text-align:center}.contact-acts{justify-content:center}.fchip.a{left:-20px}.fchip.b{right:-24px}}
+@media(max-width:700px){.container{width:min(100% - 26px,1280px)}.top .in{height:64px}.brand small{display:none}.brand-logo{height:40px}.back{padding:8px 12px;font-size:12.5px}.hero-in{padding:32px 20px;border-radius:24px}.section{padding:60px 0}.steps,.pv-cards{grid-template-columns:1fr}.erow{grid-template-columns:58px 1fr;gap:12px;padding:14px}.erow .cd{grid-column:2;justify-self:start}.erow .tick{position:absolute;right:12px;top:12px;width:30px;height:30px}.edate b{font-size:20px}.hero-actions .btn{width:100%}.chips-row .lbl{width:100%}.toolbar{grid-template-columns:1fr}.stat b{font-size:30px}.cgrid,.lf-grid,.kv{grid-template-columns:minmax(0,1fr)}.board{grid-template-columns:repeat(5,82vw)}.lf-bars b{font-size:9.5px}.lf-bars{gap:6px}.lf-row{gap:10px}.lf-row>span{font-size:13.5px}.lf-form,.lf-out{padding:18px}.lf-fill{flex-direction:column;align-items:stretch}.lf-act .btn{flex:1}.day{padding:5px}.cal{padding:14px}.mtop,.mbody{padding-left:20px;padding-right:20px}.vault-row{grid-template-columns:auto 1fr auto}.node{width:70px}.node i{width:52px;height:52px;font-size:22px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.reveal,.enter,.hero h1 .w{opacity:1!important;transform:none!important;filter:none!important}}
+@media print{.top,.progress,.hero,.stats,.toolbar,.chips-row,.actions,.quick-whatsapp,.footer,.section.white,.lf-sec,.about-sec,.privacy-sec,.notice,.tick,.seg,.toast,.health{display:none!important}.section{padding:10px 0}.erow{break-inside:avoid;box-shadow:none;animation:none}.reveal{opacity:1;transform:none;filter:none}body{background:#fff}#viewCal,#viewBoard{display:none!important}#viewList{display:block!important}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="top nav" id="top"><div class="container in">
+  <a class="brand" href="index.html" aria-label="TallySync by Suman – home">
+    <img class="brand-logo" src="tallysync-logo.png" alt="TallySync logo" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+    <span class="brand-fallback">TS</span>
+    <span><span>Tally<b>Sync</b></span><small>Accounting technology by Suman</small></span>
+  </a>
+  <nav class="links" aria-label="Page sections">
+    <a class="lk" href="#tracker">Tracker</a>
+    <a class="lk" href="#latefee">Late fee</a>
+    <a class="lk" href="#features">Features</a>
+    <a class="lk" href="#about">About</a>
+    <a class="lk" href="#privacy">Privacy</a>
+    <a class="back" href="index.html#tools">← All tools</a>
+  </nav>
+</div></header>
+
+<main>
+<section class="hero"><div class="container"><div class="hero-in" id="heroIn">
+  <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+  <div>
+    <span class="kicker live enter">Free tool · Compliance calendar</span>
+    <h1 aria-label="Never miss a due date again.">
+      <span class="w" style="--d:.1s">Never</span> <span class="w" style="--d:.18s">miss</span> <span class="w" style="--d:.26s">a</span>
+      <span class="w g" style="--d:.34s">due</span> <span class="w g" style="--d:.42s">date</span> <span class="w" style="--d:.5s">again.</span>
+    </h1>
+    <p class="lead enter" style="--d:.45s">GST, TDS/TCS, Income Tax, ROC and PF/ESI deadlines in one live tracker. Filter by your business profile, watch the countdown, tick off filings and push reminders to your calendar.</p>
+    <div class="hero-actions enter" style="--d:.55s"><a class="btn primary mag" href="#tracker">Open the tracker</a><a class="btn ghost mag" href="#latefee">🧮 Late fee calculator</a><button class="btn ghost mag" id="heroAdd" type="button">＋ Add my own reminder</button></div>
+    <div class="perks enter" style="--d:.65s"><span>✓ GST · TDS · ITR · ROC · PF/ESI</span><span>✓ Calendar (.ics) export</span><span>✓ Saved only in your browser</span></div>
+  </div>
+  <div class="float enter" style="--d:.35s"><div class="next-card" id="nextCard"></div><span class="stamp" aria-hidden="true">✓</span></div>
+</div></div></section>
+
+<section class="stats"><div class="container">
+  <div class="stat reveal"><b id="s1">–</b><span>Due in next 7 days</span></div>
+  <div class="stat t2 reveal" style="--d:.07s;--sd:.8s"><b id="s2">–</b><span>Pending this month</span></div>
+  <div class="stat red reveal" style="--d:.14s;--sd:1.6s"><b id="s3">–</b><span>Overdue &amp; not marked done</span></div>
+  <div class="stat t4 reveal" style="--d:.21s;--sd:2.4s"><b id="s4">–</b><span>Marked done</span></div>
+</div></section>
+
+<section id="tracker" class="section"><div class="container">
+  <div class="center sec-head reveal"><span class="kicker">Due date tracker</span><h2>Every deadline, <em class="serif">at a glance</em></h2><p class="lead2">Pick what applies to you and the tracker shows only the filings that matter — sorted by urgency.</p></div>
+
+  <div class="notice reveal"><span>⚠️</span><div><b>Verify before you rely on a date.</b> These are the standard statutory due dates. The Government frequently extends deadlines through notifications and circulars, and state-wise dates (e.g. GSTR-3B for QRMP filers, professional tax) can differ — always confirm on the official portal.</div></div>
+
+  <div class="panel reveal">
+    <div class="toolbar">
+      <div class="search"><input id="q" type="search" placeholder="Search GSTR-3B, TDS, advance tax, AOC-4…  (press / )" autocomplete="off"></div>
+      <select id="range" class="sel" aria-label="Date range"><option value="30">Next 30 days</option><option value="90" selected>Next 90 days</option><option value="month">This month</option><option value="fy">Rest of financial year</option><option value="all">Everything</option></select>
+      <div class="seg" role="tablist"><button id="vList" class="on" type="button">☰ List</button><button id="vCal" type="button">▦ Calendar</button><button id="vBoard" type="button">▤ Board</button></div>
+    </div>
+    <div class="chips-row"><span class="lbl">Client</span><select id="clientSel" class="sel" style="max-width:230px;height:40px" aria-label="Active client"></select><button class="chip" id="clientAdd" type="button">＋ New client</button><button class="chip" id="clientRen" type="button">✎ Rename</button><button class="chip" id="clientDel" type="button">🗑 Delete</button></div>
+    <div class="chips-row"><span class="lbl">Category</span><span id="catChips" style="display:contents"></span></div>
+    <div class="chips-row"><span class="lbl">I am a…</span><span id="profChips" style="display:contents"></span></div>
+    <div class="actions">
+      <button class="btn primary" id="addBtn" type="button">＋ Add reminder</button>
+      <button class="btn ghost" id="icsBtn" type="button">⇩ Export to calendar (.ics)</button>
+      <button class="btn line" id="printBtn" type="button">🖨 Print / Save PDF</button>
+      <button class="btn line" id="resetBtn" type="button">↺ Reset filters</button>
+      <button class="btn line" id="csvBtn" type="button">⇩ Export CSV</button>
+      <button class="btn line" id="notifyBtn" type="button">🔔 Enable alerts</button>
+      <button class="btn line" id="backupBtn" type="button">⛁ Backup</button>
+      <button class="btn line" id="restoreBtn" type="button">⇧ Restore</button>
+      <input type="file" id="restoreFile" accept="application/json" hidden>
+    </div>
+  </div>
+
+  <div class="health" id="health"></div>
+  <div class="view" id="viewList"></div>
+  <div class="view" id="viewCal" style="display:none"></div>
+  <div class="view" id="viewBoard" style="display:none"></div>
+</div></section>
+
+<section id="latefee" class="section lf-sec"><div class="container">
+  <div class="center sec-head reveal"><span class="kicker">Late fee calculator</span><h2>What will a missed deadline <em class="serif">really cost?</em></h2><p class="lead2">Work out the late fee, interest and penalty for GST, Income Tax, TDS/TCS, ROC and PF/ESI in seconds — or pick an overdue filing from your tracker and it fills itself in.</p></div>
+  <div class="lf-wrap reveal"><div class="lf-form" id="lfForm"></div><div class="lf-out" id="lfOut" aria-live="polite"></div></div>
+</div></section>
+
+<section id="features" class="section white"><div class="container">
+  <div class="center sec-head reveal"><span class="kicker">How it works</span><h2>Simple. Visual. <em class="serif">Actionable.</em></h2></div>
+  <div class="steps">
+    <div class="step reveal"><div class="num">1</div><h3>Choose your profile</h3><p>Tick GST regular, QRMP, composition, employer, company and more — irrelevant filings disappear instantly.</p></div>
+    <div class="step reveal" style="--d:.08s"><div class="num">2</div><h3>Watch the countdown</h3><p>Colour-coded urgency shows what is overdue, due this week or safely ahead. Tick filings off as you complete them.</p></div>
+    <div class="step reveal" style="--d:.16s"><div class="num">3</div><h3>Take it with you</h3><p>Export reminders to Google, Outlook or Apple Calendar with built-in alerts 3 days and 1 day before.</p></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="center sec-head reveal"><span class="kicker">Pro features</span><h2>Built for accountants who <em class="serif">manage many clients</em></h2><p class="lead2">More than a calendar — a small compliance workspace that lives in your browser.</p></div>
+  <div class="steps">
+    <div class="step reveal"><div class="num">👥</div><h3>Multi-client workspaces</h3><p>Keep a separate profile, completion status, notes and checklists for every client. Switch in one click.</p></div>
+    <div class="step reveal" style="--d:.07s"><div class="num">✅</div><h3>Filing prep checklists</h3><p>Step-by-step checklists for each return, plus a place to store the ARN / acknowledgement number and notes.</p></div>
+    <div class="step reveal" style="--d:.14s"><div class="num">🧮</div><h3>Late fee calculator</h3><p>A full calculator for GST, Income Tax (234A/B/C/F), TDS, ROC and PF/ESI — with quick fill from any overdue filing and a "the longer you wait" cost chart.</p></div>
+    <div class="step reveal"><div class="num">📅</div><h3>Extension override</h3><p>Government extended a date? Enter the new date and the whole tracker, countdowns and exports update.</p></div>
+    <div class="step reveal" style="--d:.07s"><div class="num">▤</div><h3>Kanban board</h3><p>See Overdue, This week, Next 30 days and Later at a glance. Drag a card to Completed to mark it done.</p></div>
+    <div class="step reveal" style="--d:.14s"><div class="num">⇩</div><h3>Export, alerts &amp; backup</h3><p>CSV, calendar (.ics) and JSON backup, optional browser alerts, and shortcuts: <b>/</b> search, <b>L</b> <b>C</b> <b>B</b> views, <b>N</b> new reminder.</p></div>
+  </div>
+</div></section>
+
+<section id="about" class="section about-sec"><div class="container">
+  <div class="center sec-head reveal"><span class="kicker">About the creator</span><h2>Built by someone who <em class="serif">files these returns</em></h2></div>
+  <div class="about-grid">
+    <div class="reveal"><div class="photo-wrap">
+      <img class="profile-photo" src="suman-thakur.jpg" alt="Suman Thakur" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'">
+      <div class="photo-fallback" aria-hidden="true">ST</div>
+      <span class="fchip a">🧾 Accounts</span><span class="fchip b">📊 Data</span><span class="fchip c">⚙️ Tools</span>
+    </div></div>
+    <div class="about-copy reveal" style="--d:.1s">
+      <span class="tagline">✦ TallySync by Suman</span>
+      <h3>Suman Thakur</h3>
+      <div class="about-role">Accounts Executive &amp; Data Analyst</div>
+      <p>I work with accounting, tax and business data to keep records accurate and reporting simple. TallySync turns that day-to-day experience into easy-to-use tools.</p>
+      <p>This tracker started from a simple problem: deadlines are scattered across portals, circulars and spreadsheets. It puts them in one place, so you can see what is due, what is late and what it will cost.</p>
+      <div class="about-stats"><span class="about-stat">Accounting &amp; GST</span><span class="about-stat">Data cleaning</span><span class="about-stat">Reporting</span><span class="about-stat">Free tools for Indian businesses</span></div>
+    </div>
+  </div>
+  <div class="contact-box reveal"><div><strong>Found a wrong date or want a tool built?</strong><p>Send a message on WhatsApp or email. Feedback makes these tools better.</p></div><div class="contact-acts"><a class="btn primary" href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 WhatsApp</a><a class="btn ghost" href="mailto:sumanthakur9661@gmail.com">✉ Email</a></div></div>
+</div></section>
+
+<section id="privacy" class="section privacy-sec"><div class="container">
+  <div class="pv-top">
+    <div class="reveal">
+      <div class="sec-head"><span class="kicker">Privacy first</span><h2>Your deadlines and client notes <em class="serif">stay in your browser.</em></h2><p class="lead2">Your profile, completed filings, ARN numbers, checklists and reminders are saved in this browser's local storage, on this device. This page does not send them to a TallySync server.</p></div>
+      <div class="privacy"><b>What does leave your device:</b> Google Fonts load when the page opens. Share on WhatsApp and Official portal links open other sites only when you click them. Calendar, CSV and backup files are created on your device.</div>
+    </div>
+    <div class="vault reveal" style="--d:.1s" aria-hidden="true">
+      <div class="vault-row">
+        <div class="node dev"><i>💻</i>Your browser</div>
+        <div class="wire"><span class="pkt"></span><span class="pkt"></span><span class="pkt"></span><span class="shield">✕</span></div>
+        <div class="node srv"><i>☁️</i>TallySync server</div>
+      </div>
+      <p class="vault-cap"><b>Your data stops here.</b> Nothing from your tracker is uploaded.</p>
+    </div>
+  </div>
+  <div class="pv-cards">
+    <div class="pv reveal"><span class="ic">🔒</span><h3>Stored on this device</h3><p>Everything is kept in your browser's local storage. No account or sign-in needed.</p></div>
+    <div class="pv reveal" style="--d:.07s"><span class="ic">🚫</span><h3>No upload</h3><p>Client names, notes and ARN numbers are never sent anywhere by this page.</p></div>
+    <div class="pv reveal" style="--d:.14s"><span class="ic">⛁</span><h3>Back up yourself</h3><p>Clearing browser data or switching device removes your tracker. Download a backup to keep it safe.</p></div>
+    <div class="pv reveal" style="--d:.21s"><span class="ic">🗑</span><h3>Delete anytime</h3><p>Erase every saved client, note and reminder from this browser in one click.</p></div>
+  </div>
+  <div class="pv-acts reveal"><button class="btn ghost" id="pvBackup" type="button">⛁ Download backup</button><button class="btn danger" id="pvWipe" type="button">🗑 Erase all my data</button></div>
+</div></section>
+</main>
+
+<footer class="footer"><div class="container">
+  <div class="fg"><div><h3>TallySync by Suman</h3><p>Accounting, GST, tax and reconciliation tools for Indian businesses and finance professionals — by Suman Thakur.</p></div>
+  <div><a href="index.html">← Back to TallySync</a><a href="all-tools.html">Browse all tools</a><a href="https://wa.me/919661905883" target="_blank" rel="noopener">💬 WhatsApp: 9661905883</a><a href="mailto:sumanthakur9661@gmail.com">✉ sumanthakur9661@gmail.com</a></div></div>
+  <div class="copyright">© 2026 TallySync by Suman. Due dates are indicative — verify on official portals before filing.</div>
+</div></footer>
+<a class="quick-whatsapp" href="https://wa.me/919661905883" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">💬</a>
+<div id="toast" class="toast" role="status"></div>
+
+<div class="modal" id="detail"><div class="mcard" id="detailCard"></div></div>
+<div class="modal" id="addModal"><div class="mcard"><button class="mx" type="button" id="addX" style="background:#eef1ff;color:#44556e">×</button>
+  <form class="addbox" id="addForm"><h3>Add your own reminder</h3><p>Client deadline, audit date, licence renewal — anything. Saved in this browser.</p>
+  <div class="form-g">
+    <div><label for="aT">Title</label><input class="inp" id="aT" required maxlength="80" placeholder="e.g. Client X – GST reconciliation"></div>
+    <div><label for="aD">Due date</label><input class="inp" id="aD" type="date" required></div>
+    <div><label for="aR">Repeat</label><select class="inp" id="aR"><option value="">Does not repeat</option><option value="m">Every month</option><option value="q">Every quarter</option><option value="y">Every year</option></select></div>
+    <div><label for="aN">Note (optional)</label><textarea class="inp" id="aN" maxlength="240" placeholder="Anything to remember…"></textarea></div>
+  </div>
+  <div class="mact"><button class="btn primary" type="submit">Save reminder</button><button class="btn line" type="button" id="addCancel">Cancel</button></div></form>
+</div></div>
+
+<script>
+(function(){
+"use strict";
+var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+var fine=window.matchMedia&&matchMedia("(hover:hover) and (pointer:fine)").matches;
+var lx=innerWidth/2,ly=innerHeight/2,mem={};
+addEventListener("pointerdown",function(e){lx=e.clientX;ly=e.clientY},true);
+
+/* count-up with memory, so numbers animate from their previous value */
+function count(el,to,key){
+ if(!el)return;to=Number(to);
+ if(isNaN(to)){el.textContent=to;return}
+ var k=key||el.id||"x",from=mem[k];if(from===undefined||isNaN(from))from=0;mem[k]=to;
+ if(reduce||from===to){el.textContent=to;return}
+ cancelAnimationFrame(el._r);var t0=performance.now(),dur=Math.min(1100,500+Math.abs(to-from)*30);
+ (function step(t){var p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,4);el.textContent=Math.round(from+(to-from)*e);if(p<1)el._r=requestAnimationFrame(step)})(t0);
+}
+
+/* confetti burst from the last click */
+function confetti(n){
+ if(reduce)return;n=n||34;var cols=["#2357ff","#7c5cff","#14d8a8","#f0a030","#ec5b8c","#5b7cff"];
+ for(var i=0;i<n;i++){
+  var c=document.createElement("i");c.className="conf";c.style.left=lx+"px";c.style.top=ly+"px";c.style.background=cols[i%cols.length];
+  document.body.appendChild(c);
+  var a=Math.random()*Math.PI*2,v=120+Math.random()*220,dx=Math.cos(a)*v,dy=Math.sin(a)*v-160;
+  c.animate([{transform:"translate(0,0) rotate(0)",opacity:1},{transform:"translate("+dx+"px,"+(dy+360)+"px) rotate("+(Math.random()*720-360)+"deg)",opacity:0}],{duration:1100+Math.random()*700,easing:"cubic-bezier(.2,.7,.3,1)"}).onfinish=(function(el){return function(){el.remove()}})(c);
+ }
+}
+window.TSfx={count:count,confetti:confetti};
+
+/* ripple on buttons */
+document.addEventListener("click",function(ev){
+ var b=ev.target.closest&&ev.target.closest(".btn,.chip,.seg button,.lf-tabs button");
+ if(!b||reduce)return;
+ var r=b.getBoundingClientRect(),s=Math.max(r.width,r.height),sp=document.createElement("span");
+ sp.className="ripple";sp.style.width=sp.style.height=s+"px";sp.style.left=(ev.clientX-r.left-s/2)+"px";sp.style.top=(ev.clientY-r.top-s/2)+"px";
+ b.appendChild(sp);setTimeout(function(){sp.remove()},650);
+},true);
+
+/* spotlight that follows the cursor on cards */
+if(fine){
+ document.addEventListener("pointermove",function(ev){
+  var c=ev.target.closest&&ev.target.closest(".erow,.hcard,.step");
+  if(!c)return;var r=c.getBoundingClientRect();
+  c.style.setProperty("--mx",(ev.clientX-r.left)+"px");c.style.setProperty("--my",(ev.clientY-r.top)+"px");
+ },{passive:true});
+}
+
+/* hero: grid spotlight, 3D tilt on the deadline card, magnetic buttons */
+var hero=document.getElementById("heroIn");
+if(hero&&fine&&!reduce){
+ var raf=0,px=0,py=0,card=document.getElementById("nextCard");
+ hero.addEventListener("pointermove",function(ev){
+  var r=hero.getBoundingClientRect();px=ev.clientX;py=ev.clientY;
+  hero.style.setProperty("--hx",(ev.clientX-r.left)+"px");hero.style.setProperty("--hy",(ev.clientY-r.top)+"px");
+  if(raf)return;
+  raf=requestAnimationFrame(function(){
+   raf=0;
+   if(card){var c=card.getBoundingClientRect(),dx=(px-(c.left+c.width/2))/(r.width/2),dy=(py-(c.top+c.height/2))/(r.height/2);
+    card.style.setProperty("--ry",Math.max(-9,Math.min(9,dx*9)).toFixed(2)+"deg");card.style.setProperty("--rx",Math.max(-9,Math.min(9,-dy*9)).toFixed(2)+"deg")}
+  });
+ });
+ hero.addEventListener("pointerleave",function(){if(card){card.style.setProperty("--rx","0deg");card.style.setProperty("--ry","0deg")}});
+ [].forEach.call(hero.querySelectorAll(".mag"),function(b){
+  b.addEventListener("pointermove",function(ev){var r=b.getBoundingClientRect();b.style.translate=((ev.clientX-r.left-r.width/2)*.18)+"px "+((ev.clientY-r.top-r.height/2)*.3)+"px"});
+  b.addEventListener("pointerleave",function(){b.style.translate="0 0"});
+ });
+}
+
+/* scroll: progress bar, header shadow, section highlight */
+var bar=document.getElementById("progress"),top=document.getElementById("top");
+var links=[].slice.call(document.querySelectorAll(".links a.lk")),secs=links.map(function(a){return document.querySelector(a.getAttribute("href"))});
+var tick=0;
+function onScroll(){
+ var h=document.documentElement,max=h.scrollHeight-h.clientHeight;
+ if(bar)bar.style.transform="scaleX("+(max>0?Math.min(1,scrollY/max):0)+")";
+ if(top)top.classList.toggle("scrolled",scrollY>20);
+ var cur=-1;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top<innerHeight*.4)cur=i});
+ links.forEach(function(a,i){a.classList.toggle("on",i===cur)});
+}
+addEventListener("scroll",function(){if(tick)return;tick=requestAnimationFrame(function(){tick=0;onScroll()})},{passive:true});
+onScroll();
+
+/* reveal on scroll */
+var rv=[].slice.call(document.querySelectorAll(".reveal"));
+if("IntersectionObserver" in window&&!reduce){
+ var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add("in");io.unobserve(x.target)}})},{threshold:.12,rootMargin:"0px 0px -40px 0px"});
+ rv.forEach(function(el){io.observe(el)});
+}else rv.forEach(function(el){el.classList.add("in")});
+
+/* late-fee total counts up whenever it changes */
+var lfOut=document.getElementById("lfOut");
+if(lfOut&&"MutationObserver" in window&&!reduce){
+ new MutationObserver(function(){
+  var t=lfOut.querySelector(".lf-total");if(!t)return;
+  var m=String(t.textContent).match(/^(\D*)([\d,]+)(.*)$/);if(!m)return;
+  var to=parseInt(m[2].replace(/,/g,""),10),from=mem.lf===undefined?to:mem.lf;mem.lf=to;
+  if(from===to)return;
+  var t0=performance.now(),dur=700;
+  (function step(now){var p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,4),v=Math.round(from+(to-from)*e);t.textContent=m[1]+v.toLocaleString("en-IN")+m[3];if(p<1)requestAnimationFrame(step)})(t0);
+ }).observe(lfOut,{childList:true});
+}
+
+/* privacy actions */
+var KEYS=["ts_due_custom","ts_due_state","ts_due_db","ts_due_done","ts_due_notify"];
+var pb=document.getElementById("pvBackup"),pw=document.getElementById("pvWipe");
+if(pb)pb.addEventListener("click",function(){var b=document.getElementById("backupBtn");if(b)b.click()});
+if(pw)pw.addEventListener("click",function(){
+ if(!confirm("Erase every client, note, checklist and reminder saved in this browser? This cannot be undone. Download a backup first if you may need it."))return;
+ try{KEYS.forEach(function(k){localStorage.removeItem(k)})}catch(e){}
+ location.reload();
+});
+})();
+</script>
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s)};
+var CATS={gst:{n:"GST",c:"var(--c-gst)"},tds:{n:"TDS / TCS",c:"var(--c-tds)"},it:{n:"Income Tax",c:"var(--c-it)"},roc:{n:"ROC / MCA",c:"var(--c-roc)"},pay:{n:"PF / ESI",c:"var(--c-pay)"},my:{n:"My reminders",c:"var(--c-my)"}};
+var PROFS=[["gst","GST regular"],["qrmp","QRMP filer"],["comp","Composition"],["ded","TDS / TCS deductor"],["emp","Employer (PF/ESI)"],["co","Company / LLP"],["aud","Tax audit case"],["ind","Individual / firm"]];
+var LINKS={gst:"https://www.gst.gov.in/",tds:"https://www.tdscpc.gov.in/",it:"https://www.incometax.gov.in/",roc:"https://www.mca.gov.in/",pay:"https://www.epfindia.gov.in/",my:""};
+var MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var MFULL=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+/* ---------- storage ---------- */
+function sget(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function sset(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+var custom=sget("ts_due_custom",[]);
+var st=sget("ts_due_state",null)||{};
+var DB=sget("ts_due_db",null)||{clients:[{id:"c1",name:"My business",prof:st.prof||[],done:sget("ts_due_done",{}),notes:{},chk:{}}],active:"c1",ext:{}};
+function normDB(){if(!DB||!Array.isArray(DB.clients)||!DB.clients.length)DB={clients:[{id:"c1",name:"My business"}],active:"c1",ext:{}};DB.clients.forEach(function(c){c.prof=c.prof||[];c.done=c.done||{};c.notes=c.notes||{};c.chk=c.chk||{};c.name=String(c.name||"Client")});DB.ext=DB.ext||{};if(!DB.clients.some(function(c){return c.id===DB.active}))DB.active=DB.clients[0].id}
+normDB();
+function client(){return DB.clients.filter(function(c){return c.id===DB.active})[0]||DB.clients[0]}
+function saveDB(){sset("ts_due_db",DB)}
+var done=client().done;
+var S={cats:st.cats||Object.keys(CATS),prof:client().prof.slice(),q:"",range:st.range||"90",view:st.view||"list"};
+var today=new Date();today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+var calY=today.getFullYear(),calM=today.getMonth(),selDay=today.getTime();
+function saveState(){sset("ts_due_state",{cats:S.cats,range:S.range,view:S.view});client().prof=S.prof.slice();saveDB()}
+
+/* ---------- helpers ---------- */
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function pad(n){return String(n).padStart(2,"0")}
+function ymd(d){return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())}
+function addDays(d,n){return new Date(d.getFullYear(),d.getMonth(),d.getDate()+n)}
+function daysTo(d){return Math.round((d.getTime()-today.getTime())/864e5)}
+function fmt(d){return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}
+function fmtLong(d){return d.toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}
+function fy(y){return "FY "+(y-1)+"-"+String(y).slice(2)}
+function lastDay(y,m){return new Date(y,m+1,0).getDate()}
+function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("show")},2800)}
+
+/* ---------- event rules ---------- */
+function ql(y,m){return ({0:"Oct–Dec "+(y-1),3:"Jan–Mar "+y,6:"Apr–Jun "+y,9:"Jul–Sep "+y})[m]}
+var GST_LATE="Late fee applies per day of delay (₹50/day, ₹20/day for NIL returns, subject to statutory caps) plus interest on any tax payable.";
+var MONTHLY=[
+ {k:"gstr1",d:11,t:"GSTR-1",f:"GSTR-1",c:"gst",for:["gst"],desc:"Outward supplies (sales) return for the month. Mandatory for regular taxpayers filing monthly.",who:"Regular GST taxpayers (monthly)",pen:GST_LATE+" Late GSTR-1 can also block e-way bill generation."},
+ {k:"gstr3b",d:20,t:"GSTR-3B",f:"GSTR-3B",c:"gst",for:["gst"],desc:"Summary return and payment of GST for the month — output tax less ITC.",who:"Regular GST taxpayers (monthly)",pen:GST_LATE+" Interest @18% p.a. on net tax paid late."},
+ {k:"gstr1q",d:13,m:[0,3,6,9],t:"GSTR-1 (QRMP)",f:"GSTR-1",c:"gst",for:["qrmp"],per:ql,desc:"Quarterly outward supplies return for taxpayers under the Quarterly Return Monthly Payment scheme.",who:"QRMP taxpayers",pen:GST_LATE},
+ {k:"iff",d:13,m:[1,2,4,5,7,8,10,11],t:"IFF (optional)",f:"IFF",c:"gst",for:["qrmp"],desc:"Optional Invoice Furnishing Facility for B2B supplies in the first two months of the quarter so buyers get ITC early.",who:"QRMP taxpayers (optional)",pen:"Optional facility — no late fee, but buyers' ITC is delayed until your quarterly GSTR-1."},
+ {k:"gstr3bq",d:22,m:[0,3,6,9],t:"GSTR-3B (QRMP)",f:"GSTR-3B",c:"gst",for:["qrmp"],per:ql,desc:"Quarterly GSTR-3B. Due on the 22nd for Category-X states/UTs and the 24th for Category-Y states.",who:"QRMP taxpayers",pen:GST_LATE+" Interest @18% p.a. on late tax."},
+ {k:"pmt06",d:25,m:[1,2,4,5,7,8,10,11],t:"PMT-06 monthly payment",f:"PMT-06",c:"gst",for:["qrmp"],desc:"Pay GST for the first two months of the quarter via challan (fixed-sum or self-assessment method).",who:"QRMP taxpayers",pen:"Interest @18% p.a. on tax paid after the due date."},
+ {k:"cmp08",d:18,m:[0,3,6,9],t:"CMP-08 (Composition)",f:"CMP-08",c:"gst",for:["comp"],per:ql,desc:"Quarterly statement-cum-challan for payment of composition tax.",who:"Composition scheme taxpayers",pen:"No late fee, as CMP-08 is a statement-cum-challan — but interest @18% p.a. applies on tax paid late."},
+ {k:"tdsdep",d:7,t:"TDS / TCS payment",f:"Challan 281",c:"tds",for:["ded"],desc:"Deposit TDS deducted and TCS collected in the previous month. For March deductions, the due date is 30 April.",who:"Deductors / collectors (non-government)",pen:"Interest @1% per month (deduction) / 1.5% per month (non-deposit) and possible disallowance of the expense under Sec. 40(a)(ia)."},
+ {k:"26qb",d:"end",t:"Form 26QB – TDS on property",f:"Form 26QB",c:"tds",for:["ind"],desc:"Challan-cum-statement for TDS @1% on purchase of immovable property (other than agricultural land) — due within 30 days from the end of the month of deduction.",who:"Buyers of property above ₹50 lakh",pen:"Late fee ₹200/day under Sec. 234E until filed (capped at the TDS amount) plus interest."},
+ {k:"pf",d:15,t:"PF – ECR & payment",f:"EPF ECR",c:"pay",for:["emp"],desc:"Pay EPF contribution (employer + employee) and file the Electronic Challan-cum-Return for the previous month.",who:"Establishments covered under EPF",pen:"Interest @12% p.a. and damages up to 25% p.a. for delay."},
+ {k:"esi",d:15,t:"ESI contribution",f:"ESIC",c:"pay",for:["emp"],desc:"Deposit ESI contribution for the previous month for covered employees.",who:"Establishments covered under ESI",pen:"Interest @12% p.a. on delayed contribution."}
+];
+var ANNUAL=[
+ {k:"tdsq3",m:0,d:31,t:"TDS/TCS return – Q3",f:"24Q/26Q/27Q/27EQ",c:"tds",for:["ded"],sfx:function(y){return "Oct–Dec "+(y-1)},desc:"Quarterly TDS/TCS statements for October–December deductions.",who:"All deductors / collectors",pen:"Late filing fee ₹200/day under Sec. 234E (capped at TDS amount); penalty ₹10,000–₹1,00,000 under Sec. 271H."},
+ {k:"tdsq4",m:4,d:31,t:"TDS/TCS return – Q4",f:"24Q/26Q/27Q/27EQ",c:"tds",for:["ded"],sfx:function(y){return "Jan–Mar "+y},desc:"Quarterly TDS/TCS statements for January–March deductions (includes annual salary details in 24Q).",who:"All deductors / collectors",pen:"Fee ₹200/day under Sec. 234E; penalty under Sec. 271H."},
+ {k:"tdsq1",m:6,d:31,t:"TDS/TCS return – Q1",f:"24Q/26Q/27Q/27EQ",c:"tds",for:["ded"],sfx:function(y){return "Apr–Jun "+y},desc:"Quarterly TDS/TCS statements for April–June deductions.",who:"All deductors / collectors",pen:"Fee ₹200/day under Sec. 234E; penalty under Sec. 271H."},
+ {k:"tdsq2",m:9,d:31,t:"TDS/TCS return – Q2",f:"24Q/26Q/27Q/27EQ",c:"tds",for:["ded"],sfx:function(y){return "Jul–Sep "+y},desc:"Quarterly TDS/TCS statements for July–September deductions.",who:"All deductors / collectors",pen:"Fee ₹200/day under Sec. 234E; penalty under Sec. 271H."},
+ {k:"16a3",m:1,d:15,t:"Form 16A – Q3 certificate",f:"Form 16A",c:"tds",for:["ded"],sfx:function(y){return "Oct–Dec "+(y-1)},desc:"Issue TDS certificates (non-salary) to deductees for the October–December quarter.",who:"Deductors",pen:"₹100 per day of delay under Sec. 272A(2)(g)."},
+ {k:"16",m:5,d:15,t:"Form 16 & Q4 Form 16A",f:"Form 16 / 16A",c:"tds",for:["ded","emp"],sfx:function(y){return fy(y)},desc:"Issue Form 16 (salary TDS) to employees and Form 16A for the January–March quarter.",who:"Employers / deductors",pen:"₹100 per day of delay under Sec. 272A(2)(g)."},
+ {k:"16a1",m:7,d:15,t:"Form 16A – Q1 certificate",f:"Form 16A",c:"tds",for:["ded"],sfx:function(y){return "Apr–Jun "+y},desc:"Issue TDS certificates (non-salary) to deductees for the April–June quarter.",who:"Deductors",pen:"₹100 per day of delay under Sec. 272A(2)(g)."},
+ {k:"16a2",m:10,d:15,t:"Form 16A – Q2 certificate",f:"Form 16A",c:"tds",for:["ded"],sfx:function(y){return "Jul–Sep "+y},desc:"Issue TDS certificates (non-salary) to deductees for the July–September quarter.",who:"Deductors",pen:"₹100 per day of delay under Sec. 272A(2)(g)."},
+ {k:"at1",m:5,d:15,t:"Advance tax – 1st instalment",f:"Challan 280",c:"it",for:["ind","co","aud"],sfx:function(y){return fy(y+1)+" · 15%"},desc:"Pay at least 15% of the estimated tax for the year. Applies if tax payable exceeds ₹10,000.",who:"Companies, firms, individuals with tax liability above ₹10,000",pen:"Interest under Sec. 234B / 234C @1% per month on shortfall."},
+ {k:"at2",m:8,d:15,t:"Advance tax – 2nd instalment",f:"Challan 280",c:"it",for:["ind","co","aud"],sfx:function(y){return fy(y+1)+" · 45% cumulative"},desc:"Cumulative advance tax of at least 45% of the estimated liability.",who:"Companies, firms, individuals with tax liability above ₹10,000",pen:"Interest under Sec. 234B / 234C @1% per month on shortfall."},
+ {k:"at3",m:11,d:15,t:"Advance tax – 3rd instalment",f:"Challan 280",c:"it",for:["ind","co","aud"],sfx:function(y){return fy(y+1)+" · 75% cumulative"},desc:"Cumulative advance tax of at least 75% of the estimated liability.",who:"Companies, firms, individuals with tax liability above ₹10,000",pen:"Interest under Sec. 234B / 234C @1% per month on shortfall."},
+ {k:"at4",m:2,d:15,t:"Advance tax – final instalment",f:"Challan 280",c:"it",for:["ind","co","aud"],sfx:function(y){return fy(y)+" · 100%"},desc:"Full advance tax for the year. Taxpayers under presumptive taxation (44AD/44ADA) can pay the whole amount by this date.",who:"Companies, firms, individuals with tax liability above ₹10,000",pen:"Interest under Sec. 234B / 234C @1% per month on shortfall."},
+ {k:"itr",m:6,d:31,t:"ITR – non-audit cases",f:"ITR-1 to ITR-4",c:"it",for:["ind"],sfx:function(y){return fy(y)},desc:"Due date for income-tax returns of individuals, HUFs and firms whose accounts are not required to be audited.",who:"Non-audit taxpayers",pen:"Late fee under Sec. 234F up to ₹5,000 (₹1,000 if income ≤ ₹5 lakh) plus interest under Sec. 234A; some losses cannot be carried forward."},
+ {k:"3cd",m:8,d:30,t:"Tax audit report",f:"Form 3CA/3CB-3CD",c:"it",for:["aud"],sfx:function(y){return fy(y)},desc:"Upload the tax audit report for businesses crossing the audit thresholds under Sec. 44AB.",who:"Taxpayers liable for tax audit",pen:"Penalty under Sec. 271B — 0.5% of turnover, up to ₹1,50,000."},
+ {k:"itra",m:9,d:31,t:"ITR – audit cases",f:"ITR-3/5/6",c:"it",for:["aud","co"],sfx:function(y){return fy(y)},desc:"Income-tax return due date for assessees whose accounts require audit (including companies with audit).",who:"Audit cases / companies",pen:"Late fee under Sec. 234F, interest under Sec. 234A and loss of certain carry-forward benefits."},
+ {k:"3ceb",m:9,d:31,t:"Transfer pricing report",f:"Form 3CEB",c:"it",for:["aud","co"],sfx:function(y){return fy(y)},desc:"Accountant's report for international / specified domestic transactions with associated enterprises.",who:"Taxpayers with such transactions",pen:"Penalty of ₹1,00,000 under Sec. 271BA."},
+ {k:"itrb",m:11,d:31,t:"Belated / revised ITR",f:"ITR",c:"it",for:["ind","aud"],sfx:function(y){return fy(y)},desc:"Last date to file a belated return or revise an already-filed return for the previous financial year.",who:"Taxpayers who missed or need to correct their return",pen:"Late fee under Sec. 234F and interest under Sec. 234A apply; after this date only an updated return (ITR-U) is possible."},
+ {k:"taxsave",m:2,d:31,t:"Financial year-end",f:"Tax planning",c:"it",for:["ind"],sfx:function(y){return fy(y)},desc:"Last day for tax-saving investments and deductions (80C, 80D, NPS etc.) and to close books for the financial year.",who:"Individuals, firms",pen:"No penalty — but missed investments cannot be claimed for the year."},
+ {k:"itccut",m:10,d:30,t:"ITC & credit-note claim cut-off",f:"GSTR-3B",c:"gst",for:["gst"],sfx:function(y){return fy(y)},desc:"Last date to claim ITC on invoices / debit notes of the previous financial year and to declare related credit notes.",who:"Regular GST taxpayers",pen:"ITC not availed by this date (or the annual return date, if earlier) is permanently lost."},
+ {k:"gstr9",m:11,d:31,t:"GSTR-9 / 9C annual return",f:"GSTR-9, GSTR-9C",c:"gst",for:["gst"],sfx:function(y){return fy(y)},desc:"GST annual return and reconciliation statement (where applicable by turnover).",who:"Regular taxpayers above the threshold",pen:"Late fee ₹200/day (₹100 CGST + ₹100 SGST), capped at 0.5% of turnover in the state/UT."},
+ {k:"gstr4",m:3,d:30,t:"GSTR-4 annual return",f:"GSTR-4",c:"gst",for:["comp"],sfx:function(y){return fy(y)},desc:"Annual return for taxpayers under the composition scheme.",who:"Composition taxpayers",pen:"Late fee ₹50/day (₹20/day NIL), subject to caps."},
+ {k:"msme2",m:3,d:30,t:"MSME-1 half-yearly return",f:"MSME Form-1",c:"roc",for:["co"],sfx:function(y){return "Oct–Mar "+y},desc:"Report outstanding payments to micro and small enterprises beyond 45 days.",who:"Companies with such dues",pen:"Additional fees / penalty under the Companies Act."},
+ {k:"msme1",m:9,d:31,t:"MSME-1 half-yearly return",f:"MSME Form-1",c:"roc",for:["co"],sfx:function(y){return "Apr–Sep "+y},desc:"Report outstanding payments to micro and small enterprises beyond 45 days.",who:"Companies with such dues",pen:"Additional fees / penalty under the Companies Act."},
+ {k:"dpt3",m:5,d:30,t:"DPT-3 return of deposits",f:"Form DPT-3",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"Return of deposits / outstanding receipts of money (including exempt deposits) as on 31 March.",who:"Companies",pen:"Additional fees plus penalty under the Companies Act."},
+ {k:"agm",m:8,d:30,t:"Annual General Meeting deadline",f:"AGM",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"Last date to hold the AGM for the previous financial year (within 6 months of year-end).",who:"Companies",pen:"Penalty on company and officers in default under Sec. 99."},
+ {k:"dir3",m:8,d:30,t:"DIR-3 KYC for directors",f:"DIR-3 KYC",c:"roc",for:["co"],desc:"Annual KYC of directors holding a DIN.",who:"Directors with DIN",pen:"DIN is deactivated; ₹5,000 fee to reactivate."},
+ {k:"aoc4",m:9,d:30,t:"AOC-4 financial statements",f:"Form AOC-4",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"File financial statements within 30 days of the AGM (date shown assumes an AGM on 30 September).",who:"Companies",pen:"Additional fee of ₹100 per day of delay."},
+ {k:"mgt7",m:10,d:29,t:"MGT-7 / 7A annual return",f:"Form MGT-7/7A",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"Annual return within 60 days of the AGM (date shown assumes an AGM on 30 September).",who:"Companies",pen:"Additional fee of ₹100 per day of delay."},
+ {k:"llp11",m:4,d:30,t:"LLP Form 11 annual return",f:"LLP Form 11",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"Annual return of the LLP (partners, contribution and details).",who:"LLPs",pen:"Additional fee of ₹100 per day of delay."},
+ {k:"llp8",m:9,d:30,t:"LLP Form 8 – Statement of accounts",f:"LLP Form 8",c:"roc",for:["co"],sfx:function(y){return fy(y)},desc:"Statement of account & solvency of the LLP.",who:"LLPs",pen:"Additional fee of ₹100 per day of delay."}
+];
+/* ANNUAL: Form 3CD etc. use month index; fixed typo guard */
+var CHK={
+ gstr1:["Reconcile sales register with books","Verify B2B / B2C / HSN summary tables","Include credit-debit notes and amendments","Generate JSON, file with DSC/EVC and save the ARN"],
+ gstr3b:["Download and review GSTR-2B","Reconcile ITC with the purchase register","Compute RCM liability and ITC reversals","Pay tax from cash / credit ledger, file and save the ARN"],
+ tdsdep:["Total deductions section-wise","Verify PAN of every deductee","Generate challan (ITNS 281) and pay","Save CIN / BSR details for the quarterly return"],
+ pf:["Verify attendance and wage register","Upload ECR and generate TRRN","Pay the challan on or before the due date","Download the ECR receipt"]
+};
+var CHK_DEF={
+ gst:["Reconcile books with GST portal data (2A/2B)","Prepare working and tax computation","Pay liability / challan","File return and save the ARN"],
+ tds:["Confirm deductions, rates and PANs","Reconcile challans with OLTAS / Form 26AS","Validate the file with FVU","Upload and check TRACES for defaults"],
+ it:["Collect Form 26AS / AIS / TIS","Reconcile income, deductions and TDS credit","Pay tax due (challan 280)","File the return and e-verify"],
+ roc:["Prepare and approve financial statements / forms","Arrange DSC and board / member approvals","File the form and pay fees","Download the SRN and receipt"],
+ pay:["Prepare wage and attendance data","Compute contribution and generate challan","Pay and file the return","Save the receipt"]
+};
+var CALCK={gstr1:"gst",gstr3b:"gst",gstr1q:"gst",gstr3bq:"gst",cmp08:"gst",gstr4:"gst",gstr9:"gst9",tdsq1:"tdsret",tdsq2:"tdsret",tdsq3:"tdsret",tdsq4:"tdsret","26qb":"tdsret",tdsdep:"tdsdep","16":"cert","16a1":"cert","16a2":"cert","16a3":"cert",itr:"itr",itra:"itr",itrb:"itr",at1:"at",at2:"at",at3:"at",at4:"at","3cd":"aud",aoc4:"roc",mgt7:"roc",llp11:"roc",llp8:"roc",pf:"pf"};
+var R=function(n){return "₹"+Math.round(n||0).toLocaleString("en-IN")};
+var CALCDEF={
+ gst:{f:[["days","Days late"],["tax","Net tax paid late (₹) — for interest"],["nil","NIL return","check"]],run:function(v){var cap=v.nil?1000:10000;return [["Late fee (₹"+(v.nil?20:50)+"/day, cap "+R(cap)+")",Math.min(v.days*(v.nil?20:50),cap)],["Interest @18% p.a. on tax",v.tax*.18*v.days/365]]},note:"Late fee shown is CGST + SGST combined. Interest applies only to tax paid after the due date."},
+ gst9:{f:[["days","Days late"],["turnover","Turnover in the state / UT (₹)"]],run:function(v){return [["Late fee (₹200/day, max 0.5% of turnover)",Math.min(v.days*200,v.turnover*.005)]]},note:"₹100 CGST + ₹100 SGST per day, subject to the turnover cap."},
+ tdsret:{f:[["days","Days late"],["amt","TDS amount in the statement (₹)"]],run:function(v){return [["Fee u/s 234E (₹200/day, max = TDS)",Math.min(v.days*200,v.amt)]]},note:"A penalty of ₹10,000–₹1,00,000 under Sec. 271H may also apply if the return is not filed within one year."},
+ tdsdep:{f:[["months","Months late (part month = full month)"],["amt","TDS amount (₹)"],["late","Tax was deducted late (1%), not deposited late (1.5%)","check"]],run:function(v){var r=v.late?.01:.015;return [["Interest @"+(r*100)+"% per month",v.amt*r*v.months]]},note:"Interest is per month or part of a month. Disallowance of the expense under Sec. 40(a)(ia) is a separate risk."},
+ cert:{f:[["days","Days late"],["amt","TDS amount in certificate (₹)"]],run:function(v){return [["Penalty u/s 272A(2)(g) (₹100/day, max = TDS)",Math.min(v.days*100,v.amt)]]},note:"Applies per certificate."},
+ itr:{f:[["days","Days late"],["tax","Tax payable after TDS / advance tax (₹)"],["low","Total income ≤ ₹5 lakh","check"]],run:function(v){return [["Late fee u/s 234F",v.low?1000:5000],["Interest u/s 234A (1% per month)",v.tax*.01*Math.ceil(v.days/30)]]},note:"Loss carry-forward may also be affected for a belated return."},
+ at:{f:[["shortfall","Shortfall in instalment (₹)"],["months","Months of shortfall"]],run:function(v){return [["Interest u/s 234C (1% per month)",v.shortfall*.01*v.months]]},note:"234C is 1% per month for 3 months on the first three instalments and 1 month on the last."},
+ roc:{f:[["days","Days late"]],run:function(v){return [["Additional fee (₹100/day)",v.days*100]]},note:"Indicative. Fee structure can differ by form and company type — check the MCA fee schedule."},
+ pf:{f:[["amt","Contribution paid late (₹)"],["days","Days late"]],run:function(v){var r=v.days<60?.05:v.days<120?.10:v.days<180?.15:.25;return [["Interest @12% p.a.",v.amt*.12*v.days/365],["Damages @"+(r*100)+"% p.a.",v.amt*r*v.days/365]]},note:"Damages slab: 5% (<2 months), 10% (2–4), 15% (4–6), 25% (6+ months) per annum."},
+ aud:{f:[["turnover","Turnover / gross receipts (₹)"]],run:function(v){return [["Penalty u/s 271B (0.5%, max ₹1,50,000)",Math.min(v.turnover*.005,150000)]]},note:"Penalty can be waived if reasonable cause is shown."}
+};
+function mk(rule,y,m,day,sfxTxt){
+ var dt=new Date(y,m,day),id=rule.k+"-"+ymd(dt),x=DB.ext[id],ex=null;
+ if(typeof x==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(x)){var p=x.split("-");ex=new Date(+p[0],+p[1]-1,+p[2])}
+ var title=rule.t+(sfxTxt?" · "+sfxTxt:"");
+ return {id:id,rule:rule.k,title:title,form:rule.f,cat:rule.c,date:ex||dt,orig:dt,extended:!!ex,for:rule.for||[],desc:rule.desc||"",who:rule.who||"",pen:rule.pen||"",link:LINKS[rule.c],custom:false};
+}
+function build(){
+ var out=[],base=today.getFullYear();
+ for(var k=-5;k<=18;k++){
+  var d=new Date(today.getFullYear(),today.getMonth()+k,1),y=d.getFullYear(),m=d.getMonth();
+  MONTHLY.forEach(function(r){
+   if(r.m&&r.m.indexOf(m)<0)return;
+   var day=r.d==="end"?lastDay(y,m):r.d;
+   var per=r.per?r.per(y,m):(function(){var p=new Date(y,m-1,1);return MN[p.getMonth()]+" "+p.getFullYear()})();
+   out.push(mk(r,y,m,day,per));
+  });
+ }
+ for(var y2=base-1;y2<=base+2;y2++){
+  ANNUAL.forEach(function(r){
+   var s=r.sfx?r.sfx(y2):"";
+   out.push(mk(r,y2,r.m,r.d,s));
+  });
+ }
+ custom.forEach(function(c){
+  if(!c||typeof c.date!=="string")return;
+  var p=c.date.split("-"),y0=+p[0],m0=+p[1]-1,d0=+p[2],step=c.rep==="m"?1:c.rep==="q"?3:c.rep==="y"?12:0,cnt=step?Math.ceil(30/step)+4:1;
+  for(var i=0;i<cnt;i++){
+   var mm=m0+i*step,yy=y0+Math.floor(mm/12);mm=((mm%12)+12)%12;
+   var dt=new Date(yy,mm,Math.min(d0,lastDay(yy,mm)));
+   out.push({id:c.id+(i?"-"+i:""),base:c.id,rule:"",title:c.title+(step?" ↻":""),form:"Reminder",cat:"my",date:dt,orig:dt,extended:false,for:[],desc:c.note||"Your own reminder.",who:"You",pen:"",link:"",custom:true});
+  }
+ });
+ var lo=addDays(today,-400),hi=addDays(today,560);
+ out=out.filter(function(e){return e.date>=lo&&e.date<=hi});
+ out.sort(function(a,b){return a.date-b.date||a.title.localeCompare(b.title)});
+ var seen={};return out.filter(function(e){if(seen[e.id])return false;seen[e.id]=1;return true});
+}
+var ALL=build(), BYID={};
+function reindex(){BYID={};ALL.forEach(function(e){BYID[e.id]=e})}reindex();
+
+/* ---------- filtering ---------- */
+function baseFilter(e){
+ if(S.cats.indexOf(e.cat)<0)return false;
+ if(S.prof.length&&!e.custom){var ok=e.for.some(function(p){return S.prof.indexOf(p)>=0});if(!ok)return false}
+ if(S.q){var t=(e.title+" "+e.form+" "+e.desc+" "+CATS[e.cat].n).toLowerCase();if(t.indexOf(S.q)<0)return false}
+ return true;
+}
+function rangeEnd(){
+ var r=S.range;
+ if(r==="30")return addDays(today,30);
+ if(r==="90")return addDays(today,90);
+ if(r==="month")return new Date(today.getFullYear(),today.getMonth()+1,0);
+ if(r==="fy"){var y=today.getMonth()>=3?today.getFullYear()+1:today.getFullYear();return new Date(y,2,31)}
+ return null;
+}
+function listFilter(){
+ var end=rangeEnd(),start=S.range==="all"?addDays(today,-400):addDays(today,-45);
+ return ALL.filter(function(e){
+  if(!baseFilter(e))return false;
+  if(S.range==="all")return true;
+  if(e.date<today)return !done[e.id]&&e.date>=start;
+  return !end||e.date<=end;
+ });
+}
+function urg(e){var d=daysTo(e.date);if(done[e.id])return "done";if(d<0)return "over";if(d<=3)return "hot";if(d<=7)return "warm";if(d<=15)return "cool";return "calm"}
+function cdText(e){var d=daysTo(e.date);if(done[e.id])return "✓ Done";if(d<0)return (-d)+(d===-1?" day":" days")+" overdue";if(d===0)return "Due today";if(d===1)return "Tomorrow";return "In "+d+" days"}
+
+/* ---------- rendering ---------- */
+function rowHTML(e,i){
+ var u=urg(e),c=CATS[e.cat];
+ return '<div class="erow u-'+u+'" data-id="'+esc(e.id)+'" style="--cc:'+c.c+';--i:'+Math.min(i,14)+'" tabindex="0" role="button">'
+ +'<div class="edate"><b>'+pad(e.date.getDate())+'</b><small>'+MN[e.date.getMonth()]+' · '+e.date.toLocaleDateString("en-IN",{weekday:"short"})+'</small></div>'
+ +'<div class="einfo"><h4>'+esc(e.title)+'</h4><p>'+esc(e.desc)+'</p><div class="meta"><span class="tag" style="--cc:'+c.c+'">'+esc(c.n)+'</span><span class="form-pill">'+esc(e.form)+'</span>'+pills(e)+'</div></div>'
+ +'<span class="cd">'+cdText(e)+'</span>'
+ +'<button class="tick" type="button" data-tick="'+esc(e.id)+'" aria-label="Mark as done" title="Mark as done">✓</button></div>';
+}
+function renderList(){
+ var list=listFilter(),box=$("#viewList");
+ if(!list.length){box.innerHTML='<div class="empty"><b>Nothing due in this window 🎉</b>Try a wider date range, or clear your filters.</div>';return}
+ var groups=[],over=list.filter(function(e){return e.date<today&&!done[e.id]});
+ if(over.length&&S.range!=="all")groups.push({h:"Overdue — needs attention",cls:"over",items:over});
+ var rest=S.range==="all"?list:list.filter(function(e){return e.date>=today});
+ var map={};
+ rest.forEach(function(e){var key=e.date.getFullYear()*100+e.date.getMonth();if(!map[key]){map[key]={h:MFULL[e.date.getMonth()]+" "+e.date.getFullYear(),cls:"",items:[]};groups.push(map[key])}map[key].items.push(e)});
+ var n=0,html="";
+ groups.forEach(function(g){
+  html+='<div class="group '+g.cls+'"><div class="group-h"><h3>'+esc(g.h)+'</h3><span>'+g.items.length+' filing'+(g.items.length===1?"":"s")+'</span></div><div class="rows">'+g.items.map(function(e){return rowHTML(e,n++)}).join("")+'</div></div>';
+ });
+ box.innerHTML=html;
+}
+function renderCal(){
+ var box=$("#viewCal");
+ var first=new Date(calY,calM,1),start=new Date(calY,calM,1-first.getDay());
+ var evs=ALL.filter(baseFilter),byDay={};
+ evs.forEach(function(e){var k=e.date.getTime();(byDay[k]=byDay[k]||[]).push(e)});
+ var cells="";
+ for(var i=0;i<42;i++){
+  var d=addDays(start,i),k=d.getTime(),arr=byDay[k]||[];
+  var cls="day"+(d.getMonth()!==calM?" out":"")+(k===today.getTime()?" today":"")+(k===selDay?" sel":"");
+  if(arr.some(function(e){return urg(e)==="over"}))cls+=" hasover";
+  var dots=arr.slice(0,4).map(function(e){return '<i style="--cc:'+CATS[e.cat].c+'"></i>'}).join("")+(arr.length>4?'<em>+'+(arr.length-4)+'</em>':"");
+  cells+='<div class="'+cls+'" data-day="'+k+'"><span>'+d.getDate()+'</span><span class="dots">'+dots+'</span></div>';
+ }
+ var sel=new Date(selDay),sevs=byDay[selDay]||[];
+ var legend=Object.keys(CATS).map(function(c){return '<span style="--cc:'+CATS[c].c+'"><i></i>'+CATS[c].n+'</span>'}).join("");
+ box.innerHTML='<div class="cal-wrap"><div class="cal"><div class="cal-h"><h3>'+MFULL[calM]+' '+calY+'</h3><div class="cal-nav"><button type="button" data-cal="-1" aria-label="Previous month">‹</button><button type="button" class="t" data-cal="0">Today</button><button type="button" data-cal="1" aria-label="Next month">›</button></div></div>'
+ +'<div class="dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="days">'+cells+'</div><div class="legend">'+legend+'</div></div>'
+ +'<aside class="side"><h3>'+fmtLong(sel)+'</h3><small>'+(sevs.length?sevs.length+" filing"+(sevs.length===1?"":"s")+" due":"No filings due on this day")+'</small>'+sevs.map(function(e,i){return rowHTML(e,i)}).join("")+(sevs.length?"":'<div class="empty" style="padding:30px 12px;border-radius:18px">Select a highlighted date to see its filings.</div>')+'</aside></div>';
+}
+function renderNext(){
+ var evs=ALL.filter(function(e){return baseFilter(e)&&!done[e.id]&&e.date>=today});
+ var nxt=evs[0],c=$("#nextCard");
+ if(!nxt){c.innerHTML='<div class="nc-head"><strong>Next deadline</strong><span class="pill">● All clear</span></div><p class="nc-meta">No upcoming filings match your current profile.</p>';return}
+ var d=daysTo(nxt.date),pct=Math.max(.06,Math.min(1,1-d/30)),C=2*Math.PI*52,cat=CATS[nxt.cat];
+ var more=evs.slice(1,4).map(function(e){return '<div class="nc-row" data-id="'+esc(e.id)+'" style="--cc:'+CATS[e.cat].c+'"><span><i></i>'+esc(e.title)+'</span><em>'+fmt(e.date).slice(0,6)+' · '+daysTo(e.date)+'d</em></div>'}).join("");
+ c.innerHTML='<div class="nc-head"><strong>Next deadline</strong><span class="pill" style="max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">● '+esc(client().name)+'</span></div>'
+ +'<div class="nc-main"><div class="ring"><svg width="128" height="128" viewBox="0 0 128 128"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b5bff"/><stop offset="1" stop-color="#14d8a8"/></linearGradient></defs><circle class="bg" cx="64" cy="64" r="52"/><circle class="fg" cx="64" cy="64" r="52" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+C.toFixed(1)+'" data-off="'+(C*(1-pct)).toFixed(1)+'"/></svg><div class="ring-c"><b>'+(d===0?"Today":d)+'</b><small>'+(d===0?"is due":(d===1?"day left":"days left"))+'</small></div></div>'
+ +'<div><h3 class="nc-title" style="cursor:pointer" data-id="'+esc(nxt.id)+'">'+esc(nxt.title)+'</h3><div class="nc-meta"><span class="tag" style="--cc:'+cat.c+'">'+esc(cat.n)+'</span><br>'+fmtLong(nxt.date)+'</div></div></div>'
+ +(more?'<div class="nc-list">'+more+'</div>':"");
+ var rb=c.querySelector(".ring-c b");if(rb&&d>0&&window.TSfx)TSfx.count(rb,d,"ring");
+ var fg=c.querySelector(".fg");if(fg)requestAnimationFrame(function(){setTimeout(function(){fg.style.strokeDashoffset=fg.getAttribute("data-off")},80)});
+}
+function setStat(s,v){var el=$(s);if(window.TSfx)TSfx.count(el,v,s);else el.textContent=v}
+function renderStats(){
+ var base=ALL.filter(baseFilter),m=today.getMonth(),y=today.getFullYear(),n7=addDays(today,7);
+ setStat("#s1",base.filter(function(e){return !done[e.id]&&e.date>=today&&e.date<=n7}).length);
+ setStat("#s2",base.filter(function(e){return !done[e.id]&&e.date.getMonth()===m&&e.date.getFullYear()===y&&e.date>=today}).length);
+ setStat("#s3",base.filter(function(e){return !done[e.id]&&e.date<today&&e.date>=addDays(today,-45)}).length);
+ setStat("#s4",Object.keys(done).filter(function(id){return done[id]&&BYID[id]}).length);
+}
+function renderChips(){
+ $("#catChips").innerHTML=Object.keys(CATS).map(function(k){return '<button type="button" class="chip cat'+(S.cats.indexOf(k)>=0?" on":"")+'" data-cat="'+k+'" style="--cc:'+CATS[k].c+'"><i></i>'+CATS[k].n+'</button>'}).join("");
+ $("#profChips").innerHTML='<button type="button" class="chip'+(S.prof.length?"":" on")+'" data-prof="all">All businesses</button>'+PROFS.map(function(p){return '<button type="button" class="chip'+(S.prof.indexOf(p[0])>=0?" on":"")+'" data-prof="'+p[0]+'">'+p[1]+'</button>'}).join("");
+}
+function pills(e){
+ var s="";if(e.extended)s+='<span class="form-pill ext">Extended</span>';
+ var w=e.date.getDay();if(w===0||w===6)s+='<span class="form-pill wk">'+(w===0?"Sunday":"Saturday")+'</span>';
+ var n=client().notes[e.id];if(n&&(n.ack||n.note))s+='<span class="form-pill">📝 Notes</span>';
+ return s;
+}
+function renderClients(){
+ $("#clientSel").innerHTML=DB.clients.map(function(c){return '<option value="'+esc(c.id)+'"'+(c.id===DB.active?" selected":"")+'>'+esc(c.name)+'</option>'}).join("");
+}
+function renderHealth(){
+ var fyS=new Date(today.getMonth()>=3?today.getFullYear():today.getFullYear()-1,3,1);
+ var due=ALL.filter(function(e){return baseFilter(e)&&e.date>=fyS&&e.date<today});
+ var dn=due.filter(function(e){return done[e.id]}).length,pct=due.length?Math.round(dn/due.length*100):100,C=2*Math.PI*44;
+ var tone=pct>=90?"Excellent":pct>=70?"Good progress":"Needs attention";
+ var bars=S.cats.map(function(k){
+  var t=due.filter(function(e){return e.cat===k}),d=t.filter(function(e){return done[e.id]}).length;
+  if(!t.length)return "";
+  return '<div class="cbar" style="--cc:'+CATS[k].c+'"><div><span>'+CATS[k].n+'</span><span>'+d+' / '+t.length+'</span></div><div class="tr"><i style="width:'+Math.round(d/t.length*100)+'%"></i></div></div>';
+ }).join("")||'<p class="hnote">No filings have fallen due yet for this selection.</p>';
+ var wl=[],mx=1;
+ for(var i=0;i<6;i++){
+  var d0=new Date(today.getFullYear(),today.getMonth()+i,1);
+  var n=ALL.filter(function(e){return baseFilter(e)&&!done[e.id]&&e.date>=today&&e.date.getMonth()===d0.getMonth()&&e.date.getFullYear()===d0.getFullYear()}).length;
+  wl.push([MN[d0.getMonth()],n]);mx=Math.max(mx,n);
+ }
+ $("#health").innerHTML='<div class="hcard"><h4>Compliance health · '+fy(fyS.getFullYear()+1)+'</h4><div class="hscore"><div class="hr"><svg width="104" height="104" viewBox="0 0 104 104"><circle class="bg" cx="52" cy="52" r="44"/><circle class="fg" cx="52" cy="52" r="44" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-pct/100)).toFixed(1)+'"/></svg><div class="c"><b>'+pct+'%</b></div></div><p><b>'+tone+'</b>'+dn+' of '+due.length+' filings that fell due this year are marked done.</p></div></div>'
+ +'<div class="hcard"><h4>Completion by category</h4>'+bars+'</div>'
+ +'<div class="hcard"><h4>Pending workload · next 6 months</h4><div class="wl">'+wl.map(function(w){return '<div><b>'+w[1]+'</b><i style="height:'+Math.max(4,Math.round(w[1]/mx*70))+'px"></i><small>'+w[0]+'</small></div>'}).join("")+'</div></div>';
+}
+function renderBoard(){
+ var evs=ALL.filter(baseFilter);
+ var cols=[
+  ["over","Overdue",function(e){return !done[e.id]&&e.date<today&&e.date>=addDays(today,-90)}],
+  ["week","This week",function(e){var d=daysTo(e.date);return !done[e.id]&&d>=0&&d<=7}],
+  ["month","Next 30 days",function(e){var d=daysTo(e.date);return !done[e.id]&&d>7&&d<=30}],
+  ["later","Later (31–120 days)",function(e){var d=daysTo(e.date);return !done[e.id]&&d>30&&d<=120}],
+  ["done","Completed",function(e){return !!done[e.id]}]
+ ];
+ var html='<p class="bhint">Drag a card into <b>Completed</b> to mark it done (or back out to undo). On touch screens use the ✓ button.</p><div class="board">';
+ cols.forEach(function(c){
+  var items=evs.filter(c[2]);
+  if(c[0]==="done")items=items.sort(function(a,b){return b.date-a.date}).slice(0,15);
+  html+='<div class="bcol" data-col="'+c[0]+'"><div class="bh"><b>'+c[1]+'</b><span>'+items.length+'</span></div>';
+  html+=items.length?items.map(function(e){
+   var u=urg(e);
+   return '<div class="bcard u-'+u+'" draggable="true" data-id="'+esc(e.id)+'" style="--cc:'+CATS[e.cat].c+'"><h5>'+esc(e.title)+'</h5><div class="bm"><span>'+fmt(e.date).slice(0,6)+' · '+e.date.toLocaleDateString("en-IN",{weekday:"short"})+'</span><span class="cd">'+cdText(e)+'</span></div><button class="tick" type="button" data-tick="'+esc(e.id)+'" aria-label="Toggle done">✓</button></div>';
+  }).join(""):'<div class="bempty">Nothing here</div>';
+  html+='</div>';
+ });
+ $("#viewBoard").innerHTML=html+'</div>';
+}
+function renderAll(){
+ renderClients();renderChips();renderNext();renderStats();renderHealth();
+ var map={list:"#viewList",cal:"#viewCal",board:"#viewBoard"},btn={list:"#vList",cal:"#vCal",board:"#vBoard"};
+ Object.keys(map).forEach(function(v){$(map[v]).style.display=S.view===v?"block":"none";$(btn[v]).classList.toggle("on",S.view===v)});
+ if(S.view==="list")renderList();else if(S.view==="cal")renderCal();else renderBoard();
+ renderLF();
+ $("#range").value=S.range;$("#range").style.display=S.view==="list"?"":"none";
+}
+
+/* ---------- modal ---------- */
+function isoDate(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function calcUI(kind,e){
+ var d=CALCDEF[kind],late=Math.max(0,-daysTo(e.date));
+ return '<div class="cgrid" id="calcBox" data-kind="'+kind+'">'+d.f.map(function(f){
+  if(f[2]==="check")return '<label class="ck full"><input type="checkbox" id="cf_'+f[0]+'"> '+f[1]+'</label>';
+  var def=f[0]==="days"?late:(f[0]==="months"?Math.max(1,Math.ceil(late/30)):"");
+  return '<div><label for="cf_'+f[0]+'">'+f[1]+'</label><input class="inp" type="number" min="0" step="any" id="cf_'+f[0]+'" value="'+def+'"></div>';
+ }).join("")+'</div><div class="cout" id="calcOut"></div>';
+}
+function runCalc(){
+ var box=$("#calcBox");if(!box)return;
+ var def=CALCDEF[box.getAttribute("data-kind")],v={};
+ def.f.forEach(function(f){var el=$("#cf_"+f[0]);v[f[0]]=f[2]==="check"?el.checked:(parseFloat(el.value)||0)});
+ var rows=def.run(v),tot=0;
+ $("#calcOut").innerHTML=rows.map(function(r){tot+=r[1];return '<div><span>'+r[0]+'</span><b>'+R(r[1])+'</b></div>'}).join("")+'<div class="tot"><span>Estimated extra cost</span><span>'+R(tot)+'</span></div><small>'+def.note+' This is an estimate — confirm exact amounts on the portal.</small>';
+}
+function openDetail(id,sec){
+ var e=BYID[id];if(!e)return;
+ var c=CATS[e.cat],card=$("#detailCard"),isDone=!!done[id],cl=client(),nt=cl.notes[id]||{},ck=cl.chk[id]||{};
+ var wd=e.date.getDay(),wk=wd===0?"Sunday":(wd===6?"Saturday":"");
+ var items=e.custom?[]:(CHK[e.rule]||CHK_DEF[e.cat]||[]),kind=e.custom?null:CALCK[e.rule];
+ var op=function(k){return sec===k?" open":""};
+ var nDone=items.filter(function(t,i){return ck[i]}).length;
+ var doneAt=(typeof done[id]==="number"&&done[id]>1e12)?"Completed on "+fmt(new Date(done[id])):"";
+ card.style.setProperty("--cc",c.c);
+ card.innerHTML='<div class="mtop"><button class="mx" type="button" data-close="1" aria-label="Close">×</button><span class="tag" style="--cc:'+c.c+'">'+esc(c.n)+'</span><h3>'+esc(e.title)+'</h3><p>'+esc(e.form)+' · '+esc(cl.name)+'</p></div>'
+ +'<div class="mbody"><div class="kv"><div><small>Due date'+(e.extended?" (extended)":"")+'</small><b>'+fmt(e.date)+' · '+e.date.toLocaleDateString("en-IN",{weekday:"short"})+'</b>'+(e.extended?'<div style="font-size:11px;color:var(--muted);margin-top:3px">Originally '+fmt(e.orig)+'</div>':"")+'</div><div><small>Status</small><b>'+cdText(e)+'</b>'+(doneAt?'<div style="font-size:11px;color:var(--muted);margin-top:3px">'+doneAt+'</div>':"")+'</div></div>'
+ +(wk&&!isDone?'<div class="wkn">📌 This due date falls on a <b>'+wk+'</b>. Portals stay open, but it\'s safer to file a day or two earlier.</div>':"")
+ +'<h5>What is it?</h5><p>'+esc(e.desc)+'</p>'
+ +(e.who?'<h5>Who needs to file?</h5><p>'+esc(e.who)+'</p>':"")
+ +(e.pen?'<h5>If you miss it</h5><p>'+esc(e.pen)+'</p>':"")
+ +'<details'+op("track")+'><summary>📝 Filing record<em>ARN / acknowledgement &amp; notes</em></summary><div class="dbody"><div class="cgrid"><div class="full"><label for="nAck">ARN / acknowledgement number</label><input class="inp" id="nAck" maxlength="60" value="'+esc(nt.ack||"")+'" placeholder="e.g. AA2711260123456"></div><div class="full"><label for="nNote">Notes</label><textarea class="inp" id="nNote" maxlength="400" placeholder="Remarks, who filed, pending queries…">'+esc(nt.note||"")+'</textarea></div></div><div class="mini"><button class="btn primary" type="button" data-savenote="'+esc(id)+'">Save record</button></div></div></details>'
+ +(items.length?'<details'+op("chk")+'><summary>✅ Preparation checklist<em id="chkSum">'+nDone+' / '+items.length+' done</em></summary><div class="dbody">'+items.map(function(t,i){return '<label class="chk"><input type="checkbox" data-chk="'+esc(id)+'|'+i+'"'+(ck[i]?" checked":"")+'><span>'+esc(t)+'</span></label>'}).join("")+'</div></details>':"")
+ +(kind?'<details'+op("calc")+'><summary>🧮 Delay cost estimator<em>Late fee &amp; interest</em></summary><div class="dbody">'+calcUI(kind,e)+'</div></details>':"")
+ +(!e.custom?'<details'+op("ext")+'><summary>📅 Government extended this date?<em>'+(e.extended?"Override active":"Enter the new date")+'</em></summary><div class="dbody"><div class="cgrid"><div class="full"><label for="exD">New due date</label><input class="inp" type="date" id="exD" value="'+isoDate(e.date)+'"></div></div><div class="mini"><button class="btn primary" type="button" data-ext="'+esc(id)+'">Apply new date</button>'+(e.extended?'<button class="btn line" type="button" data-extreset="'+esc(id)+'">Reset to '+fmt(e.orig).slice(0,6)+'</button>':"")+'</div></div></details>':"")
+ +'<div class="mact"><button class="btn '+(isDone?"done":"primary")+'" type="button" data-toggle="'+esc(id)+'">'+(isDone?"✓ Done — undo":"✓ Mark as done")+'</button>'
+ +'<button class="btn ghost" type="button" data-ics="'+esc(id)+'">⇩ Add to calendar</button>'
+ +'<a class="btn line" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent("Reminder: "+e.title+" is due on "+fmt(e.date)+". (via TallySync Due Date Tracker)")+'">Share on WhatsApp</a>'
+ +(LFMAP[e.rule]&&!e.custom?'<button class="btn ghost" type="button" data-lfopen="'+esc(id)+'">🧮 Late fee calculator</button>':"")
+ +(e.link?'<a class="btn line" target="_blank" rel="noopener" href="'+e.link+'">Official portal ↗</a>':"")
+ +(e.custom?'<button class="btn line" type="button" data-del="'+esc(e.base||id)+'" style="color:#d92d3a">Delete</button>':"")
+ +'</div></div>';
+ $("#detail").classList.add("show");
+ if(kind)runCalc();
+}
+function closeModals(){$("#detail").classList.remove("show");$("#addModal").classList.remove("show")}
+
+/* ---------- ICS ---------- */
+function icsEsc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n")}
+function makeICS(evs){
+ var stamp=new Date().toISOString().replace(/[-:]/g,"").split(".")[0]+"Z";
+ var L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//TallySync//Due Date Tracker//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH"];
+ evs.forEach(function(e){
+  var body=e.desc+(e.pen?" | If missed: "+e.pen:"")+" | Verify on the official portal.";
+  L.push("BEGIN:VEVENT","UID:"+e.id+"@tallysync","DTSTAMP:"+stamp,"DTSTART;VALUE=DATE:"+ymd(e.date),"DTEND;VALUE=DATE:"+ymd(addDays(e.date,1)),
+   "SUMMARY:"+icsEsc("Due: "+e.title),"DESCRIPTION:"+icsEsc(body),"CATEGORIES:"+icsEsc(CATS[e.cat].n),
+   "BEGIN:VALARM","TRIGGER:-P3D","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(e.title+" due in 3 days"),"END:VALARM",
+   "BEGIN:VALARM","TRIGGER:-P1D","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(e.title+" due tomorrow"),"END:VALARM","END:VEVENT");
+ });
+ L.push("END:VCALENDAR");return L.join("\r\n");
+}
+function dl(name,txt){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/calendar;charset=utf-8"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1000)}
+
+/* ---------- events ---------- */
+function toggleDone(id){if(done[id])delete done[id];else{done[id]=Date.now();if(window.TSfx)TSfx.confetti()}saveDB();renderAll();if($("#detail").classList.contains("show"))openDetail(id)}
+document.addEventListener("click",function(ev){
+ var t=ev.target;
+ var tk=t.closest("[data-tick]");if(tk){ev.stopPropagation();toggleDone(tk.getAttribute("data-tick"));return}
+ var sn=t.closest("[data-savenote]");if(sn){var nid=sn.getAttribute("data-savenote"),cl=client();cl.notes[nid]={ack:$("#nAck").value.trim(),note:$("#nNote").value.trim()};if(!cl.notes[nid].ack&&!cl.notes[nid].note)delete cl.notes[nid];saveDB();renderAll();openDetail(nid,"track");toast("Filing record saved");return}
+ var ex=t.closest("[data-ext]");if(ex){var xid=ex.getAttribute("data-ext"),xv=$("#exD").value;if(!xv){toast("Pick a date first");return}DB.ext[xid]=xv;saveDB();ALL=build();reindex();renderAll();openDetail(xid,"ext");toast("Extended due date applied");return}
+ var xr=t.closest("[data-extreset]");if(xr){var rid=xr.getAttribute("data-extreset");delete DB.ext[rid];saveDB();ALL=build();reindex();renderAll();openDetail(rid,"ext");toast("Original due date restored");return}
+ var tg=t.closest("[data-toggle]");if(tg){toggleDone(tg.getAttribute("data-toggle"));return}
+ var ic=t.closest("[data-ics]");if(ic){var e=BYID[ic.getAttribute("data-ics")];dl("tallysync-"+e.id+".ics",makeICS([e]));toast("Calendar file downloaded");return}
+ var dd=t.closest("[data-del]");if(dd){var id=dd.getAttribute("data-del");custom=custom.filter(function(c){return c.id!==id});sset("ts_due_custom",custom);ALL=build();reindex();closeModals();renderAll();toast("Reminder deleted");return}
+ if(t.closest("[data-close]")||t.id==="detail"||t.id==="addModal"){closeModals();return}
+ var cat=t.closest("[data-cat]");if(cat){var k=cat.getAttribute("data-cat"),i=S.cats.indexOf(k);if(i>=0){if(S.cats.length>1)S.cats.splice(i,1)}else S.cats.push(k);saveState();renderAll();return}
+ var pr=t.closest("[data-prof]");if(pr){var p=pr.getAttribute("data-prof");if(p==="all")S.prof=[];else{var j=S.prof.indexOf(p);if(j>=0)S.prof.splice(j,1);else S.prof.push(p)}saveState();renderAll();return}
+ var cn=t.closest("[data-cal]");if(cn){var v=+cn.getAttribute("data-cal");if(v===0){calY=today.getFullYear();calM=today.getMonth();selDay=today.getTime()}else{calM+=v;if(calM<0){calM=11;calY--}if(calM>11){calM=0;calY++}}renderCal();return}
+ var dy=t.closest("[data-day]");if(dy){selDay=+dy.getAttribute("data-day");renderCal();return}
+ var row=t.closest("[data-id]");if(row){openDetail(row.getAttribute("data-id"))}
+});
+document.addEventListener("keydown",function(ev){
+ if(ev.key==="Escape")closeModals();
+ if((ev.key==="Enter"||ev.key===" ")&&ev.target.classList&&ev.target.classList.contains("erow")){ev.preventDefault();openDetail(ev.target.getAttribute("data-id"))}
+});
+$("#q").addEventListener("input",function(){S.q=this.value.trim().toLowerCase();renderAll()});
+$("#range").addEventListener("change",function(){S.range=this.value;saveState();renderAll()});
+$("#vList").addEventListener("click",function(){S.view="list";saveState();renderAll()});
+$("#vCal").addEventListener("click",function(){S.view="cal";saveState();renderAll()});
+$("#vBoard").addEventListener("click",function(){S.view="board";saveState();renderAll()});
+
+/* clients */
+function switchClient(id){DB.active=id;saveDB();done=client().done;S.prof=client().prof.slice();renderAll()}
+$("#clientSel").addEventListener("change",function(){switchClient(this.value)});
+$("#clientAdd").addEventListener("click",function(){var n=prompt("Client / business name:");if(n&&n.trim()){var c={id:"c"+Date.now(),name:n.trim().slice(0,40),prof:[],done:{},notes:{},chk:{}};DB.clients.push(c);switchClient(c.id);toast("Client added — choose their profile below")}});
+$("#clientRen").addEventListener("click",function(){var c=client(),n=prompt("Rename client:",c.name);if(n&&n.trim()){c.name=n.trim().slice(0,40);saveDB();renderAll()}});
+$("#clientDel").addEventListener("click",function(){if(DB.clients.length<2){toast("You need at least one client");return}var c=client();if(confirm('Delete "'+c.name+'" and all its progress, notes and checklists?')){DB.clients=DB.clients.filter(function(x){return x.id!==c.id});DB.active=DB.clients[0].id;saveDB();done=client().done;S.prof=client().prof.slice();renderAll();toast("Client deleted")}});
+
+/* checklist + calculator */
+document.addEventListener("change",function(ev){
+ var t=ev.target;
+ if(t.matches&&t.matches("[data-chk]")){
+  var p=t.getAttribute("data-chk").split("|"),cl=client();
+  cl.chk[p[0]]=cl.chk[p[0]]||{};if(t.checked)cl.chk[p[0]][p[1]]=1;else delete cl.chk[p[0]][p[1]];
+  saveDB();var all=document.querySelectorAll("#detailCard [data-chk]"),n=0;[].forEach.call(all,function(x){if(x.checked)n++});
+  var s=$("#chkSum");if(s)s.textContent=n+" / "+all.length+" done";
+ }
+});
+document.addEventListener("input",function(ev){if(ev.target.closest&&ev.target.closest("#calcBox"))runCalc()});
+
+/* drag & drop on board */
+document.addEventListener("dragstart",function(ev){var c=ev.target.closest&&ev.target.closest(".bcard");if(c){ev.dataTransfer.setData("text/plain",c.getAttribute("data-id"));ev.dataTransfer.effectAllowed="move"}});
+document.addEventListener("dragover",function(ev){var c=ev.target.closest&&ev.target.closest(".bcol");if(c){ev.preventDefault();c.classList.add("drag")}});
+document.addEventListener("dragleave",function(ev){var c=ev.target.closest&&ev.target.closest(".bcol");if(c&&!c.contains(ev.relatedTarget))c.classList.remove("drag")});
+document.addEventListener("drop",function(ev){
+ var c=ev.target.closest&&ev.target.closest(".bcol");if(!c)return;
+ ev.preventDefault();c.classList.remove("drag");
+ var id=ev.dataTransfer.getData("text/plain");if(!BYID[id])return;
+ var toDone=c.getAttribute("data-col")==="done";
+ if(toDone&&!done[id]){done[id]=Date.now();saveDB();renderAll();toast("Marked as done ✓");if(window.TSfx)TSfx.confetti()}
+ else if(!toDone&&done[id]){delete done[id];saveDB();renderAll();toast("Moved back to pending")}
+});
+
+/* export / backup / alerts */
+function dlFile(name,txt,type){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:type}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},1000)}
+$("#csvBtn").addEventListener("click",function(){
+ var list=listFilter(),cl=client();
+ if(!list.length){toast("Nothing to export in this window");return}
+ var rows=[["Due date","Filing","Form","Category","Status","Days left","ARN / Ack","Notes","Originally due"]];
+ list.forEach(function(e){var n=cl.notes[e.id]||{};rows.push([isoDate(e.date),e.title,e.form,CATS[e.cat].n,done[e.id]?"Done":(e.date<today?"Overdue":"Pending"),daysTo(e.date),n.ack||"",n.note||"",e.extended?isoDate(e.orig):""])});
+ var csv="﻿"+rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(",")}).join("\r\n");
+ dlFile("tallysync-due-dates-"+cl.name.replace(/[^\w]+/g,"-")+".csv",csv,"text/csv;charset=utf-8");toast("CSV downloaded");
+});
+$("#backupBtn").addEventListener("click",function(){dlFile("tallysync-tracker-backup-"+ymd(today)+".json",JSON.stringify({v:1,db:DB,custom:custom}),"application/json");toast("Backup downloaded")});
+$("#restoreBtn").addEventListener("click",function(){$("#restoreFile").click()});
+$("#restoreFile").addEventListener("change",function(){
+ var f=this.files[0];if(!f)return;var inp=this;var fr=new FileReader();
+ fr.onload=function(){
+  try{
+   var o=JSON.parse(fr.result);
+   if(!o||!o.db||!Array.isArray(o.db.clients)||!o.db.clients.length)throw new Error("bad");
+   DB=o.db;normDB();custom=Array.isArray(o.custom)?o.custom:[];sset("ts_due_custom",custom);saveDB();
+   done=client().done;S.prof=client().prof.slice();ALL=build();reindex();renderAll();toast("Backup restored");
+  }catch(err){toast("That file isn't a valid TallySync backup")}
+  inp.value="";
+ };
+ fr.readAsText(f);
+});
+function updateNotifyBtn(){var b=$("#notifyBtn"),on=sget("ts_due_notify",false)&&("Notification" in window)&&Notification.permission==="granted";b.textContent=on?"🔔 Alerts on":"🔔 Enable alerts"}
+$("#notifyBtn").addEventListener("click",function(){
+ if(!("Notification" in window)){toast("Alerts aren't supported in this browser");return}
+ if(sget("ts_due_notify",false)&&Notification.permission==="granted"){sset("ts_due_notify",false);updateNotifyBtn();toast("Alerts turned off");return}
+ Notification.requestPermission().then(function(p){
+  if(p==="granted"){sset("ts_due_notify",true);updateNotifyBtn();toast("Alerts on — you'll get a heads-up whenever you open this page");try{new Notification("TallySync alerts are on",{body:"You'll be notified when filings are due within 3 days."})}catch(e){}}
+  else toast("Notification permission was blocked");
+ });
+});
+function notifyCheck(){
+ if(!("Notification" in window)||Notification.permission!=="granted"||!sget("ts_due_notify",false))return;
+ var key=ymd(today);if(sget("ts_due_lastnotify","")===key)return;
+ var u=ALL.filter(function(e){var d=daysTo(e.date);return baseFilter(e)&&!done[e.id]&&d<=3&&d>=-3});
+ if(!u.length)return;
+ try{new Notification("TallySync · "+u.length+" filing"+(u.length===1?"":"s")+" need attention",{body:u.slice(0,3).map(function(e){return e.title+" ("+cdText(e)+")"}).join("\n")});sset("ts_due_lastnotify",key)}catch(e){}
+}
+
+/* keyboard shortcuts */
+document.addEventListener("keydown",function(ev){
+ var tg=(ev.target.tagName||"").toLowerCase();
+ if(tg==="input"||tg==="textarea"||tg==="select"||ev.ctrlKey||ev.metaKey||ev.altKey)return;
+ if($("#detail").classList.contains("show")||$("#addModal").classList.contains("show"))return;
+ var k=ev.key.toLowerCase();
+ if(k==="/"){ev.preventDefault();$("#q").focus()}
+ else if(k==="l"){S.view="list";saveState();renderAll()}
+ else if(k==="c"){S.view="cal";saveState();renderAll()}
+ else if(k==="b"){S.view="board";saveState();renderAll()}
+ else if(k==="n"){ev.preventDefault();openAdd()}
+});
+$("#resetBtn").addEventListener("click",function(){S.cats=Object.keys(CATS);S.prof=[];S.q="";S.range="90";$("#q").value="";saveState();renderAll();toast("Filters reset")});
+$("#printBtn").addEventListener("click",function(){S.view="list";renderAll();window.print()});
+$("#icsBtn").addEventListener("click",function(){
+ var list=(S.view!=="list"?ALL.filter(baseFilter):listFilter()).filter(function(e){return !done[e.id]&&e.date>=today});
+ if(!list.length){toast("No pending filings to export");return}
+ dl("tallysync-due-dates.ics",makeICS(list));toast(list.length+" reminders exported");
+});
+function openAdd(){var d=addDays(today,7);$("#aD").value=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());$("#addModal").classList.add("show");setTimeout(function(){$("#aT").focus()},60)}
+$("#addBtn").addEventListener("click",openAdd);$("#heroAdd").addEventListener("click",function(){document.getElementById("tracker").scrollIntoView();openAdd()});
+$("#addX").addEventListener("click",closeModals);$("#addCancel").addEventListener("click",closeModals);
+$("#addForm").addEventListener("submit",function(ev){
+ ev.preventDefault();
+ var t=$("#aT").value.trim(),d=$("#aD").value;if(!t||!d)return;
+ custom.push({id:"my-"+Date.now(),title:t,date:d,note:$("#aN").value.trim(),rep:$("#aR").value});
+ sset("ts_due_custom",custom);ALL=build();reindex();
+ $("#addForm").reset();closeModals();
+ if(S.cats.indexOf("my")<0)S.cats.push("my");
+ renderAll();toast("Reminder saved");
+});
+
+
+
+
+/* ===== LATE FEE CALCULATOR ===== */
+function pd(s){var p=String(s||"").split("-");return p.length===3&&+p[0]?new Date(+p[0],+p[1]-1,+p[2]):null}
+function monthsPart(d1,d2){if(!d1||!d2||d2<=d1)return 0;var m=(d2.getFullYear()-d1.getFullYear())*12+(d2.getMonth()-d1.getMonth());if(d2.getDate()>d1.getDate())m++;return m}
+var SLAB15=[["0","Up to ₹1.5 crore"],["1","₹1.5 – ₹5 crore"],["2","Above ₹5 crore"]];
+var GSTINT=[{id:"tax",l:"Net GST paid late — cash portion (₹)",t:"n",h:"Interest @18% p.a. from the due date to the date of payment."},{id:"itc",l:"Excess / wrongly availed ITC (₹)",t:"n",h:"Interest @24% p.a. applies to excess ITC claimed or output tax reduced."}];
+function gstInterest(v){return [{t:"Interest @18% p.a.",d:R(v.tax)+" × 18% × "+v.days+"/365 days",v:v.tax*.18*v.days/365},{t:"Interest @24% p.a. (excess ITC)",d:R(v.itc)+" × 24% × "+v.days+"/365 days",v:v.itc*.24*v.days/365}]}
+function gstFee(v,rate,cap,label){var raw=v.days*rate,fee=Math.min(raw,cap);return {t:label||"Late fee",d:"₹"+rate+"/day × "+v.days+" day"+(v.days===1?"":"s")+" = "+R(raw)+(raw>cap?" → capped at "+R(cap):" (cap "+R(cap)+")")+" · CGST "+R(fee/2)+" + SGST "+R(fee/2),v:fee}}
+var LF={
+ gst:{n:"GST",types:{
+  gstr3b:{n:"GSTR-3B (monthly / quarterly)",dates:"both",time:true,f:[{id:"slab",l:"Turnover in the previous year",t:"s",o:SLAB15,d:"0"},{id:"nil",l:"This is a NIL return",t:"c"}].concat(GSTINT),
+   run:function(v){return {rows:[gstFee(v,v.nil?20:50,v.nil?500:[2000,5000,10000][+v.slab])].concat(gstInterest(v)),notes:["Late fee runs from the day after the due date until the date of filing.","Interest is charged on the net tax payable in cash, not on tax covered by ITC."]}}},
+  gstr1:{n:"GSTR-1 / IFF",dates:"both",time:true,f:[{id:"slab",l:"Turnover in the previous year",t:"s",o:SLAB15,d:"0"},{id:"nil",l:"This is a NIL return",t:"c"}],
+   run:function(v){return {rows:[gstFee(v,v.nil?20:50,v.nil?500:[2000,5000,10000][+v.slab])],notes:["There is no interest on GSTR-1 itself, but late filing can block e-way bill generation and delays your buyers' ITC."]}}},
+  gstr4:{n:"GSTR-4 (composition annual)",dates:"both",time:true,f:[{id:"nil",l:"This is a NIL return",t:"c"},{id:"tax",l:"Composition tax paid late (₹)",t:"n",h:"Interest @18% p.a. on tax paid after the due date."}],
+   run:function(v){return {rows:[gstFee(v,v.nil?20:50,v.nil?500:2000),{t:"Interest @18% p.a.",d:R(v.tax)+" × 18% × "+v.days+"/365 days",v:v.tax*.18*v.days/365}],notes:["Late fee for some past years was waived by CBIC amnesty notifications — check if your year qualifies."]}}},
+  cmp08:{n:"CMP-08 (composition payment)",dates:"both",time:true,f:[{id:"tax",l:"Composition tax paid late (₹)",t:"n"}],
+   run:function(v){return {rows:[{t:"Late fee",d:"None — CMP-08 is a statement-cum-challan, not a return.",txt:"Nil"},{t:"Interest @18% p.a.",d:R(v.tax)+" × 18% × "+v.days+"/365 days",v:v.tax*.18*v.days/365}],notes:[]}}},
+  gstr9:{n:"GSTR-9 annual return",dates:"both",time:true,f:[{id:"slab",l:"Aggregate turnover of the year",t:"s",o:[["0","Up to ₹2 crore (optional)"],["1","₹2 – ₹5 crore"],["2","₹5 – ₹20 crore"],["3","Above ₹20 crore"]],d:"1"},{id:"turn",l:"Turnover in the State / UT (₹)",t:"n",h:"Used to work out the cap on the late fee."}],
+   run:function(v){var s=+v.slab;if(s===0)return {rows:[{t:"Late fee",d:"Filing GSTR-9 is optional up to ₹2 crore, so no late fee applies.",txt:"Nil"}],notes:[]};
+    var rate=[0,50,100,200][s],pct=[0,.04,.04,.5][s],cap=v.turn*pct/100,raw=v.days*rate,fee=Math.min(raw,cap);
+    return {rows:[{t:"Late fee",d:"₹"+rate+"/day × "+v.days+" days = "+R(raw)+" · cap "+pct+"% of turnover = "+R(cap)+" · CGST "+R(fee/2)+" + SGST "+R(fee/2),v:fee}],notes:v.turn?[]:["Enter the turnover to apply the cap — without it the fee is shown as zero."]}}},
+  gstint:{n:"GST interest only (any return)",dates:"both",time:true,f:GSTINT,run:function(v){return {rows:gstInterest(v),notes:["Use this for tax paid late through a demand, ITC reversal or amended return."]}}}
+ }},
+ it:{n:"Income Tax",types:{
+  itr:{n:"Late ITR — Sec. 234F & 234A",dates:"both",time:true,f:[{id:"low",l:"Total income is ₹5 lakh or less",t:"c"},{id:"after",l:"Filing after 31 December of the assessment year",t:"c"},{id:"tax",l:"Tax payable after TDS & advance tax (₹)",t:"n",h:"Interest u/s 234A is charged on this amount."}],
+   run:function(v){var fee=v.low?1000:(v.after?10000:5000);return {rows:[{t:"Late filing fee — Sec. 234F",d:v.low?"₹1,000 as total income is ≤ ₹5 lakh":(v.after?"₹10,000 for filing after 31 December":"₹5,000 for filing after the due date but by 31 December"),v:fee},{t:"Interest — Sec. 234A",d:R(v.tax)+" × 1% × "+v.months+" month"+(v.months===1?"":"s")+" (part of a month counts as a full month)",v:v.tax*.01*v.months}],notes:["A belated return can also cost you the carry-forward of certain losses (other than house property loss).","Returns for FY 2025-26 are filed under the Income-tax Act, 1961. From tax year 2026-27 the Income-tax Act, 2025 applies — verify the section references."]}}},
+  adv:{n:"Advance tax — Sec. 234C & 234B",dates:false,time:false,f:[{id:"tax",l:"Tax liability after TDS / TCS (₹)",t:"n",h:"Tax on your final income less TDS/TCS."},{id:"a1",l:"Advance tax paid by 15 June (cumulative ₹)",t:"n"},{id:"a2",l:"…by 15 September (cumulative ₹)",t:"n"},{id:"a3",l:"…by 15 December (cumulative ₹)",t:"n"},{id:"a4",l:"…by 15 March (cumulative ₹)",t:"n"},{id:"pres",l:"Presumptive taxation (44AD / 44ADA) — single instalment by 15 March",t:"c"},{id:"m234b",l:"Months for 234B (from 1 April of the assessment year)",t:"n",h:"e.g. return filed on 31 July = 4 months. Part of a month counts as a full month."}],
+   run:function(v){var T=v.tax,rows=[],notes=[];if(T<10000){return {rows:[{t:"Advance tax interest",d:"Advance tax applies only when the tax payable is ₹10,000 or more.",txt:"Nil"}],notes:[]}}
+    function inst(label,req,thr,paid,mo){var need=T*req,sh=Math.max(0,need-paid),ok=thr&&paid>=T*thr,val=ok?0:sh*.01*mo;rows.push({t:label,d:"Required "+R(need)+" · paid "+R(paid)+(sh?" · shortfall "+R(sh):"")+(ok?" · no interest as ≥ "+(thr*100)+"% was paid":"")+" × 1% × "+mo+" month"+(mo>1?"s":""),v:val})}
+    if(v.pres)inst("234C — single instalment (100% by 15 Mar)",1,0,v.a4,1);else{inst("234C — 1st instalment (15% by 15 Jun)",.15,.12,v.a1,3);inst("234C — 2nd instalment (45% by 15 Sep)",.45,.36,v.a2,3);inst("234C — 3rd instalment (75% by 15 Dec)",.75,0,v.a3,3);inst("234C — 4th instalment (100% by 15 Mar)",1,0,v.a4,1)}
+    var short=Math.max(0,T-v.a4),b=(v.a4<T*.9)?short*.01*v.m234b:0;
+    rows.push({t:"234B — default in advance tax",d:v.a4<T*.9?R(short)+" × 1% × "+v.m234b+" month"+(v.m234b===1?"":"s"):"Not applicable — at least 90% of the tax was paid as advance tax",v:b});
+    notes.push("234C is not charged on a shortfall caused by capital gains or dividend income that arose after the instalment date, if the tax is paid in the remaining instalments.");return {rows:rows,notes:notes}}},
+  audit:{n:"Tax audit not done — Sec. 271B",dates:false,time:false,f:[{id:"turn",l:"Turnover / gross receipts (₹)",t:"n"}],
+   run:function(v){var raw=v.turn*.005;return {rows:[{t:"Penalty — Sec. 271B",d:"0.5% of turnover = "+R(raw)+" · maximum ₹1,50,000",v:Math.min(raw,150000)}],notes:["The penalty can be dropped if you show a reasonable cause under Sec. 273B."]}}},
+  tp:{n:"Transfer pricing report — Sec. 271BA",dates:false,time:false,f:[],run:function(){return {rows:[{t:"Penalty — Sec. 271BA",d:"Fixed penalty for not furnishing the Form 3CEB report",v:100000}],notes:[]}}}
+ }},
+ tds:{n:"TDS / TCS",types:{
+  tdsret:{n:"Late TDS / TCS return — Sec. 234E",dates:"both",time:true,f:[{id:"amt",l:"TDS / TCS amount in the statement (₹)",t:"n"}],
+   run:function(v){var raw=v.days*200,fee=Math.min(raw,v.amt);return {rows:[{t:"Fee — Sec. 234E",d:"₹200/day × "+v.days+" days = "+R(raw)+(raw>v.amt?" → capped at the TDS amount "+R(v.amt):""),v:fee},{t:"Penalty — Sec. 271H",d:v.days>365?"The statement is more than a year late — ₹10,000 to ₹1,00,000 can be levied.":"Can apply if the statement is not filed within one year of the due date.",txt:v.days>365?"₹10,000 – ₹1,00,000":"Not yet"}],notes:["The 234E fee must be paid before the statement is accepted.","Also covers Form 26QB / 26QC challan-cum-statements."]}}},
+  tdsint:{n:"TDS interest — Sec. 201(1A)",dates:false,time:false,f:[{id:"amt",l:"TDS amount (₹)",t:"n"},{id:"m1",l:"Months of delay in deducting TDS",t:"n",d:0,h:"1% per month from the date it was deductible to the date deducted."},{id:"m2",l:"Months from deduction to deposit",t:"n",d:1,h:"1.5% per month from the date of deduction to the date of deposit. Part of a month counts as a full month."}],
+   run:function(v){return {rows:[{t:"Late deduction @1% per month",d:R(v.amt)+" × 1% × "+v.m1+" month"+(v.m1===1?"":"s"),v:v.amt*.01*v.m1},{t:"Late deposit @1.5% per month",d:R(v.amt)+" × 1.5% × "+v.m2+" month"+(v.m2===1?"":"s"),v:v.amt*.015*v.m2}],notes:["The interest must be paid before filing the TDS statement.","The expense may also be disallowed (30%) under Sec. 40(a)(ia) if TDS is not deposited by the ITR due date."]}}},
+  cert:{n:"Late Form 16 / 16A — Sec. 272A(2)(g)",dates:"both",time:true,f:[{id:"amt",l:"TDS amount in the certificate (₹)",t:"n",h:"The penalty cannot exceed the tax deductible."},{id:"n",l:"Number of certificates",t:"n",d:1}],
+   run:function(v){var n=Math.max(1,v.n),per=Math.min(v.days*100,v.amt),tot=per*n;return {rows:[{t:"Penalty — Sec. 272A(2)(g)",d:"₹100/day × "+v.days+" days"+(v.amt&&v.days*100>v.amt?" (capped at the TDS amount)":"")+" × "+n+" certificate"+(n>1?"s":""),v:tot}],notes:["The cap is applied per certificate, so enter the average TDS amount per certificate."]}}}
+ }},
+ roc:{n:"ROC / MCA",types:{
+  annual:{n:"AOC-4 / MGT-7 — ₹100 per day",dates:"both",time:true,f:[{id:"forms",l:"Forms filed late",t:"s",o:[["1","AOC-4 only"],["1 ","MGT-7 / 7A only"],["2","AOC-4 and MGT-7"]],d:"2"}],
+   run:function(v){var k=parseInt(v.forms,10)||1;return {rows:[{t:"Additional fee — Sec. 403",d:"₹100/day × "+v.days+" days × "+k+" form"+(k>1?"s":"")+" — no maximum limit",v:v.days*100*k}],notes:["Count days from the original due date. MCA has sometimes allowed filing without additional fee until a relaxed date (for FY 2025-26: AOC-4 till 31 Dec 2026 and MGT-7 till 31 Jan 2027, as reported for MCA General Circular 05/2026). If a filing misses the relaxed date, the fee is counted from the original due date. Confirm on the MCA site."]}}},
+  llp:{n:"LLP Form 8 / Form 11 — ₹100 per day",dates:"both",time:true,f:[{id:"forms",l:"Forms filed late",t:"s",o:[["1","One form"],["2","Form 8 and Form 11"]],d:"1"}],
+   run:function(v){var k=parseInt(v.forms,10)||1;return {rows:[{t:"Additional fee — LLP Act",d:"₹100/day × "+v.days+" days × "+k+" form"+(k>1?"s":"")+" — no maximum limit",v:v.days*100*k}],notes:["The LLP Act has no cap, so the cost keeps growing every day."]}}},
+  slab:{n:"Other ROC forms — slab fee",dates:"both",time:true,f:[{id:"fee",l:"Normal filing fee of the form (₹)",t:"n",h:"Check the fee for the form and your authorised capital."},{id:"rep",l:"Repeat default (higher additional fee)",t:"c"}],
+   run:function(v){var d=v.days,i=d<=0?-1:d<=30?0:d<=60?1:d<=90?2:d<=180?3:4,m=i<0?0:(v.rep?[3,6,9,15,18]:[2,4,6,10,12])[i],add=m*v.fee;return {rows:[{t:"Additional fee",d:m?m+"× the normal fee of "+R(v.fee)+" for a delay of "+d+" days":"No delay",v:add},{t:"Total payable with the normal fee",d:"Normal fee "+R(v.fee)+" + additional fee "+R(add),txt:R(v.fee+add),info:true}],notes:["Slabs: up to 30 days 2× · 31–60 days 4× · 61–90 days 6× · 91–180 days 10× · over 180 days 12× (higher additional fee 3× – 18×).","ADT-1 and DIR-3C have shorter slabs, and charge forms follow separate rules — check the form's fee schedule."]}}},
+  dir3:{n:"DIR-3 KYC (director)",dates:false,time:false,f:[],run:function(){return {rows:[{t:"Reactivation fee",d:"A flat fee to reactivate a DIN deactivated for missing the annual KYC",v:5000}],notes:["The DIN stays deactivated until the KYC is filed and the fee is paid."]}}}
+ }},
+ pf:{n:"PF / ESI",types:{
+  epf:{n:"EPF — interest & damages",dates:"both",time:true,f:[{id:"amt",l:"Contribution paid late (₹)",t:"n",h:"Employer + employee share, plus admin charges."}],
+   run:function(v){var mo=v.days/30.4375,r=mo<2?5:mo<4?10:mo<6?15:25,int=v.amt*.12*v.days/365,dm=Math.min(v.amt*r/100*v.days/365,v.amt);return {rows:[{t:"Interest — Sec. 7Q @12% p.a.",d:R(v.amt)+" × 12% × "+v.days+"/365 days",v:int},{t:"Damages — Sec. 14B @"+r+"% p.a.",d:"Slab: under 2 months 5% · 2–4 months 10% · 4–6 months 15% · over 6 months 25% (max 100% of arrears)",v:dm}],notes:["Damages are decided by the EPFO after an enquiry, so the final order can differ."]}}},
+  esi:{n:"ESI — interest",dates:"both",time:true,f:[{id:"amt",l:"Contribution paid late (₹)",t:"n"}],
+   run:function(v){return {rows:[{t:"Interest @12% p.a.",d:R(v.amt)+" × 12% × "+v.days+"/365 days",v:v.amt*.12*v.days/365},{t:"Damages — Sec. 85B",d:"ESIC can levy damages up to 100% of the arrears after an enquiry.",txt:"Possible"}],notes:[]}}}
+ }}
+};
+var LFMAP={gstr3b:["gst","gstr3b"],gstr3bq:["gst","gstr3b"],gstr1:["gst","gstr1"],gstr1q:["gst","gstr1"],cmp08:["gst","cmp08"],gstr4:["gst","gstr4"],gstr9:["gst","gstr9"],itccut:["gst","gstint"],
+ itr:["it","itr"],itra:["it","itr"],itrb:["it","itr"],at1:["it","adv"],at2:["it","adv"],at3:["it","adv"],at4:["it","adv"],"3cd":["it","audit"],"3ceb":["it","tp"],
+ tdsq1:["tds","tdsret"],tdsq2:["tds","tdsret"],tdsq3:["tds","tdsret"],tdsq4:["tds","tdsret"],"26qb":["tds","tdsret"],tdsdep:["tds","tdsint"],"16":["tds","cert"],"16a1":["tds","cert"],"16a2":["tds","cert"],"16a3":["tds","cert"],
+ aoc4:["roc","annual"],mgt7:["roc","annual"],llp11:["roc","llp"],llp8:["roc","llp"],dpt3:["roc","slab"],msme1:["roc","slab"],msme2:["roc","slab"],dir3:["roc","dir3"],pf:["pf","epf"],esi:["pf","esi"]};
+var LFS={tab:"gst",type:{gst:"gstr3b",it:"itr",tds:"tdsret",roc:"annual",pf:"epf"},due:isoDate(addDays(today,-20)),paid:isoDate(today),vals:{}};
+function lfCfg(){return LF[LFS.tab].types[LFS.type[LFS.tab]]}
+function lfKey(f){return LFS.tab+"."+LFS.type[LFS.tab]+"."+f.id}
+function lfVal(f){var v=LFS.vals[lfKey(f)];if(v!==undefined)return v;return f.d!==undefined?f.d:(f.t==="c"?false:"")}
+function lfRead(){
+ var cfg=lfCfg(),v={},d1=pd(LFS.due),d2=pd(LFS.paid);
+ cfg.f.forEach(function(f){var x=lfVal(f);v[f.id]=f.t==="c"?!!x:(f.t==="s"?String(x):Math.max(0,parseFloat(x)||0))});
+ v.days=cfg.dates&&d1&&d2?Math.max(0,Math.round((d2-d1)/864e5)):0;
+ v.months=cfg.dates&&d1&&d2?monthsPart(d1,d2):0;
+ return v;
+}
+function lfFillOptions(){
+ var list=ALL.filter(function(e){return !e.custom&&LFMAP[e.rule]&&!done[e.id]&&e.date<today&&e.date>=addDays(today,-200)&&baseFilter(e)}).sort(function(a,b){return b.date-a.date}).slice(0,40);
+ if(!list.length)return '<option value="">No overdue filings for this client 🎉</option>';
+ return '<option value="">Pick an overdue filing from your tracker…</option>'+list.map(function(e){return '<option value="'+esc(e.id)+'">'+esc(e.title)+' — '+(-daysTo(e.date))+' days overdue</option>'}).join("");
+}
+function renderLF(){
+ var cfg=lfCfg(),g=LF[LFS.tab],box=$("#lfForm");if(!box)return;
+ var tabs=Object.keys(LF).map(function(k){return '<button type="button" data-lftab="'+k+'" class="'+(k===LFS.tab?"on":"")+'">'+LF[k].n+'</button>'}).join("");
+ var types=Object.keys(g.types).map(function(k){return '<option value="'+k+'"'+(k===LFS.type[LFS.tab]?" selected":"")+'>'+esc(g.types[k].n)+'</option>'}).join("");
+ var dates="";
+ if(cfg.dates)dates='<div class="f"><label for="lfDue">Due date</label><input class="lf-inp" type="date" id="lfDue" value="'+esc(LFS.due)+'"></div><div class="f"><label for="lfPaid">Date of filing / payment</label><input class="lf-inp" type="date" id="lfPaid" value="'+esc(LFS.paid)+'"></div><div class="f full" id="lfDays" style="margin-top:-4px"></div>';
+ var fields=cfg.f.map(function(f){
+  var val=lfVal(f);
+  if(f.t==="c")return '<label class="ck"><input type="checkbox" data-lf="'+f.id+'"'+(val?" checked":"")+'><span>'+esc(f.l)+'</span></label>';
+  if(f.t==="s")return '<div class="f full"><label for="lf_'+f.id+'">'+esc(f.l)+'</label><select class="lf-inp" id="lf_'+f.id+'" data-lf="'+f.id+'">'+f.o.map(function(o){return '<option value="'+esc(o[0])+'"'+(String(val)===o[0]?" selected":"")+'>'+esc(o[1])+'</option>'}).join("")+'</select></div>';
+  return '<div class="f'+(f.l.length>34?" full":"")+'"><label for="lf_'+f.id+'">'+esc(f.l)+'</label><input class="lf-inp" type="number" min="0" step="any" inputmode="decimal" id="lf_'+f.id+'" data-lf="'+f.id+'" value="'+esc(val)+'" placeholder="0">'+(f.h?'<div class="lf-hint">'+esc(f.h)+'</div>':"")+'</div>';
+ }).join("");
+ box.innerHTML='<div class="lf-tabs" role="tablist">'+tabs+'</div>'
+  +'<div class="lf-fill"><span>⚡ Quick fill</span><select class="lf-inp" id="lfFill" aria-label="Fill from tracker">'+lfFillOptions()+'</select></div>'
+  +'<div class="lf-grid"><div class="f full"><label for="lfType">What do you want to calculate?</label><select class="lf-inp" id="lfType">'+types+'</select></div>'+dates+fields+'</div>';
+ calcLF();
+}
+function lfTotals(cfg,v){var res=cfg.run(v),tot=0;res.rows.forEach(function(r){if(typeof r.v==="number"&&!r.info)tot+=r.v});return {res:res,tot:tot}}
+function calcLF(){
+ var cfg=lfCfg(),v=lfRead(),out=$("#lfOut");if(!out)return;
+ var o=lfTotals(cfg,v),res=o.res,tot=o.tot;
+ var dEl=$("#lfDays");if(dEl){var d1=pd(LFS.due),d2=pd(LFS.paid);dEl.innerHTML=(d1&&d2)?(v.days>0?'<span class="lf-chip bad" style="margin:0;background:#ffe9eb;color:#d92d3a;border-color:#ffc9ce">'+v.days+' day'+(v.days===1?"":"s")+' late · '+v.months+' month'+(v.months===1?"":"s")+' (part month = full)</span>':'<span class="lf-chip ok" style="margin:0;background:#e8faf3;color:#0f9f74;border-color:#bfeedd">Not late — filed on or before the due date</span>'):""}
+ var chip=cfg.dates?(v.days>0?'<span class="lf-chip bad">'+v.days+' day'+(v.days===1?"":"s")+' late</span>':'<span class="lf-chip ok">On time</span>'):"";
+ var rows=res.rows.map(function(r){var z=typeof r.v==="number"&&r.v===0;return '<div class="lf-row'+(z?" zero":"")+'"><div><b>'+esc(r.t)+'</b><small>'+esc(r.d||"")+'</small></div><span>'+(typeof r.v==="number"?R(r.v):esc(r.txt||""))+'</span></div>'}).join("");
+ var clock="";
+ if(cfg.time&&cfg.dates==="both"){
+  var d2b=pd(LFS.paid),d1b=pd(LFS.due),sc=[0,30,60,90,180],vals=sc.map(function(k){var dd=addDays(d2b,k),vv=Object.assign({},v,{days:Math.max(0,Math.round((dd-d1b)/864e5)),months:monthsPart(d1b,dd)});return lfTotals(cfg,vv).tot}),mx=Math.max.apply(null,vals.concat([1]));
+  if(d1b&&d2b)clock='<div class="lf-clock"><h4>The longer you wait</h4><p>Estimated cost if the filing or payment is made later.</p><div class="lf-bars">'+vals.map(function(x,i){return '<div><b>'+R(x)+'</b><i style="height:'+Math.max(4,Math.round(x/mx*70))+'px"></i><small>'+(i?"+"+sc[i]+" days":"Now")+'</small></div>'}).join("")+'</div></div>';
+ }
+ var notes=(res.notes||[]).map(function(n){return '<li>'+esc(n)+'</li>'}).join("");
+ var summary="Late fee estimate — "+LF[LFS.tab].n+": "+cfg.n+"\n"+(cfg.dates?"Due "+LFS.due+", filed/paid "+LFS.paid+" ("+v.days+" days late)\n":"")+res.rows.map(function(r){return "• "+r.t+": "+(typeof r.v==="number"?R(r.v):(r.txt||""))}).join("\n")+"\nTotal extra cost: "+R(tot)+"\n(Estimate by TallySync Due Date Tracker — verify before paying.)";
+ LFS.summary=summary;
+ out.innerHTML='<div class="lf-top"><span>Estimated extra cost</span><div>'+chip+'<span class="lf-chip">'+esc(LF[LFS.tab].n)+'</span></div></div><div class="lf-total">'+R(tot)+'</div><div class="lf-rows">'+rows+'</div>'+clock+(notes?'<ul class="lf-notes">'+notes+'</ul>':"")
+  +'<div class="lf-act"><button class="btn primary" type="button" id="lfCopy">⧉ Copy summary</button><a class="btn ghost" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(summary)+'">Share on WhatsApp</a></div><p class="lf-disc">Estimates for planning only, based on the standard statutory rates. Waivers, amnesty schemes, state-specific rules and department orders can change the final amount — verify on the official portal or with your professional before paying.</p>';
+}
+function lfApply(eid){
+ var e=BYID[eid],m=e&&LFMAP[e.rule];if(!m)return false;
+ LFS.tab=m[0];LFS.type[m[0]]=m[1];LFS.due=isoDate(e.date);LFS.paid=isoDate(today);renderLF();return true;
+}
+document.addEventListener("click",function(ev){
+ var t=ev.target;
+ var tb=t.closest&&t.closest("[data-lftab]");if(tb){LFS.tab=tb.getAttribute("data-lftab");renderLF();return}
+ if(t.closest&&t.closest("#lfCopy")){var txt=LFS.summary||"";try{navigator.clipboard.writeText(txt).then(function(){toast("Summary copied")},function(){toast("Couldn't copy — select the text manually")})}catch(e){toast("Couldn't copy on this browser")}return}
+ var op=t.closest&&t.closest("[data-lfopen]");if(op){var id=op.getAttribute("data-lfopen");closeModals();if(lfApply(id)){var s=$("#latefee");if(s)s.scrollIntoView({behavior:"smooth"})}else toast("No calculator for this filing")}
+});
+document.addEventListener("change",function(ev){
+ var t=ev.target;if(!t||!t.id)return;
+ if(t.id==="lfType"){LFS.type[LFS.tab]=t.value;renderLF()}
+ else if(t.id==="lfFill"&&t.value){lfApply(t.value)}
+});
+document.addEventListener("input",function(ev){
+ var t=ev.target;if(!t||!t.closest||!t.closest("#latefee"))return;
+ if(t.id==="lfDue"){LFS.due=t.value;calcLF();return}
+ if(t.id==="lfPaid"){LFS.paid=t.value;calcLF();return}
+ var id=t.getAttribute&&t.getAttribute("data-lf");if(!id)return;
+ var f=lfCfg().f.filter(function(x){return x.id===id})[0];if(!f)return;
+ LFS.vals[lfKey(f)]=t.type==="checkbox"?t.checked:t.value;calcLF();
+});
+document.addEventListener("change",function(ev){var t=ev.target;if(t&&t.type==="checkbox"&&t.getAttribute("data-lf")&&t.closest("#latefee")){var f=lfCfg().f.filter(function(x){return x.id===t.getAttribute("data-lf")})[0];if(f){LFS.vals[lfKey(f)]=t.checked;calcLF()}}});
+
+renderAll();updateNotifyBtn();notifyCheck();
+})();
+</script>
+</body>
+</html>
